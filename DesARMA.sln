@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DesARMA", "DesARMA\DesARMA.csproj", "{30FC179A-85DF-4F3B-B988-3E45E988B466}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{30FC179A-85DF-4F3B-B988-3E45E988B466}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30FC179A-85DF-4F3B-B988-3E45E988B466}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30FC179A-85DF-4F3B-B988-3E45E988B466}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30FC179A-85DF-4F3B-B988-3E45E988B466}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D7CB27CC-B3EF-446A-94CF-CE19EAF6021B}
+	EndGlobalSection
+EndGlobal
