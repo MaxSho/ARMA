@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DesARMA.Model3
+namespace DesARMA.Models
 {
-    public partial class DictAssetsType
+    public partial class DictRequest
     {
-        public byte? Code { get; set; }
+        public bool? Code { get; set; }
         public string? Name { get; set; }
         public DateTime? DtBegin { get; set; }
         public DateTime? DtEnd { get; set; }

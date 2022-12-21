@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DesARMA"
         mc:Ignorable="d"
-        Title="Запити" Height="450" Width="800">
+        Title="Запити" Height="450" Width="800" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <SolidColorBrush x:Key="1ColorStyle" Color="#2C3333" />
         <SolidColorBrush x:Key="2ColorStyle" Color="#395B64" />
@@ -15,13 +15,9 @@
             <Setter Property="Label.Background" Value="{StaticResource 2ColorStyle}" />
             <Setter Property="Label.Foreground" Value="{StaticResource 3ColorStyle}" />
         </Style>
-        <Style TargetType="TextBox">
-            <Setter Property="TextBox.Background" Value="{StaticResource 3ColorStyle}" />
-            <Setter Property="TextBox.Foreground" Value="{StaticResource 1ColorStyle}" />
-        </Style>
         <Style TargetType="Button">
-            <Setter Property="Background"  Value="{StaticResource 3ColorStyle}"/>
-            <Setter Property="Foreground"  Value="{StaticResource 1ColorStyle}"/>
+            <Setter Property="Button.Background" Value="{StaticResource 3ColorStyle}" />
+            <Setter Property="Button.Foreground" Value="{StaticResource 1ColorStyle}" />
         </Style>
     </Window.Resources>
     <Grid Margin="0" Background="{StaticResource 2ColorStyle}">
@@ -34,7 +30,7 @@
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -44,55 +40,57 @@
         <Label Grid.Column="0" Grid.Row="0"  Content="Держмитслужба" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft" 
                />
-        <TextBox Grid.Column="1" Grid.Row="0" Padding="5" Text="..." 
-                  FontSize="16"/>
+       
+        <Button Grid.Column="1" Grid.Row="0" Padding="5" Content="Створити" 
+                  FontSize="16" Click="DMSButton_Click1"/>
         
 
         <Label Grid.Column="0"  Content="Укрпатент" Grid.Row="1"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"      
                />
-        <TextBox Grid.Column="1" Padding="5" Text="..." Grid.Row="1"
-                  FontSize="16"  />
+        <Button Grid.Column="1" Padding="5" Content="Створити" Grid.Row="1"
+                  FontSize="16"  Click="UPButton_Click2"/>
 
         <Label Grid.Column="0" Grid.Row="2"  Content="Геонадра"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"      
                />
-        <TextBox Grid.Column="1" Grid.Row="2" Padding="5" Text="..." 
-                  FontSize="16"  />
+        <Button Grid.Column="1" Grid.Row="2" Padding="5" Content="Створити" 
+                  FontSize="16"  Click="GNButton_Click3"/>
 
         <Label Grid.Column="0" Grid.Row="3"  Content="Держпраці" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"      
                />
-        <TextBox Grid.Column="1" Grid.Row="3" Padding="5" Text="..." 
-                  FontSize="16"  />
+        <Button Grid.Column="1" Grid.Row="3" Padding="5" Content="Створити" 
+                  FontSize="16"  Click="DPButton_Click4"/>
 
         <Label Grid.Column="0" Grid.Row="4"  Content="АМК" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"      
                />
-        <TextBox Grid.Column="1" Grid.Row="4" Padding="5" Text="..." 
-                  FontSize="16"  />
+        <Button Grid.Column="1" Grid.Row="4" Padding="5" Content="Створити" 
+                  FontSize="16" Click="AMKButton_Click5" />
 
         <Label Grid.Column="0" Grid.Row="5"  Content="НКЦПФР 1" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft" 
                />
-        <TextBox Grid.Column="1" Grid.Row="5" Padding="5" Text="..." 
-                  FontSize="16"  Grid.RowSpan="3"/>
+        <Button Grid.Column="1" Grid.Row="5" Padding="5" Content="Створити" 
+                  FontSize="16" Click="NKCPFRButton_Click6" />
 
         <Label Grid.Column="0" Grid.Row="6"  Content="НКЦПФР 2" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft" 
                />
-        <TextBox Grid.Column="1" Grid.Row="6" Padding="5" Text="..." 
-                  FontSize="16"  />
+        <Button Grid.Column="1" Grid.Row="6" Padding="5" Content="Створити" 
+                  FontSize="16"  Click="NKCPFR2Button_Click7"/>
 
         <Label Grid.Column="0" Grid.Row="7"  Content="НАЗК" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"  
                />
-        <TextBox Grid.Column="1" Grid.Row="7" Padding="5" Text="..."
-                  FontSize="16"/>
+        <Button Grid.Column="1" Grid.Row="7" Padding="5" Content="Створити"
+                  FontSize="16" Click="NAZKButton_Click8"/>
+        
         <Label Grid.Column="0" Grid.Row="8"  Content="Банки"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"    
                />
-        <TextBox Grid.Column="1" Grid.Row="8" Padding="5" Text="..."
-                  FontSize="16"/>
+        <Button Grid.Column="1" Grid.Row="8" Padding="5" Content="Створити"
+                  FontSize="16" Click="BankButton_Click9"/>
     </Grid>
 </Window>

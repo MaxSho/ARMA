@@ -10,7 +10,7 @@
         Title="DeskAPMA" MinHeight="800" MinWidth="800" FontSize="16" WindowState="Maximized"
         ResizeMode="CanResizeWithGrip" Closing="App_Closing">
     <Window.Resources>
-        <local:Phone Price="600" Title="iPhone 6S" x:Key="iPhone6s" />
+        
         <SolidColorBrush x:Key="1ColorStyle" Color="#2C3333" />
         <SolidColorBrush x:Key="2ColorStyle" Color="#395B64" />
         <SolidColorBrush x:Key="3ColorStyle" Color="#A5C9CA" />
@@ -25,7 +25,7 @@
             <Setter Property="Label.Foreground" Value="{StaticResource 1ColorStyle}" />
         </Style>
     </Window.Resources>
-    <Grid Margin="0,0,0,0" x:Name="grid1" DataContext="{StaticResource iPhone6s}">
+    <Grid Margin="0,0,0,0" x:Name="grid1" >
 
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
@@ -54,69 +54,97 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.2*" />
-            <ColumnDefinition Width="1.8*" />
-            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="0.3*" />
+            <ColumnDefinition Width="1.7*" />
+            <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="3*" />
             <ColumnDefinition Width="4*" />
         </Grid.ColumnDefinitions>
-
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         <GridSplitter Grid.Column="2" ShowsPreview="False" Width="3"
         HorizontalAlignment="Center" Margin="0,0,0,34" Grid.RowSpan="2" />
 
 
-        <StackPanel x:Name="stackPanelDelete" Grid.Column="0" Grid.RowSpan="23" Grid.Row="2" Background="{StaticResource 1ColorStyle}">
-            <Button Background="{StaticResource 4ColorStyle}" Foreground="{StaticResource 1ColorStyle}" Content="X" />
-        </StackPanel>
+             <Button Background="{StaticResource 4ColorStyle}" 
+                    Width="50" Grid.Column="0" Grid.Row="2" Click="ToDiskButtonClick" ToolTip="Зібрати папки в додатки">
+                <Image   Margin="1"
+                   Source="https://cdn-icons-png.flaticon.com/512/4910/4910593.png" 
+                   ></Image>
+            </Button>
+            <Button Background="{StaticResource 4ColorStyle}"  Click="ChangeFolderButtonClick" 
+                    Width="50" Grid.Column="0" Grid.Row="3" ToolTip="Перемістити або задати папку запиту">
+                <Image   Margin="1"
+                   Source="https://cdn-icons-png.flaticon.com/512/235/235251.png" 
+                   ></Image>
+            </Button>
+            <Button Background="{StaticResource 4ColorStyle}"
+                    Click="Button_ClickSave"  Width="50" Grid.Column="0" Grid.Row="4" ToolTip="Зберегти дані про поточний запит в базу даних">
+                <Image Margin="1"
+                   Source="https://icon-library.com/images/file-save-icon/file-save-icon-28.jpg" 
+                   ></Image>
+            </Button>
+        <StackPanel Grid.Column="0" Grid.Row="5" Grid.RowSpan="19"  
+                    Background="{StaticResource 1ColorStyle}"  ></StackPanel>
 
         <ScrollViewer  Grid.Column="1" Grid.RowSpan="24" Grid.Row="2">
             <StackPanel x:Name="stackPanel1"  Grid.Column="1" Background="{StaticResource 1ColorStyle}" Grid.RowSpan="23"
                           Grid.Row="2">
-                <Button x:Name="AddButton" Background="{StaticResource 4ColorStyle}" Foreground="{StaticResource 1ColorStyle}" Content="+" Click="Button_Click_1" Tag="0"/>
+                <Button x:Name="AddButton" Background="{StaticResource 4ColorStyle}" Foreground="{StaticResource 1ColorStyle}" Content="Відкрити запит" Click="Button_Click_1" Tag="0"/>
             </StackPanel>
         </ScrollViewer>
         <TextBox x:Name="textBoxSearch"  Grid.Column="1" Grid.Row="1" Padding="5" Margin="0 0 0 0"></TextBox>
-        <Button Grid.Column="0" Grid.Row="1" Background="{StaticResource 4ColorStyle}" Click="ButtonSearchClick">
+        <Button Grid.Column="0" Grid.Row="1" Background="{StaticResource 4ColorStyle}" Click="ButtonSearchClick"  Width="50"
+                ToolTip="Пошук запиту серед відкритих">
+            <!--Click="ButtonSearchClick"-->
             <Image x:Name="searchImage" Grid.Column="0" Grid.Row="1" Margin="1"
-                   Source="https://static.thenounproject.com/png/424969-200.png"
+                   Source="https://static.thenounproject.com/png/424969-200.png" 
                    ></Image>
         </Button>
 
         <Label Grid.Column="2" Grid.Row="1"  Content="Номер КП"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"/>
-        <TextBox x:Name="numberKPTextBox" Grid.Column="3" Grid.Row="1" Padding="5" Text="" IsReadOnly="True"/>
+        <TextBox x:Name="numberKPTextBox" Grid.Column="3" Grid.Row="1" Padding="5" Text="" IsReadOnly="True" Foreground="{StaticResource 5ColorStyle}"/>
 
         <Label Grid.Column="2" Grid.Row="2"  Content="Вхідний номер"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"   
                />
-        <TextBox Grid.Column="3" Grid.Row="2" Padding="5" Text="9999/99-99"
+        <TextBox Grid.Column="3" Grid.Row="2" Padding="5" Text="" Foreground="{StaticResource 5ColorStyle}"
                  x:Name="numberInTextBox" IsReadOnly="True"/>
 
         <Label Grid.Column="2" Grid.Row="3"  Content="Вхідна дата"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft" 
                />
-        <TextBox Grid.Column="3" Grid.Row="3" Padding="5" Text="__.__.____"
+        <TextBox Grid.Column="3" Grid.Row="3" Padding="5" Text="" Foreground="{StaticResource 5ColorStyle}"
                  x:Name="dateInTextBox" IsReadOnly="True"/>
 
         <Label Grid.Column="2" Grid.Row="4"  Content="Дата контролю"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"/>
-        <TextBox x:Name="dateControlTextBox" Grid.Column="3" Grid.Row="4" Padding="5" Text="" IsReadOnly="True"/>
+        <TextBox x:Name="dateControlTextBox" Grid.Column="3" Grid.Row="4" Padding="5" Text="" IsReadOnly="True" Foreground="{StaticResource 5ColorStyle}"/>
 
         <Label Grid.Column="2" Grid.Row="5"  Content="Тип звернення" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
         <ComboBox Grid.Column="3" Grid.Row="5" Padding="5" Height="45"
                  Foreground="{StaticResource 2ColorStyle}" Name="typeorgansList" VerticalAlignment="Top" >
-            <TextBlock>ДБР</TextBlock>
+            <!--<TextBlock>ДБР</TextBlock>
             <TextBlock>БЕБ</TextBlock>
             <TextBlock>МІНЮСТ</TextBlock>
-            <TextBlock>СБУ, МВС, НАБУ, Прокуратура</TextBlock>
+            <TextBlock>СБУ, МВС, НАБУ, Прокуратура</TextBlock>-->
         </ComboBox>
 
         <Label Grid.Column="2" Grid.Row="6"  Content="Номер запиту"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
-        <TextBox Grid.Column="3" Grid.Row="6" Padding="5" Text="99/99/9999"
+        <TextBox Grid.Column="3" Grid.Row="6" Padding="5" Text=""
                  x:Name="numberRequestTextBox"/>
 
         <Label Grid.Column="2" Grid.Row="7"  Content="Дата запиту"
@@ -137,25 +165,25 @@
         <Label Grid.Column="2" Grid.Row="9"  Content="Адреса органу"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
-        <TextBox Grid.Column="3" Grid.Row="9" Padding="5" Text="вул. Петренка, 23"
+        <TextBox Grid.Column="3" Grid.Row="9" Padding="5" Text=""
                  x:Name="addressOrgTextBox"/>
 
         <Label Grid.Column="2" Grid.Row="10"  Content="Посада суб'єкта звернення"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"  
                />
-        <TextBox Grid.Column="3" Grid.Row="10" Padding="5" Text="Начальнику Слідчого відділу"
+        <TextBox Grid.Column="3" Grid.Row="10" Padding="5" Text=""
                  x:Name="positionSubTextBox"/>
 
         <Label Grid.Column="2" Grid.Row="11"  Content="ПІБ суб'єкта звернення" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
-        <TextBox Grid.Column="3" Grid.Row="11"  Padding="5" Text="А. ГРИГОРЕНКУ"
+        <TextBox Grid.Column="3" Grid.Row="11"  Padding="5" Text=""
                  x:Name="nameSubTextBox"/>
 
         <Label Grid.Column="2" Grid.Row="12"  Content="Вихідний номер" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
-        <TextBox Grid.Column="3" Grid.Row="12"  Padding="5" Text="9/9/9" x:Name="numberOutTextBox"
+        <TextBox Grid.Column="3" Grid.Row="12"  Padding="5" Text="" x:Name="numberOutTextBox"
                  />
 
         <Label Grid.Column="2" Grid.Row="13"  Content="Вихідна дата" 
@@ -168,7 +196,7 @@
         <Label Grid.Column="2" Grid.Row="14"  Content="Співвиконавець" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
-        <TextBox Grid.Column="3" Grid.Row="14"  Padding="5" Text="Іваненко" x:Name="co_executorTextBox"
+        <TextBox Grid.Column="3" Grid.Row="14"  Padding="5" Text="" x:Name="co_executorTextBox"
                  />
         <Label Grid.Column="2" Grid.Row="15"  Content="ТЕКА" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
@@ -200,7 +228,7 @@
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"  
                />
 
-
+        <!--Click="ClickDefendantsButton"-->
         <Button Grid.Column="3" Grid.Row="19" Content="Перелік фігурантів" x:Name="countDefendantsButton" Click="ClickDefendantsButton"
                   Foreground="{StaticResource 2ColorStyle}" Height="45"  VerticalAlignment="Top"></Button>
 
@@ -208,8 +236,8 @@
         <Label Grid.Column="2" Grid.Row="20"  Content="Пов'язані особи"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"/>
 
-        <Button Grid.Column="3" Grid.Row="20" Content="Перелік пов'язаних осіб" x:Name="connectedPeopleButton" Click="ClickСonnectedPeopleButton"
-                  Foreground="{StaticResource 2ColorStyle}" Height="45"   VerticalAlignment="Top"></Button>
+        <Button Grid.Column="3" Grid.Row="20" Content="Перелік пов'язаних осіб" x:Name="connectedPeopleButton" 
+                  Foreground="{StaticResource 2ColorStyle}" Height="45"   VerticalAlignment="Top" Click="ClickСonnectedPeopleButton"></Button> <!--Click="ClickСonnectedPeopleButton"-->
 
         <Label Grid.Column="2" Grid.Row="21"  Content="Запити"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"/>
@@ -217,11 +245,18 @@
                 x:Name="ReqButton" Foreground="{StaticResource 2ColorStyle}" Height="45"   VerticalAlignment="Top"></Button>
 
 
+        <Label  FontSize="18"  Foreground="{StaticResource 4ColorStyle}" 
+               x:Name="nameVykon" Grid.ColumnSpan="2" FlowDirection="RightToLeft"
+                Grid.Column="4" Grid.Row="22"
+               >
+            ФІО
+        </Label>
 
 
 
-
-        <Menu Margin="0 0 0 0" Height="25" VerticalAlignment="Top" Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="0" Background="#395B64" Foreground="#A5C9CA">
+        <Menu Margin="0 0 0 0" Height="30" VerticalAlignment="Top" Grid.Column="0" 
+                  Grid.ColumnSpan="5" Grid.Row="0" Background="#395B64" Foreground="#A5C9CA"
+                  FontSize="14">
             <MenuItem Header="File" Background="#395B64" Foreground="#A5C9CA">
                 <MenuItem Margin="0 0 0 0" Header="New Project" Foreground="#395B64" Padding="0 0 0 0"></MenuItem>
                 <MenuItem Header="Open Project" Foreground="#395B64">
@@ -233,14 +268,15 @@
             </MenuItem>
             <MenuItem Header="Edit" ></MenuItem>
             <MenuItem Header="View" ></MenuItem>
+
         </Menu>
 
-        <StackPanel Grid.Column="4" Grid.Row="2" Grid.RowSpan="23"  
+        <StackPanel Grid.Column="4" Grid.Row="2" Grid.RowSpan="20"  
                     Background="{StaticResource 1ColorStyle}"  >
-            <Label Margin="15" Background="{StaticResource 1ColorStyle}">Контроль/Схема</Label>
+            <Label Margin="15" Background="{StaticResource 1ColorStyle}" x:Name="contShLabel">Контроль/Схема</Label>
             <TreeView x:Name="treeView1" 
                   Background="#2C3333">
-                <CheckBox >
+                <CheckBox Checked="CheckBox_Checked" >
                     <TreeViewItem Foreground="{StaticResource 4ColorStyle}" Header="1. Приклад" >
                         <TreeViewItem Foreground="{StaticResource 4ColorStyle}" Header="1.xlsx"  />
                     </TreeViewItem>
@@ -254,13 +290,15 @@
                 </CheckBox>
             </TreeView>
         </StackPanel>
-
-        <Button x:Name="Button1" Content="Відповідь" Click="Button_ClickRespon" Grid.ColumnSpan="2"
+        <!--Click="Button_ClickRespon"-->
+        <Button x:Name="Button1" Content="Відповідь"  Grid.ColumnSpan="2"
                 Grid.Column="2" Grid.Row="22" Background="{StaticResource 5ColorStyle}"
-                Foreground="{StaticResource 4ColorStyle}"/>
-        <Button x:Name="ButtonUpdate" Content="Оновити" Click="Button_ClickUpdate" 
+                Foreground="{StaticResource 4ColorStyle}" Click="Button_ClickRespon"/>
+        
+        <Button x:Name="ButtonUpdate" Content="Оновити" Click="Button_ClickUpdate"
                 Grid.Column="4" Grid.Row="1" Background="{StaticResource 4ColorStyle}"
                 Foreground="{StaticResource 1ColorStyle}"/>
+        
         
         
         

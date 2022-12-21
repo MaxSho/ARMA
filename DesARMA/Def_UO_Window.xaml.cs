@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DesARMA.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,28 +20,28 @@ namespace DesARMA
     /// </summary>
     public partial class Def_UO_Window : Window
     {
-        public UO uo = new UO();
+        public Figurant figurant = new Figurant();
         public bool isDelete = false;
-        public Def_UO_Window(UO uo, bool isConn)
+        public Def_UO_Window(Figurant figurant, bool isConn)
         {
             InitializeComponent();
-            this.uo = uo;
+            this.figurant = figurant;
 
-            nameTextBox.Text = uo.name;
-            codeTextBox.Text = uo.code;
-            residentTextBox.IsChecked = uo.isResid;
-            uo.isConnectedPeople = isConn;
+            nameTextBox.Text = figurant.Name;
+            codeTextBox.Text = figurant.Code;
+            residentTextBox.IsChecked = figurant.ResUr == null ? false: figurant.ResUr;
+            figurant.Status = isConn;
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            uo.name = nameTextBox.Text;
-            uo.code = codeTextBox.Text;
+            figurant.Name = nameTextBox.Text;
+            figurant.Code = codeTextBox.Text;
             var chbis = residentTextBox.IsChecked;
             if(chbis!=null)
-                uo.isResid = (bool)(chbis);
+                figurant.ResUr = (bool)(chbis);
             else
-                uo.isResid = false;
+                figurant.ResUr = false;
 
             if (nameTextBox.Text == "" ||  codeTextBox.Text == "")
             {

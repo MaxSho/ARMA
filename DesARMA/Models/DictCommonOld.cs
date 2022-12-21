@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DesARMA.Model3
+namespace DesARMA.Models
 {
-    public partial class DictCommon
+    public partial class DictCommonOld
     {
         public byte? Id { get; set; }
         public string? Name { get; set; }

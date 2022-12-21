@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DesARMA.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,35 +20,35 @@ namespace DesARMA
     /// </summary>
     public partial class Def_FO_Window : Window
     {
-        public FO fo = new FO();
         public bool isDelete;
+        public Figurant figurant;
 
-        public Def_FO_Window(FO fo, bool isConn)
+
+        public Def_FO_Window(Figurant figurant, bool isConn)
         {
             InitializeComponent();
-            this.fo = fo;
-            nameTextBox.Text = fo.name;
-            codeTextBox.Text = fo.code;
-            if (fo.dateB != "" && fo.dateB != null)
-                dateDatePicker.Text = $"{fo.dateB.Substring(0, 2)}.{fo.dateB.Substring(3, 2)}.{fo.dateB.Substring(6,4)}" /*r.dateOut*/;
-            fo.isConnectedPeople = isConn;
+            this.figurant = figurant;
+            nameTextBox.Text = figurant.Name;
+            codeTextBox.Text = figurant.Ipn;
+            dateDatePicker.Text = InStrDate(figurant.DtBirth);
+            figurant.Status = isConn;
         }
 
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            fo.name = nameTextBox.Text;
-            fo.code = codeTextBox.Text;
-            fo.dateB = dateDatePicker.Text;
+            figurant.Name = nameTextBox.Text;
+            figurant.Ipn = codeTextBox.Text;
+            figurant.DtBirth = IsCorectDate(dateDatePicker.Text);
             var chbIsch = residentTextBox.IsChecked;
 
             if (chbIsch != null)
             {
-                fo.isResid = (bool)(chbIsch);
+                figurant.ResFiz = (bool)(chbIsch);
             }
             else
             {
-                fo.isResid = false;
+                figurant.ResFiz = false;
             }
 
             if(nameTextBox.Text == "" ||  dateDatePicker.SelectedDate == null)
@@ -214,6 +215,38 @@ namespace DesARMA
                 MessageBox.Show("Невдалось конвертувати");
             }
                 
+        }
+        private DateTime? IsCorectDate(string value)
+        {
+            if (value.Length != 10) return null;
+
+            string day = value.Substring(0, 2);
+            string month = value.Substring(3, 2);
+            string year = value.Substring(6, 4);
+
+            int dayInt = 0;
+            int monthInt = 0;
+            int yearInt = 0;
+
+            bool successDay = int.TryParse(day, out dayInt);
+            bool successMath = int.TryParse(month, out monthInt);
+            bool successYear = int.TryParse(year, out yearInt);
+
+            if (successDay && successMath && successYear)
+                return new DateTime(yearInt, monthInt, dayInt);
+
+            return null;
+        }
+        private string InStrDate(DateTime? dateTime)
+        {
+            if (dateTime != null)
+            {
+                var t = dateTime.ToString();
+                if (t != null)
+                    return $"{t[0]}{t[1]}.{t[3]}{t[4]}.{t[6]}{t[7]}{t[8]}{t[9]}";
+            }
+
+            return "";
         }
     }
 }

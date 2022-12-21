@@ -57,7 +57,7 @@
                  x:Name="dateTextBox" FontSize="16" Text="__.__.____" PreviewMouseDown ="textBox_MouseDown" TextChanged="textBox_TextChanged"/>-->
         <DatePicker Margin="0 5 10 0" Grid.Column="1" Grid.Row="2" SelectedDateFormat="Short" x:Name="dateDatePicker"></DatePicker>
 
-        <Label Grid.Column="0" Grid.Row="3"  Content="Резидент" Margin="10 0 0 0"
+        <Label Grid.Column="0" Grid.Row="3"  Content="Не резидент" Margin="10 0 0 0"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"   
                />
 

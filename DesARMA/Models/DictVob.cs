@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DesARMA.Model3
+namespace DesARMA.Models
 {
     public partial class DictVob
     {

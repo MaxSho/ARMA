@@ -1,0 +1,50 @@
+﻿<Window x:Class="DesARMA.SelectFigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DesARMA"
+        mc:Ignorable="d"
+        Title="Вибір фігурантів" Height="600" Width="800" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <SolidColorBrush x:Key="1ColorStyle" Color="#2C3333" />
+        <SolidColorBrush x:Key="2ColorStyle" Color="#395B64" />
+        <SolidColorBrush x:Key="3ColorStyle" Color="#A5C9CA" />
+        <SolidColorBrush x:Key="4ColorStyle" Color="#E7F6F2" />
+        <Style TargetType="Label">
+            <Setter Property="Label.Background" Value="{StaticResource 2ColorStyle}" />
+            <Setter Property="Label.Foreground" Value="{StaticResource 3ColorStyle}" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Button.Background" Value="{StaticResource 3ColorStyle}" />
+            <Setter Property="Button.Foreground" Value="{StaticResource 1ColorStyle}" />
+        </Style>
+    </Window.Resources>
+    <Grid  Background="{StaticResource 2ColorStyle}" x:Name="grid1">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="4*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+        <CheckBox Margin="10 10 0 0" Padding="10 -4 0 0" FontSize="16" Background="{StaticResource 3ColorStyle}" 
+                  x:Name="chAll" 
+                  Foreground="{StaticResource 4ColorStyle}" Click="CheckBox_Checked">
+            <Label Margin="0 " Padding="0">Вибір усіх</Label>
+        </CheckBox>
+
+        <ScrollViewer Grid.Row="1" BorderBrush="{StaticResource 1ColorStyle}">
+            <StackPanel x:Name="stackPanelAdd" ></StackPanel>
+        </ScrollViewer>
+
+        <ScrollViewer Grid.Row="2" BorderBrush="{StaticResource 1ColorStyle}">
+            <StackPanel x:Name="stackPanelAddElse">
+
+                <Label  Content="Назва банку" FontSize="16" Tag="8Назва_банкуLabel"></Label>
+                <ComboBox FontSize="16" Tag="9Назва_банкуComboBox" Foreground="{StaticResource 2ColorStyle}" VerticalAlignment="Top" ></ComboBox>
+                <Button Tag="12ПошукButton" FontSize="16" Click="GenerationFromTheSiteButtonClick">Згенерувати із реєстру дозволів</Button>
+            </StackPanel>
+        </ScrollViewer>
+        <Button Grid.Row="3" FontSize="16" Click="CreateReq">Створити запит</Button>
+    </Grid>
+</Window>

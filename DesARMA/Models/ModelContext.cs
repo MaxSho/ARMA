@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace DesARMA.Model3
+namespace DesARMA.Models
 {
     public partial class ModelContext : DbContext
     {
@@ -15,11 +15,14 @@ namespace DesARMA.Model3
             : base(options)
         {
         }
-
+        public bool? isAuth;
+        public virtual DbSet<DictAgWork> DictAgWorks { get; set; } = null!;
         public virtual DbSet<DictAgency> DictAgencies { get; set; } = null!;
         public virtual DbSet<DictAsset> DictAssets { get; set; } = null!;
         public virtual DbSet<DictAssetsType> DictAssetsTypes { get; set; } = null!;
+        public virtual DbSet<DictBank> DictBanks { get; set; } = null!;
         public virtual DbSet<DictCommon> DictCommons { get; set; } = null!;
+        public virtual DbSet<DictCommonOld> DictCommonOlds { get; set; } = null!;
         public virtual DbSet<DictReg> DictRegs { get; set; } = null!;
         public virtual DbSet<DictRequest> DictRequests { get; set; } = null!;
         public virtual DbSet<DictVob> DictVobs { get; set; } = null!;
@@ -27,6 +30,7 @@ namespace DesARMA.Model3
         public virtual DbSet<Final> Finals { get; set; } = null!;
         public virtual DbSet<FizUr> FizUrs { get; set; } = null!;
         public virtual DbSet<Main> Mains { get; set; } = null!;
+        public virtual DbSet<MainConfig> MainConfigs { get; set; } = null!;
         public virtual DbSet<Request> Requests { get; set; } = null!;
         public virtual DbSet<Stat> Stats { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
@@ -39,11 +43,55 @@ namespace DesARMA.Model3
                 optionsBuilder.UseOracle("Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = 10.10.110.20)(PORT = 1521))(CONNECT_DATA = (SERVER = DEDICATED)(SERVICE_NAME = arma)));Password=oracle;User ID=stat");
             }
         }
-
+        public string ActivePostCountForBlog(string p_Password) => throw new NotImplementedException();
+       
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.HasDbFunction(typeof(ModelContext).GetMethod(nameof(ActivePostCountForBlog),
+                new[] { typeof(string) }))
+                    //.HasName("PKG_SECURITY.AUTHENTICATE_USER");
+                    .HasName("dbms_obfuscation_toolkit.md5")
+                    .HasSchema("PUBLIC");
+                    ;
+
             modelBuilder.HasDefaultSchema("STAT")
                 .UseCollation("USING_NLS_COMP");
+
+            modelBuilder.Entity<DictAgWork>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("DICT_AG_WORK");
+
+                entity.Property(e => e.Addr)
+                    .HasMaxLength(70)
+                    .IsUnicode(false)
+                    .HasColumnName("ADDR");
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("NUMBER")
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(130)
+                    .IsUnicode(false)
+                    .HasColumnName("NAME");
+
+                entity.Property(e => e.Status)
+                    .HasColumnType("NUMBER")
+                    .HasColumnName("STATUS");
+
+                entity.Property(e => e.Tel)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("TEL");
+
+                entity.Property(e => e.Url)
+                    .HasMaxLength(25)
+                    .IsUnicode(false)
+                    .HasColumnName("URL");
+            });
 
             modelBuilder.Entity<DictAgency>(entity =>
             {
@@ -125,11 +173,97 @@ namespace DesARMA.Model3
                     .HasColumnName("NAME");
             });
 
+            modelBuilder.Entity<DictBank>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("DICT_BANK");
+
+                entity.Property(e => e.Adress)
+                    .HasMaxLength(60)
+                    .IsUnicode(false)
+                    .HasColumnName("ADRESS");
+
+                entity.Property(e => e.Fullname)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("FULLNAME");
+
+                entity.Property(e => e.Glb)
+                    .HasColumnType("NUMBER")
+                    .HasColumnName("GLB");
+
+                entity.Property(e => e.Ikod)
+                    .HasColumnType("NUMBER")
+                    .HasColumnName("IKOD");
+
+                entity.Property(e => e.Kb)
+                    .HasColumnType("NUMBER")
+                    .HasColumnName("KB");
+
+                entity.Property(e => e.Mfo)
+                    .HasColumnType("NUMBER")
+                    .HasColumnName("MFO");
+
+                entity.Property(e => e.Nb)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("NB");
+
+                entity.Property(e => e.Np)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("NP");
+
+                entity.Property(e => e.Pi)
+                    .HasColumnType("NUMBER")
+                    .HasColumnName("PI");
+
+                entity.Property(e => e.Reestr)
+                    .HasMaxLength(1)
+                    .IsUnicode(false)
+                    .HasColumnName("REESTR");
+
+                entity.Property(e => e.Tb)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("TB");
+            });
+
             modelBuilder.Entity<DictCommon>(entity =>
             {
                 entity.HasNoKey();
 
+                //entity.HasKey(e => e.Id)
+                //    .HasName("ID");
+
                 entity.ToTable("DICT_COMMON");
+
+                entity.Property(e => e.Code)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("CODE");
+
+                entity.Property(e => e.Domain)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("DOMAIN");
+
+                entity.Property(e => e.Id)
+                    .HasPrecision(3)
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(1000)
+                    .IsUnicode(false)
+                    .HasColumnName("NAME");
+            });
+
+            modelBuilder.Entity<DictCommonOld>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("DICT_COMMON_OLD");
 
                 entity.Property(e => e.Code)
                     .HasPrecision(2)
@@ -145,7 +279,7 @@ namespace DesARMA.Model3
                     .HasColumnName("ID");
 
                 entity.Property(e => e.Name)
-                    .HasMaxLength(50)
+                    .HasMaxLength(1000)
                     .IsUnicode(false)
                     .HasColumnName("NAME");
             });
@@ -218,6 +352,8 @@ namespace DesARMA.Model3
 
             modelBuilder.Entity<Figurant>(entity =>
             {
+                //entity.HasNoKey();
+                entity.HasKey(e => e.Id).HasName("ID");
 
                 entity.ToTable("FIGURANT");
 
@@ -225,6 +361,10 @@ namespace DesARMA.Model3
                     .HasMaxLength(20)
                     .IsUnicode(false)
                     .HasColumnName("CODE");
+
+                entity.Property(e => e.DtBirth)
+                    .HasColumnType("DATE")
+                    .HasColumnName("DT_BIRTH");
 
                 entity.Property(e => e.DtInsert)
                     .HasColumnType("DATE")
@@ -285,10 +425,6 @@ namespace DesARMA.Model3
                 entity.Property(e => e.Status)
                     .HasPrecision(1)
                     .HasColumnName("STATUS");
-
-                entity.Property(e => e.DtBirth)
-                    .HasColumnType("DATE")
-                    .HasColumnName("DT_BIRTH");
 
                 entity.HasOne(d => d.NumbInputNavigation)
                     .WithMany()
@@ -486,6 +622,10 @@ namespace DesARMA.Model3
                     .ValueGeneratedOnAdd()
                     .HasColumnName("ID");
 
+                entity.Property(e => e.IdAcc)
+                    .HasColumnType("NUMBER")
+                    .HasColumnName("ID_ACC");
+
                 entity.Property(e => e.LoginName)
                     .HasMaxLength(20)
                     .IsUnicode(false)
@@ -524,6 +664,39 @@ namespace DesARMA.Model3
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("WORK");
+            });
+
+            modelBuilder.Entity<MainConfig>(entity =>
+            {
+               // entity.HasNoKey();
+
+                entity.HasKey(e => e.NumbInput)
+                    .HasName("NUMB_INPUT"); //UN_MAIN_CONFIG_NUMB_INPUT
+
+                entity.ToTable("MAIN_CONFIG");
+
+                //entity.HasIndex(e => e.NumbInput, "UN_MAIN_CONFIG_NUMB_INPUT")
+                //    .IsUnique();
+
+                entity.Property(e => e.Control)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("CONTROL");
+
+                entity.Property(e => e.Folder)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("FOLDER");
+
+                entity.Property(e => e.NumbInput)
+                    .HasMaxLength(13)
+                    .IsUnicode(false)
+                    .HasColumnName("NUMB_INPUT");
+
+                entity.Property(e => e.Shema)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("SHEMA");
             });
 
             modelBuilder.Entity<Request>(entity =>
@@ -657,7 +830,9 @@ namespace DesARMA.Model3
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasNoKey();
+                //entity.HasNoKey();
+                entity.HasKey(e => e.IdUser)
+                    .HasName("ID_USER");
 
                 entity.ToTable("USERS");
 
@@ -694,7 +869,7 @@ namespace DesARMA.Model3
                     .HasColumnName("EMAIL");
 
                 entity.Property(e => e.Employee)
-                    .HasPrecision(1)
+                    //.HasPrecision(1)
                     .HasColumnName("EMPLOYEE");
 
                 entity.Property(e => e.Fio)
@@ -740,7 +915,6 @@ namespace DesARMA.Model3
 
             OnModelCreatingPartial(modelBuilder);
         }
-
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

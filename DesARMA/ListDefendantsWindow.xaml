@@ -40,8 +40,13 @@
             <StackPanel x:Name="stackPanel1"  MinWidth="250" >
                 </StackPanel>
         </ScrollViewer>
-        <Button Grid.RowSpan="1" Grid.Row="0" Grid.Column="0" IsDefault="True" Click="Add_ClickFO"  Margin="5" FontSize="16">Додати ФО</Button>
-        <Button Grid.RowSpan="1" Grid.Row="0" Grid.Column="1" IsDefault="True" Click="Add_ClickUO"  Margin="5" FontSize="16">Додати ЮО</Button>
+        <!--Click="Add_ClickFO"-->
+        <Button Grid.RowSpan="1" Grid.Row="0" Grid.Column="0" IsDefault="True"   Margin="5" FontSize="16"
+                Click="Add_ClickFO"
+                >Додати ФО</Button>
+        <!--Click="Add_ClickUO"-->
+        <Button Grid.RowSpan="1" Grid.Row="0" Grid.Column="1" IsDefault="True"  Margin="5" FontSize="16"
+                Click="Add_ClickUO">Додати ЮО</Button>
         
     </Grid>
 </Window>

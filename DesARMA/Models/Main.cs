@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DesARMA.Model3
+namespace DesARMA.Models
 {
     public partial class Main
     {
@@ -9,6 +9,7 @@ namespace DesARMA.Model3
         {
             FizUrs = new HashSet<FizUr>();
         }
+
         public decimal? Id { get; set; }
         public string? LoginName { get; set; }
         public DateTime? DtInsert { get; set; }
@@ -35,6 +36,7 @@ namespace DesARMA.Model3
         public string? Art { get; set; }
         public string? Addr { get; set; }
         public string? Work { get; set; }
+        public decimal? IdAcc { get; set; }
 
         public virtual ICollection<FizUr> FizUrs { get; set; }
     }

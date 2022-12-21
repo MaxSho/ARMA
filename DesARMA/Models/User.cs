@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DesARMA.Model3
+namespace DesARMA.Models
 {
     public partial class User
     {
@@ -10,7 +10,8 @@ namespace DesARMA.Model3
         public string? Name { get; set; }
         public byte? Depart { get; set; }
         public byte? Division { get; set; }
-        public bool? Employee { get; set; }
+        // public bool? Employee { get; set; }
+        public byte? Employee { get; set; }
         public bool? UserRole { get; set; }
         public string? Email { get; set; }
         public string? Password { get; set; }
