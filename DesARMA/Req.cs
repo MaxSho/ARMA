@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,7 +13,7 @@ namespace DesARMA
     public class Req
 
     {
-        public static string RunList(string code, int numPage)
+        public static async Task<string> RunList(string code, int numPage)
         {
             string Response = "";
             try
@@ -42,7 +43,7 @@ namespace DesARMA
             return Response;
         }
 
-        public static string RunEbout(int id)
+        public static async Task<string> RunEbout(int id)
         {
             string Response = "";
             try
@@ -71,7 +72,7 @@ namespace DesARMA
             return Response;
         }
 
-        public static List<string> Pars(Figurant fig)
+        public static async Task<List<string>>  Pars(Figurant fig)
         {
             List<string> listOrg = new List<string>();
             string? code;
@@ -80,10 +81,11 @@ namespace DesARMA
             else
                 code = fig.Code;
 
-            var st = Req.RunList(code+"", 1);
+            var st = await Req.RunList(code+"", 1);
 
             var stCountOnPage = st.Split("dle_per_page = ")[1];
             var indFinishStCount = stCountOnPage.IndexOf(';');
+            if (indFinishStCount == 0) return null!;
             var dle_per_page = Convert.ToInt32(stCountOnPage.Substring(0, indFinishStCount));
             //Console.WriteLine(dle_per_page);
 
@@ -97,7 +99,7 @@ namespace DesARMA
             else CountP = dle_records / dle_per_page + 1;
             for (int page = 1; page <= CountP; page++)
             {
-                st = Req.RunList(code + "", page);
+                st = await Req.RunList(code + "", page);
                 var arr = st.Split("dozvil/get/?id=");
                 for (int i = 1; i < arr.Length; i++)
                 {
@@ -108,7 +110,7 @@ namespace DesARMA
                     var id = Convert.ToInt32(arr[i].Substring(0, finishCode));
                     // Console.Write(id + ". ");
 
-                    var stAbout = Req.RunEbout(id);
+                    var stAbout = await Req.RunEbout(id);
                     var arrStAbout = stAbout.Split("formresult");
                     var indexEndDiv = arrStAbout[2].IndexOf("</div>");
                     // Console.WriteLine(arrStAbout[2].Substring(2, indexEndDiv - 2));

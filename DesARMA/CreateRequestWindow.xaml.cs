@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,9 +20,26 @@ namespace DesARMA
     /// </summary>
     public partial class CreateRequestWindow : Window
     {
+        private System.Windows.Forms.Timer inactivityTimer = new System.Windows.Forms.Timer();
         public CreateRequestWindow()
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
+
+                string shif = ConfigurationManager.AppSettings["hv"].ToString();
+                inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
+                inactivityTimer.Tick += (sender, args) =>
+                {
+                    Environment.Exit(0);
+                };
+                inactivityTimer.Start();
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            
         }
 
         private void Accept_Click(object sender, RoutedEventArgs e)

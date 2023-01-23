@@ -37,18 +37,29 @@ using System.Windows.Forms;
 using Oracle.ManagedDataAccess.Client;
 using System.ComponentModel.Design.Serialization;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
+using System.Printing;
+using NPOI.XSSF.Streaming.Values;
+using DesARMA.Registers.EDR;
+using DesARMA.Entities;
+using Microsoft.Extensions.Logging;
+using System.Configuration;
+using System.Security.Cryptography;
+using Newtonsoft.Json.Linq;
+using System.Collections;
+using System.Diagnostics;
 
 namespace DesARMA
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    public delegate void UpdateDel(object sender, RoutedEventArgs e);
     public partial class MainWindow : System.Windows.Window
     {
-        //ApplicationContext db = new ApplicationContext();
+        public bool isOpenWindFig = false;
         System.Windows.Controls.Button currentButton = new System.Windows.Controls.Button();
-        //bool isLoad = false;
-        public List<User> users = new List<User>();
+        private Timer inactivityTimer = new Timer();
+        Main CurrentMainDB = null!;
         ModelContext modelContext = new ModelContext();
         public User CurrentUser { get; set; } = null!;
         public static string CreateMD5(string input)
@@ -60,14 +71,6 @@ namespace DesARMA
                 byte[] hashBytes = md5.ComputeHash(inputBytes);
 
                 return Convert.ToHexString(hashBytes); // .NET 5 +
-
-                // Convert the byte array to hexadecimal string prior to .NET 5
-                // StringBuilder sb = new System.Text.StringBuilder();
-                // for (int i = 0; i < hashBytes.Length; i++)
-                // {
-                //     sb.Append(hashBytes[i].ToString("X2"));
-                // }
-                // return sb.ToString();
             }
         }
         public MainWindow()
@@ -75,18 +78,87 @@ namespace DesARMA
             try
             {
                 InitializeComponent();
-            
-                foreach (var item in modelContext.Users)
-                {
-                    users.Add(item);
-                }
 
-                //auth
-               Auth();
-
+                Auth();
                 currentButton = AddButton;
+                DownloadReest();
+                LoadDb();
+                //CreateButtonsGetData();
 
+                inactivityTimer = new Timer();
+                string shif = ConfigurationManager.AppSettings["hv"].ToString();
+                inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
 
+                inactivityTimer.Tick += (sender, args) =>
+                {
+                    Environment.Exit(0);
+                };
+                inactivityTimer.Start();
+
+                InsertDataIntoMultipleRequestWindow insertDataIntoMultipleRequestWindow =
+                    new InsertDataIntoMultipleRequestWindow(modelContext, CurrentUser);
+                insertDataIntoMultipleRequestWindow.ShowDialog();
+
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show(e.Message);
+                Environment.Exit(0);
+            }
+        }
+       
+        public string GetStrFromByte(byte b)
+        {
+            string ret = ""+b;
+            if (b < 10)
+            {
+                ret = "00" + b;
+            }
+            else if(b < 100)
+            {
+                ret = "0" + b;
+            }
+            return ret;
+        }
+        private void CreateButtonsGetData()
+        {
+            for (int i = 1; i <= Reest.sNazyv.Count; i++)
+            {
+                System.Windows.Controls.Button curB = new System.Windows.Controls.Button();
+                curB.Background = this.Resources[$"3ColorStyle"] as SolidColorBrush;
+                curB.Foreground = this.Resources[$"1ColorStyle"] as SolidColorBrush;
+                curB.Tag = i;
+                curB.Content = "" + i;
+                curB.Click += Button_Click_GetData;
+                
+                stackPanelButtonsGetData.Children.Add(curB);
+            }
+        }
+        private void Button_Click_GetData(object sender, RoutedEventArgs e)
+        {
+            inactivityTimer.Stop();
+            try
+            {
+                System.Windows.MessageBox.Show("in");
+                RegisterEDR registerEDR = new RegisterEDR();
+                if (CurrentMainDB != null)
+                {
+                    registerEDR.requestProgram = new RequestProgram(CurrentMainDB, modelContext);
+                    registerEDR.GetData();
+                }
+                if(CurrentMainDB != null)
+                    System.Windows.MessageBox.Show($"{CurrentMainDB.NumbInput}");
+            }
+            catch (Exception e2)
+            {
+                System.Windows.MessageBox.Show(e2.Message);
+            }
+            inactivityTimer.Start();
+        }
+        private void DownloadReest()
+        {
+            try 
+            { 
                 var blogs = from b in modelContext.DictCommons
                             where b.Domain == "ACCOST"
                             select b;
@@ -104,23 +176,113 @@ namespace DesARMA
                 Reest.organs = listOrgans;
 
 
+                var Reestr = from b in modelContext.DictCommons
+                             where b.Domain == "REGISTER"
+                             select b;
 
+                List<string> sNazyv = new List<string>();
+                List<string> sRodov = new List<string>();
+                List<string> sDav = new List<string>();
+                List<int> sGrupa = new List<int>();
+                List<string> aString = new List<string>();
 
+                var l = Reestr.ToList();
+                for (int i = 1; i <= l.Count; i++)
+                {
+                    var item = (from b in modelContext.DictCommons
+                                where b.Domain == "REGISTER" && b.Code == i + ""
+                                select b).ToList().First();
+                    if (item.Name != null)
+                    {
+                        var arr = item.Name.Split('^');
 
-                LoadDb();
-                //Button_ClickUpdate(new object(), new RoutedEventArgs());
-                //isLoad = true;
+                        if (arr.Length >= 5)
+                        {
+                            sNazyv.Add(arr[0]);
+                            sRodov.Add(arr[1]);
+                            sDav.Add(arr[2]);
 
+                            int variable = -1;
+                            int.TryParse(arr[3], out variable);
+                            sGrupa.Add(variable);
 
+                            aString.Add(arr[4]);
+                        }
+                        else if (arr.Length == 4)
+                        {
+                            sNazyv.Add(arr[0]);
+                            sRodov.Add(arr[1]);
+                            sDav.Add(arr[2]);
 
+                            int variable = -1;
+                            int.TryParse(arr[3], out variable);
+                            sGrupa.Add(variable);
+
+                            aString.Add("");
+                        }
+                        else if (arr.Length == 3)
+                        {
+                            sNazyv.Add(arr[0]);
+                            sRodov.Add(arr[1]);
+                            sDav.Add(arr[2]);
+                            sGrupa.Add(-1);
+                            aString.Add("");
+                        }
+                        else if (arr.Length == 2)
+                        {
+                            sNazyv.Add(arr[0]);
+                            sRodov.Add(arr[1]);
+                            sDav.Add("");
+                            sGrupa.Add(-1);
+                            aString.Add("");
+                        }
+                        else if (arr.Length == 1)
+                        {
+                            sNazyv.Add(arr[0]);
+                            sRodov.Add("");
+                            sDav.Add("");
+                            sGrupa.Add(-1);
+                            aString.Add("");
+                        }
+                        else
+                        {
+                            sNazyv.Add("");
+                            sRodov.Add("");
+                            sDav.Add("");
+                            sGrupa.Add(-1);
+                            aString.Add("");
+                        }
+                    }
+                    else
+                    {
+                        sNazyv.Add("");
+                        sRodov.Add("");
+                        sDav.Add("");
+                        sGrupa.Add(-1);
+                        aString.Add("");
+                    }
+
+                }
+                Reest.sNazyv = sNazyv;
+                Reest.sRodov = sRodov;
+                Reest.sDav = sDav;
+                Reest.sGrupa = sGrupa;
+                Reest.abbreviatedName = aString;
             }
             catch (Exception e)
             {
-                System.Windows.MessageBox.Show(e.Message);
+                 System.Windows.MessageBox.Show(e.Message);
+                 Environment.Exit(0);
             }
-        }
+}
         private void Auth()
         {
+            List<User> users = new List<User>();
+
+            foreach (var item in modelContext.Users)
+            {
+                users.Add(item);
+            }
             while (true)
             {
                 AuthWindow authWindow = new AuthWindow();
@@ -156,99 +318,60 @@ namespace DesARMA
         {
             try
             {
-                int i = 0;
-                foreach (var main in modelContext.Mains)
+                var mains = (from b in modelContext.Mains
+                             where b.Executor == CurrentUser.IdUser
+                    &&
+                    (from o in modelContext.MainConfigs
+                     where o.NumbInput == b.NumbInput
+                     select o).Count() == 1
+                             select b
+                    ).ToList();
+
+                foreach (var main in mains)
                 {
+                    var mcIs = modelContext.MainConfigs.Find(main.NumbInput);
+                    if (mcIs == null) continue;
+
+                    contShLabel.Content = $"Контроль/Схема  Розташування папки: {mcIs.Folder}";
+
+                    //Кнопка запиту зліва
+                    var itemButton = new System.Windows.Controls.Button();
+                    itemButton.Click += Button_Any_Click_Req;
+
+                    var NumForeground = 4;
+                    var NumBackground = 2;
+
+                    itemButton.Foreground = this.Resources[$"{NumForeground}ColorStyle"] as SolidColorBrush;
+                    itemButton.Background = this.Resources[$"{NumBackground}ColorStyle"] as SolidColorBrush;
+
+                    numberKPTextBox.Text = main.CpNumber;
+                    numberInTextBox.Text = main.NumbInput;
+                    dateInTextBox.Text = InStrDate(main.DtInput);
+                    dateControlTextBox.Text = InStrDate(main.DtCheck);
+
+                    ReadFromMainDBToCenter(main);
+
+                    itemButton.Tag = main.Id;
+                    itemButton.Content = $"Запит: {main.NumbInput}";
+                    stackPanel1.Children.Insert(0, itemButton);
+
+                    currentButton = itemButton;
+                    CurrentMainDB = main;
+
                     
-                    if (main.Executor == CurrentUser.IdUser)
-                    {
-                        var mcIs = modelContext.MainConfigs.Find(main.NumbInput);
-                        if (mcIs == null) continue;
 
-                        contShLabel.Content = $"Контроль/Схема  Розташування папки: {mcIs.Folder}";
+                    treeView1.Items.Clear();
+                   
 
-                        //Кнопка запиту зліва
-                        var itemButton = new System.Windows.Controls.Button();
-                        itemButton.Click += Button_Any_Click_Req;
-
-                        var NumForeground = 4;
-                        var NumBackground = 2;
-
-                        itemButton.Foreground = this.Resources[$"{NumForeground}ColorStyle"] as SolidColorBrush;
-                        itemButton.Background = this.Resources[$"{NumBackground}ColorStyle"] as SolidColorBrush;
-
-                        numberKPTextBox.Text = main.CpNumber;
-                        numberInTextBox.Text = main.NumbInput;
-                        dateInTextBox.Text = InStrDate(main.DtInput);
-                        dateControlTextBox.Text = InStrDate(main.DtCheck);
-
-                        ReadFromMainDBToCenter(main);
-
-                        itemButton.Tag = main.Id;
-                        itemButton.Content = $"Запит: {main.NumbInput}";
-                        stackPanel1.Children.Insert(0, itemButton);
-
-                        currentButton = itemButton;
-
-                        treeView1.Items.Clear();
-                        int index = 1;
-
-                        foreach (var item in Reest.sNazyv)
-                        {
-                            var checkBox = new System.Windows.Controls.CheckBox();
-                            checkBox.Checked += ClickOnCheckBox;
-                            var checkBox2 = new System.Windows.Controls.CheckBox();
-                            checkBox2.Checked += ClickOnCheckBox;
-
-                            var parentItem = new TreeViewItem();
-                            parentItem.Header = $"{index++}. " + item;
-                            parentItem.Foreground = this.Resources[$"4ColorStyle"] as SolidColorBrush;
-
-                            checkBox.Content = parentItem;
-                            checkBox.Margin = new Thickness(0, 1, 0, 0);
-                            checkBox2.Content = checkBox;
-                            treeView1.Items.Add(checkBox2);
-                        }
-                        var checkBoxS = new System.Windows.Controls.CheckBox();
-                        checkBoxS.Checked += ClickOnCheckBox;
-                        var checkBoxS2 = new System.Windows.Controls.CheckBox();
-                        checkBoxS2.Checked += ClickOnCheckBox;
-
-                        var treeS = new TreeViewItem();
-                        treeS.Foreground = new SolidColorBrush(Color.FromRgb(230, 78, 78));
-                        treeS.Header = $"{index}. Схеми";
-
-                        checkBoxS.Content = treeS;
-                        checkBoxS.Margin = new Thickness(0, 1, 0, 0);
-                        checkBoxS2.Content = checkBoxS;
-                        treeView1.Items.Add(checkBoxS2);
-
-                        //TODO read is checkb
-                        var mcs = from b in modelContext.MainConfigs
-                                 where b.NumbInput.Equals(numberInTextBox.Text)
-                                 select b;
-
-                        MainConfig? mc = null!;
-                        foreach (var c in mcs)
-                        {
-                            mc = c;
-                            break;
-                        }
-
-                        if (!ReadFromStringDBToCheckBoxes(mc))
-                        {
-                            modelContext.MainConfigs.Add(new MainConfig()
-                            {
-                                Control = new string('0', Reest.sNazyv.Count + 1),
-                                Shema = new string('0', Reest.sNazyv.Count + 1),
-                                Folder = null,
-                                NumbInput = main.NumbInput
-                            });
-                        }
-                        modelContext.SaveChanges();
-                    }
-                    i++;
+                    AllDirectories allDirectories = new AllDirectories(main, mcIs, ClickOnCheckBox, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
+                                            this.Resources["GreenEmpty"] as SolidColorBrush
+                                            , treeView1, modelContext
+                                           );
+                    allDirectories.CreateNewTree();
                 }
+
+                
+
 
 
                 for (int j = 1; j < stackPanel1.Children.Count; j++)
@@ -261,8 +384,10 @@ namespace DesARMA
                     }
                 }
 
-                Button_ClickUpdate(new object(), new RoutedEventArgs());
 
+                
+                Button_ClickUpdate(new object(), new RoutedEventArgs());
+               // System.Windows.MessageBox.Show("" + treeView1.Items.Count);
 
             }
             catch (Exception e)
@@ -271,8 +396,30 @@ namespace DesARMA
             }
 
         }
+        private void ClearMainCenter()
+        {
+            typeorgansList.SelectedIndex = -1;
+            numberRequestTextBox.Text = "";
+            dateRequestDatePicker.SelectedDate = new DateTime();
+            vidOrgTextBox.Text = "";
+            addressOrgTextBox.Text = "";
+            positionSubTextBox.Text = "";
+            nameSubTextBox.Text = "";
+            numberOutTextBox.Text = "";
+            dateOutDatePicker.SelectedDate = new DateTime();
+            co_executorTextBox.Text = "";
+            TEKATextBox.Text = "";
+            article_CCUTextBox.Text = "";
+            noteTextBox.Text = "";
+            typeAppealList.SelectedIndex = -1;
+            numberKPTextBox.Text = "";
+            dateInTextBox.Text = null;
+            dateControlTextBox.Text = null;
+            numberInTextBox.Text = "";
+        }
         private void Button_Any_Click_Req(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try {
 
                 var itemBut = (System.Windows.Controls.Button)sender;
@@ -287,35 +434,19 @@ namespace DesARMA
                     if (!SaveAllDB())
                         System.Windows.MessageBox.Show("Виникла помилка збереження");
                 }
-
-
-                //var prevM = modelContext.Mains.Find(numberInTextBox.Text);
-
-                //if (prevM != null)
-                //{
-                //    SaveAllDB();
-                //}
-                //else
-                //{
-                //    System.Windows.MessageBox.Show("В базу дані не збережено");
-                //}
-
                 currentButton = itemBut;
-
+                
                 //Button_ClickUpdate(null, null);
-                var mainR = from b in modelContext.Mains
+                var m = (from b in modelContext.Mains
                             where b.Id.Equals((decimal)currentButton.Tag)
-                            select b;
+                            select b).First();
 
-                Main m = null!;
-                foreach (var item in mainR)
-                {
-                    m = item;
-                    break;
-                }
 
                 if (m != null)
                 {
+                    CurrentMainDB = m;
+                    ClearMainCenter();
+
                     numberKPTextBox.Text = m.CpNumber;
                     dateInTextBox.Text = InStrDate(m.DtInput);
                     dateControlTextBox.Text = InStrDate(m.DtCheck);
@@ -323,8 +454,6 @@ namespace DesARMA
                     ReadFromMainDBToCenter(m);
 
                     
-
-
                     for (int i = 0; i < stackPanel1.Children.Count - 1; i++)
                     {
                         var butI = stackPanel1.Children[i] as System.Windows.Controls.Button;
@@ -342,12 +471,13 @@ namespace DesARMA
                     itemBut.Background = this.Resources[$"2ColorStyle"] as SolidColorBrush;
                     itemBut.Foreground = this.Resources[$"4ColorStyle"] as SolidColorBrush;
 
+                    var mc = modelContext.MainConfigs.Find(m.NumbInput);
+                    if(mc!=null)
+                        contShLabel.Content = $"Контроль/Схема  Розташування папки: {mc.Folder}";
 
                     //TODO Save chackB
+                    ReadFromStringDBToCheckBoxes(mc);
 
-
-
-                 
                     Button_ClickUpdate(new object(), new RoutedEventArgs());
                 }
                 else
@@ -359,9 +489,11 @@ namespace DesARMA
             {
                 System.Windows.MessageBox.Show(e2.Message);
             }
+            inactivityTimer.Start();
         }
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 CreateRequestWindow createRequestWindow = new CreateRequestWindow();
@@ -419,8 +551,6 @@ namespace DesARMA
                     ;
 
 
-                
-
                 var mcs = from b in modelContext.MainConfigs
                           where b.NumbInput.Equals(createRequestWindow.CodeRequest)
                           select b;
@@ -430,8 +560,8 @@ namespace DesARMA
                     System.Windows.MessageBox.Show("Запит уже відкривався");
                     return;
                 }
-                
 
+               
 
                 MyForm.FolderBrowserDialog FBD = new MyForm.FolderBrowserDialog();
                 if (FBD.ShowDialog() == MyForm.DialogResult.OK)
@@ -444,6 +574,7 @@ namespace DesARMA
                     }
 
                     main.Executor = CurrentUser.IdUser;
+                    main.LoginName = CurrentUser.LoginName;// new
 
                     numberInTextBox.Text = createRequestWindow.CodeRequest;
                     numberKPTextBox.Text = main.CpNumber;
@@ -462,7 +593,7 @@ namespace DesARMA
 
                     itemButton.Foreground = this.Resources[$"{NumForeground}ColorStyle"] as SolidColorBrush;
                     itemButton.Background = this.Resources[$"{NumBackground}ColorStyle"] as SolidColorBrush;
-                    itemButton.Content = $"Запит {ind + 1}: {createRequestWindow.CodeRequest}";
+                    itemButton.Content = $"Запит: {createRequestWindow.CodeRequest}";
 
 
                     for (int i = 0; i < ind; i++)
@@ -485,7 +616,7 @@ namespace DesARMA
                     Directory.CreateDirectory(FBD.SelectedPath + $"\\{codeRequest}");
                     int index = 1;
                     treeView1.Items.Clear();
-                    foreach (var item in Reest.sNazyv)
+                    foreach (var item in Reest.abbreviatedName)
                     {
                         Directory.CreateDirectory(FBD.SelectedPath + $"\\{codeRequest}\\{index}. {item}");
                         var checkBox = new System.Windows.Controls.CheckBox();
@@ -513,9 +644,14 @@ namespace DesARMA
                     Directory.CreateDirectory(FBD.SelectedPath + $"\\{codeRequest}\\{index}. Схеми");
 
                     currentButton = itemButton;
+                    CurrentMainDB = main;
                     //treeView1.Items.Count
                     modelContext.MainConfigs.Add(new MainConfig() { Control = new string('0', treeView1.Items.Count), Folder = FBD.SelectedPath+ $"\\{codeRequest}" , NumbInput = main.NumbInput, Shema = new string('0', treeView1.Items.Count) });
+                    contShLabel.Content = $"Контроль/Схема  Розташування папки: {FBD.SelectedPath + $"\\{codeRequest}"}";
                     modelContext.SaveChanges();
+
+
+                    
                 }
                 else
                 {
@@ -527,194 +663,131 @@ namespace DesARMA
             {
                 System.Windows.MessageBox.Show(e2.Message);
             }
-        }
-        private void DeleteButton_Click(object sender, RoutedEventArgs e)
-        {
-            //int ind = stackPanelDelete.Children.IndexOf((Button)sender);
-            //stackPanel1.Children.RemoveAt(ind);
-            //stackPanelDelete.Children.RemoveAt(ind);
-
-            //if(ind > 0)
-            //    Button_Any_Click_Req(stackPanel1.Children[ind - 1], null);
-            //else
-            //{
-            //    currentButton = AddButton;
-            //    treeView1.Items.Clear();
-
-            //    organTextBox.Text = "";
-            //    nameTextBox.Text = "";
-            //    address1TextBox.Text = "";
-            //    date1TextBox.Text = "";
-            //    date2TextBox.Text = "";
-            //    number1TextBox.Text = "";
-            //    number2TextBox.Text = "";
-            //    count_ShematTextBox.Text = "";
-            //    vidOrganTextBox.Text = "";
-            //    typeorgansList.SelectedIndex = -1;
-            //    indexSubCheckBox.IsChecked = false;
-            //}
+            inactivityTimer.Start();
         }
         private void Button_ClickUpdate(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 if (currentButton == AddButton) return;
 
-
                 var prevMc = modelContext.MainConfigs.Find(numberInTextBox.Text);
                 
-
                 var main = modelContext.Mains.Find(numberInTextBox.Text);
                 ReadFromCheckBoxesToStringDB(prevMc);
 
-                if (prevMc != null)
+                if(prevMc != null && main != null)
                 {
-
-                    var listContr = GetBoolsFromString(prevMc.Control);
-                    var listSh = GetBoolsFromString(prevMc.Shema);
-
-                    // Перевірка наявності папки запиту
-                    if (Directory.Exists(prevMc.Folder))
-                    {
-                        //Отримання масиву вмісту папки запиту(реєстрів)
-                        string[] dirs = Directory.GetDirectories(prevMc.Folder);
-
-                        // Створення нового дерева
-                        treeView1.Items.Clear();
-                        int i = 1;
-
-                        // Прохід по кожному реєстрі зі списку
-                        foreach (string itemSNazyv in Reest.sNazyv)
-                        {
-                            //Створення вузла
-                            TreeViewItem tree = new TreeViewItem();
-
-                            var checkBox = new System.Windows.Controls.CheckBox();
-                            checkBox.Checked += ClickOnCheckBox;
-                            checkBox.IsChecked = listSh[i - 1];
-                            var checkBox2 = new System.Windows.Controls.CheckBox();
-                            checkBox2.Checked += ClickOnCheckBox;
-                            checkBox2.IsChecked = listContr[i - 1];
-                            checkBox.Content = tree;
-                            checkBox.Margin = new Thickness(0, 1, 0, 0);
-                            checkBox2.Content = checkBox;
-
-                            // на самому початку задано червоний колір
-                            tree.Foreground = new SolidColorBrush(Color.FromRgb(230, 78, 78));
-                            tree.Header = $"{i}. " + itemSNazyv;
-
-                            // пошук реєстру за порядеом в папці 
-                            foreach (var itemDir in dirs)
-                            {
-                                // якщо знайдено папку з поточним реєстром
-                                if ((new DirectoryInfo(itemDir)).Name == $"{i}. " + itemSNazyv)
-                                {
-                                    // перезадано на зелений колір
-                                    tree.Foreground = new SolidColorBrush(Color.FromRgb(33, 194, 92));
-
-                                    if (Directory.GetDirectories(itemDir).Length == 0 &&
-                                         Directory.GetFiles(itemDir).Length == 0
-                                    )
-                                    {
-                                        // якщо папка пуста перезадано на колір білий
-                                        tree.Foreground = this.Resources[$"4ColorStyle"] as SolidColorBrush;
-
-                                    }
-                                    else
-                                    {
-                                        // якщо не пуста додаємо в середину вузли
-                                        //tree.Items.Clear();
-                                        foreach (var itemDIn in Directory.GetDirectories(itemDir))
-                                        {
-                                            TreeViewItem treeIn = new TreeViewItem();
-                                            treeIn.Foreground = new SolidColorBrush(Color.FromRgb(33, 194, 92));
-                                            treeIn.Header = new DirectoryInfo(itemDIn).Name;
-                                            tree.Items.Add(treeIn);
-                                        }
-                                        foreach (var itemFIn in Directory.GetFiles(itemDir))
-                                        {
-                                            TreeViewItem treeIn = new TreeViewItem();
-                                            treeIn.Foreground = new SolidColorBrush(Color.FromRgb(33, 194, 92));
-                                            treeIn.Header = new FileInfo(itemFIn).Name;
-                                            tree.Items.Add(treeIn);
-                                        }
-                                    }
-                                    checkBox.Content = tree;
-                                }
-
-                            }
-                            treeView1.Items.Add(checkBox2);
-                            i++;
-                        }
-
-                        TreeViewItem treeS = new TreeViewItem();
-
-                        var checkBoxS = new System.Windows.Controls.CheckBox();
-                        checkBoxS.Checked += ClickOnCheckBox;
-                        checkBoxS.IsChecked = listSh[i - 1];
-                        var checkBoxS2 = new System.Windows.Controls.CheckBox();
-                        checkBoxS2.Checked += ClickOnCheckBox;
-                        checkBoxS2.IsChecked = listContr[i - 1];
-                        checkBoxS.Content = treeS;
-                        checkBoxS.Margin = new Thickness(0, 1, 0, 0);
-                        checkBoxS2.Content = checkBoxS;
-
-                        treeS.Foreground = new SolidColorBrush(Color.FromRgb(230, 78, 78));
-                        treeS.Header = $"{i}. Схеми";
-                        foreach (var item in dirs)
-                        {
-                            if ((new DirectoryInfo(item)).Name == $"{i}. Схеми")
-                            {
-                                treeS.Foreground = new SolidColorBrush(Color.FromRgb(33, 194, 92));
-                                if (Directory.GetDirectories(item).Length == 0 &&
-                                        Directory.GetFiles(item).Length == 0
-                                   )
-                                {
-                                    // якщо папка пуста перезадано на колір білий
-                                    treeS.Foreground = this.Resources[$"4ColorStyle"] as SolidColorBrush;
-
-                                }
-                                else
-                                {
-                                    foreach (var itemDIn in Directory.GetDirectories(item))
-                                    {
-                                        TreeViewItem treeIn = new TreeViewItem();
-                                        treeIn.Foreground = new SolidColorBrush(Color.FromRgb(33, 194, 92));
-                                        treeIn.Header = new DirectoryInfo(itemDIn).Name;
-                                        treeS.Items.Add(treeIn);
-                                    }
-                                    foreach (var itemFIn in Directory.GetFiles(item))
-                                    {
-                                        TreeViewItem treeIn = new TreeViewItem();
-                                        treeIn.Foreground = new SolidColorBrush(Color.FromRgb(33, 194, 92));
-                                        treeIn.Header = new FileInfo(itemFIn).Name;
-                                        treeS.Items.Add(treeIn);
-                                    }
-                                }
-                                treeView1.Items.Add(checkBoxS2);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        foreach (TreeViewItem item in treeView1.Items)
-                        {
-                            item.Foreground = new SolidColorBrush(Color.FromRgb(230, 78, 78));
-                        }
-                    }
+                    AllDirectories allDirectories = new AllDirectories(main, prevMc, ClickOnCheckBox, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
+                        this.Resources["GreenEmpty"] as SolidColorBrush
+                        , treeView1, modelContext
+                       );
+                    allDirectories.CreateNewTree();
                 }
-                else
-                {
-                    System.Windows.MessageBox.Show("Не вдалося зберегти поточний запит. Не знайдено запит в контексті локальної бази");
-                }
+
+
+               
             }
             catch (Exception e2)
             {
                 System.Windows.MessageBox.Show(e2.Message);
+                System.Windows.MessageBox.Show($"StackTrace: {e2.StackTrace}\n\n");
+
+                var trace = new StackTrace(e2, true);
+
+                foreach (var frame in trace.GetFrames())
+                {
+                    var sb = new StringBuilder();
+
+                    sb.AppendLine($"Файл: {frame.GetFileName()}");
+                    sb.AppendLine($"Строка: {frame.GetFileLineNumber()}");
+                    sb.AppendLine($"Столбец: {frame.GetFileColumnNumber()}");
+                    sb.AppendLine($"Метод: {frame.GetMethod()}");
+
+                    System.Windows.MessageBox.Show(sb.ToString());
+                }
             }
+            inactivityTimer.Start();
+        }
+        private bool isHaveBefore(int indexRee, List<int> listGr)
+        {
+            for (int i = 0; i < indexRee; i++)
+            {
+                if (listGr[i] == listGr[indexRee])
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        private List<int> Orders(List<string> listSRod)
+        {
+            int index = 1;
+
+            List<int> listGr = new List<int>();
+            List<int> listReturnNumb = new List<int>();
+
+            foreach (var item in listSRod)
+            {
+                // індекс назви реєстра в робовому 
+                var indexReest = Reest.sRodov.IndexOf(item);
+
+                // listGr додається групу цього реєстру
+                listGr.Add(Reest.sGrupa[indexReest]);
+            }
+
+            foreach (var item in listSRod)
+            {
+                if (isHaveBefore(listSRod.IndexOf(item), listGr))
+                {
+                    listReturnNumb.Add(listGr[listSRod.IndexOf(item)]);
+                }
+                else
+                {
+                    listReturnNumb.Add(index++);
+                }
+            }
+
+            return listReturnNumb;
+
+
+            //List<int> listUnikalGr = new List<int>();
+
+            //foreach (var item in listGr)
+            //{
+
+            //    if (Reest.sGrupa.IndexOf(item) == Reest.sGrupa.LastIndexOf(item))
+            //    {
+            //        listUnikalGr.Add(item);
+            //    }
+            //    else{
+                    
+            //    }
+            //}
+
+
+            //List<int> listIndexes = new List<int>();
+
+            
+            //foreach (var item in listGr)
+            //{
+
+            //    if (Reest.sGrupa.IndexOf(item) == Reest.sGrupa.LastIndexOf(item))
+            //    {
+            //        listUnikalGr.Add(index);
+            //    }
+            //    else
+            //    {
+
+            //    }
+            //    index++;
+            //}
+
         }
         private void Button_ClickRespon(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 if (currentButton == AddButton) return;
@@ -722,72 +795,84 @@ namespace DesARMA
                 var prevM = modelContext.MainConfigs.Find(numberInTextBox.Text);
                 if(prevM == null) return;
 
+                var listNotCheckControl = new List<string>();
                 foreach (var item in treeView1.Items)
                 {
-                    var chB = item as System.Windows.Controls.CheckBox;
-                    if (chB != null)
+                    var sp = item as System.Windows.Controls.StackPanel;
+                    if (sp != null)
                     {
-                        var b = chB.IsChecked;
-                        if (b != null)
+                        var chB = sp.Children[0] as System.Windows.Controls.CheckBox;
+                        if (chB != null)
                         {
-                            if (!(bool)b)
+                            var b = chB.IsChecked;
+                            if (b != null)
                             {
-                                var b2 = chB.Content as System.Windows.Controls.CheckBox;
-
-                                if(b2 != null)
+                                if (!(bool)b)
                                 {
-                                    var tr = b2.Content as System.Windows.Controls.TreeViewItem;
-                                    if(tr != null)
+                                    var nameReest = sp.Children[2] as System.Windows.Controls.TreeViewItem;
+
+                                    if (nameReest != null)
                                     {
-                                        if (Directory.Exists(prevM.Folder + "\\" + tr.Header)) 
+                                        if (Directory.Exists(prevM.Folder + "\\" + nameReest.Header))
                                         {
-                                            System.Windows.MessageBox.Show($"Не відмічено контроль");
-                                            return;
+
+                                            listNotCheckControl.Add(nameReest.Header.ToString());
+                                            //return;
                                         }
                                     }
                                     else
                                     {
-                                        System.Windows.MessageBox.Show($"Помилка CheckBox");
+                                        System.Windows.MessageBox.Show($"Не знайдено назву реэстру");
                                         return;
                                     }
                                 }
-                                else
-                                {
-                                    System.Windows.MessageBox.Show($"Помилка CheckBox");
-                                    return;
-                                } 
+                            }
+                            else
+                            {
+                                System.Windows.MessageBox.Show($"Не відмічено контроль(null)");
+                                return;
                             }
                         }
                         else
                         {
-                            System.Windows.MessageBox.Show($"Не відмічено контроль(null)");
+                            System.Windows.MessageBox.Show($"Прапорець номер {iPrap} контролю не визначений");
                             return;
                         }
                     }
-                    else
-                    {
-                        System.Windows.MessageBox.Show($"Прапорець номер {iPrap} контролю не визначений");
-                        return;
-                    }
+                    
                     iPrap++;
+                }
+
+                if(listNotCheckControl.Count > 0)
+                {
+                    
+                    string str = $"Не відмічено контроль:";
+
+                    foreach (var item in listNotCheckControl)
+                    {
+                        str += "\n" + item;
+                    }
+                    System.Windows.MessageBox.Show(str);
+                    return;
                 }
 
                 var isCountFig = (from b in modelContext.Figurants
                            where b.NumbInput == numberInTextBox.Text &&
-                                         b.Status == false
+                                         b.Status == 1
                            select b).ToList().Count;
+
                 if (isCountFig == 0)
                 {
                     System.Windows.MessageBox.Show($"Не вибрано жодного фігуранта");
                     return;
                 }
-
-
-                string path3 = "";
-                //Створення документу звіту
                 
+                
+                string path3 = "";
+
+                //Створення документу звіту
                 XWPFDocument doc1;
-                if (prevM != null)
+                if (prevM != null && prevM.Folder != null)
                 {
                     Directory.CreateDirectory(prevM.Folder + "\\Відповідь");
 
@@ -809,8 +894,21 @@ namespace DesARMA
                     return;
                 }
 
+
+
+
+                bool isExReq = false;
+                if(Directory.Exists(prevM.Folder + "\\Запити"))
+                if (!(Directory.GetDirectories(prevM.Folder + "\\Запити").Length == 0 &&
+                                    Directory.GetFiles(prevM.Folder + "\\Запити").Length == 0)
+                     )
+                {
+                    isExReq = true;
+                }
+
+
+                //Створення зміних, що вставляються в звіт   
                 var indexSub = isCountFig > 1 ? 0 : 1;
-                //Створення зміних, що вставляються в звіт
                 int whatIndex = 0; //type organ
                 whatIndex = typeorgansList.SelectedIndex;
                 string name = nameSubTextBox.Text;
@@ -823,8 +921,11 @@ namespace DesARMA
                 string vidOrgan = vidOrgTextBox.Text;
                 string positionSub = positionSubTextBox.Text;
 
-                    //Створення списків реєстрів родовий і давальний
-                    List<string> listSRod = new List<string>();
+
+                
+
+                //Створення списків реєстрів родовий і давальний
+                List<string> listSRod = new List<string>();
                     List<string> listSDav = new List<string>();
 
 
@@ -832,22 +933,23 @@ namespace DesARMA
                 if (Directory.Exists(prevM.Folder))
                     {
                     int i = 1;
-                    foreach (string itemSNazyv in Reest.sNazyv)
+                    foreach (string itemAbbreviatedName in Reest.abbreviatedName)
                     {
                         string[] dirs = Directory.GetDirectories(prevM.Folder);
                         foreach (var itemDir in dirs)
                         {
-                            if ((new DirectoryInfo(itemDir)).Name == $"{i}. " + itemSNazyv)
+                            if ((new DirectoryInfo(itemDir)).Name == $"{i}. " + itemAbbreviatedName)
                             {
                                 if (Directory.GetDirectories(itemDir).Length > 0 ||
                                      Directory.GetFiles(itemDir).Length > 0
                                 )
                                 {
-                                    listSRod.Add(Reest.sRodov[Reest.sNazyv.IndexOf(itemSNazyv)]);
+                                    listSRod.Add(Reest.sRodov[Reest.abbreviatedName.IndexOf(itemAbbreviatedName)]);
                                 }
                                 else
                                 {
-                                    listSDav.Add(Reest.sDav[Reest.sNazyv.IndexOf(itemSNazyv)]);
+
+                                    listSDav.Add(Reest.sDav[Reest.abbreviatedName.IndexOf(itemAbbreviatedName)]);
                                 }
                             }
                         }
@@ -872,10 +974,32 @@ namespace DesARMA
                         return;
                 }
 
+                //створення множини ідентичних груп додатків
+                var listNumering = Orders(listSRod);
+                HashSet<int> hset = new HashSet<int>();
+                foreach (var item in listNumering)
+                {
+                    hset.Add(item);
+                }
 
 
-                    //Формування параграфів
-                    var par = doc1.Paragraphs[22];
+
+                DocResponse docResponse = new DocResponse(prevM, new List<int>() { indexSub, whatIndex, count_Shemat }, new List<string>() {
+                name,
+                address1,
+                date1,
+                date2,
+                number1,
+                number2,
+                vidOrgan,
+                positionSub
+                });
+
+                
+
+
+                //Формування параграфів
+                var par = doc1.Paragraphs[22];
                     par.ReplaceText(par.Text, positionSub);
 
 
@@ -892,15 +1016,20 @@ namespace DesARMA
                     par.ReplaceText(par.Text, "");
 
                     par = doc1.Paragraphs[30];
-                    par.ReplaceText("14.12.2021 № 65/16/6133 (вх. № 6018/27-21 від 21.12.2022)", $"{date1} № {number1} (вх. № {number2} від {date2})");
-                    par.ReplaceText("зазначених", Reest.sub[indexSub]);
+                    //par.ReplaceText("14.12.2021 № 65/16/6133 (вх. № 6018/27-21 від 21.12.2022)", $"{date1} № {number1} (вх. № {number2} від {date2})");
+                par.ReplaceText("14.12.2021", $"{date1}");
+                par.ReplaceText("65/16/6133", $"{number1}");
+                par.ReplaceText("6018/27-21", $"{number2}");
+                par.ReplaceText("21.12.2022", $"{date2}");
+
+                par.ReplaceText("зазначених", Reest.sub[indexSub]);
                     par.ReplaceText("осіб", Reest.sub2[indexSub]);
 
 
                     par = doc1.Paragraphs[31];
 
                     if (count_Shemat > 0)
-                        par.ReplaceText("додаток 10-11", $"додаток {listSRod.Count + 1}");
+                        par.ReplaceText("додаток 10-11", $"додаток {hset.Count + 1}");
 
                     par.ReplaceText("зазначених", Reest.sub[indexSub]);
                     par.ReplaceText("осіб", Reest.sub2[indexSub]);
@@ -909,7 +1038,6 @@ namespace DesARMA
                     par.ReplaceText("зазначених", Reest.sub[indexSub]);
                     par.ReplaceText("осіб", Reest.sub2[indexSub]);
 
-                    
 
                     par = doc1.Paragraphs[33];
                     par.ReplaceText("зазначених", Reest.sub[indexSub]);
@@ -940,7 +1068,9 @@ namespace DesARMA
 
                     // засунуть 1 ліст
                     int count_dodat = 0;
-                    foreach (var item in listSRod)
+                    //var listNumering = Orders(listSRod);
+                    
+                foreach (var item in listSRod)
                     {
                         var tmpParagraph = doc1.CreateParagraph();
                         doc1.SetParagraph(tmpParagraph, 31 + count_dodat);
@@ -949,10 +1079,12 @@ namespace DesARMA
                         var tmpRun = tmpParagraph.CreateRun();
                         tmpRun.AppendText($"{count_dodat + 1}) ");
                         if (count_dodat == listSRod.Count - 1)
-                            tmpRun.AppendText($"{item} (додаток {count_dodat + 1}).");
+                            tmpRun.AppendText($"{item} (додаток {listNumering[count_dodat]}).");
                         else
-                            tmpRun.AppendText($"{item} (додаток {count_dodat + 1});");
-                        tmpRun.FontSize = 14;
+                            tmpRun.AppendText($"{item} (додаток {listNumering[count_dodat]});");
+
+                    
+                    tmpRun.FontSize = 14;
                         count_dodat++;
                     }
                     //remove
@@ -979,6 +1111,8 @@ namespace DesARMA
                         doc1.SetParagraph(tmpParagraph, i + listSDav.Count);
                     }
 
+                    
+       
                     // встувить 2 ліст
                     for (int i = 0; i < listSDav.Count; i++)
                     {
@@ -988,10 +1122,14 @@ namespace DesARMA
                         tmpParagraph.Alignment = ParagraphAlignment.BOTH;
                         var tmpRun = tmpParagraph.CreateRun();
 
+                       
+
                         if (i == listSDav.Count - 1)
                             tmpRun.AppendText($"- {listSDav[i]}.");
                         else
                             tmpRun.AppendText($"- {listSDav[i]};");
+
+                        
 
                         tmpRun.FontSize = 14;
                     }
@@ -1009,19 +1147,37 @@ namespace DesARMA
                     par.ReplaceText(par.Text, $"Примірник № 1 - {vidOrgTextBox.Text}");
 
 
+                    
+
+                    int indexDel = 0;
                     if (count_Shemat == 0)
                     {
-                        for (int i = 32 + listSRod.Count; i < doc1.Paragraphs.Count; i++)
-                        {
-                            var tmpParagraph = doc1.Paragraphs[i];
-                            doc1.SetParagraph(tmpParagraph, i - 1);
-                        }
-                        doc1.SetParagraph(doc1.Paragraphs[0], doc1.Paragraphs.Count - 1);
+                        indexDel = 33 + listSRod.Count + listSDav.Count;
+                    for (int i = 32 + listSRod.Count; i < doc1.Paragraphs.Count; i++)
+                            {
+                                var tmpParagraph = doc1.Paragraphs[i];
+                                doc1.SetParagraph(tmpParagraph, i - 1);
+                            }
+                            doc1.SetParagraph(doc1.Paragraphs[0], doc1.Paragraphs.Count - 1);
+                    }
+                    else
+                    {
+                        indexDel = 34 + listSRod.Count + listSDav.Count;
                     }
 
+                
+                if (!isExReq)
+                {
+                    for (int i = indexDel; i < doc1.Paragraphs.Count; i++)
+                    {
+                        var tmpParagraph = doc1.Paragraphs[i];
+                        doc1.SetParagraph(tmpParagraph, i - 1);
+                    }
+                    doc1.SetParagraph(doc1.Paragraphs[0], doc1.Paragraphs.Count - 1);
+                }
 
 
-                    var path4 = prevM.Folder + "\\Відповідь\\Відповідь.docx";
+                var path4 = prevM.Folder + "\\Відповідь\\Відповідь.docx";
 
                     //Збереження звіта 
                     using (FileStream sw = File.Create(path4))
@@ -1032,7 +1188,19 @@ namespace DesARMA
 
                     doc1.Close();
                     File.Delete(path4);
+
+                if (whatIndex == 2)
+                {
+                    docResponse.CreateResponse();
+                    
+                }
+                else
+                {
                     System.Windows.MessageBox.Show($"Відповідь збережено в папку:\n{path3}");
+                }   
+
+
+                
                
             }
             catch (Exception e2)
@@ -1041,64 +1209,48 @@ namespace DesARMA
                // doc1.Close();
             }
 
-
+            inactivityTimer.Start();
         }
         private void ButtonSearchClick(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
-                var blogs = from b in modelContext.Mains
-                            where b.NumbInput.Equals(textBoxSearch.Text) && b.Executor == CurrentUser.IdUser
-                            select b;
-                var s = "";
+                var mcCur = modelContext.MainConfigs.Find(textBoxSearch.Text);
 
-                foreach (var item in blogs)
+                if(mcCur == null)
                 {
-                   // ind = item.Id;
-
-                    s = item.NumbInput;
-
-                    break;
+                    System.Windows.MessageBox.Show("Запит " + textBoxSearch.Text + " не знайдено серед витягнутих");
+                    return;
                 }
-                if (s != "")
-                    CreateButton(s);
+
+                    CreateButton(mcCur.NumbInput);
                  //System.Windows.MessageBox.Show(s);
             }
             catch (Exception e2)
             {
                 System.Windows.MessageBox.Show(e2.Message);
             }
+            inactivityTimer.Start();
         }
         private void ClickDefendantsButton(object sender, RoutedEventArgs e)
         {
-            
+            inactivityTimer.Stop();
             try
             {
-                var mainR = from b in modelContext.Mains
+                
+                var m = (from b in modelContext.Mains
                             where b.Id.Equals((decimal)currentButton.Tag)
-                            select b;
+                            select b).ToList().First();
 
-                Main m = null!;
-                foreach (var item in mainR)
+
+                if (m != null)
                 {
-                    m = item;
-                    break;
-                }
-
-                if (m != null) 
-                {
-
-                    ListDefendantsWindow listDefendantsWindow = new ListDefendantsWindow(modelContext, 
+                    
+                        ListDefendantsWindow listDefendantsWindow = new ListDefendantsWindow(modelContext,
                         numberInTextBox.Text, "Перелік фігурантів", false);
-
-                    if (listDefendantsWindow.ShowDialog() == true)
-                    {
-
-                    }
-                    else
-                    {
-
-                    }
+                        listDefendantsWindow.Owner = this;
+                        listDefendantsWindow.Show();
 
                 }
                 else
@@ -1111,6 +1263,23 @@ namespace DesARMA
             {
                 System.Windows.MessageBox.Show(e2.Message);
             }
+            inactivityTimer.Start();
+        }
+        private List<decimal> GetIdButon()
+        {
+            var list = new List<decimal>();
+
+            foreach (var item in stackPanel1.Children)
+            {
+                var item2 = item as System.Windows.Controls.Button;
+                if(item2 != null)
+                {
+                    var item3 = Convert.ToDecimal(item2.Tag);
+                    if(item3 != 0)
+                        list.Add(item3);
+                }
+            }
+            return list;
         }
         private void CreateButton(string numbInput)
         {
@@ -1120,13 +1289,18 @@ namespace DesARMA
 
                 if (reqItAdd != null)
                 {
+                    
+                    var list = GetIdButon();
                     stackPanel1.Children.Clear();
-
                     int i = 1;
-                    foreach (var m in modelContext.Mains)
+
+                    foreach (var itemId in list)
                     {
-                        if (m.NumbInput != numbInput && m.Executor == CurrentUser.IdUser)
+                        var mC = (from b in modelContext.Mains where b.Id == itemId select b).ToList();
+                        if(mC.Count > 0 && reqItAdd.Id != itemId)
                         {
+                            var m = mC.Last();
+
                             var itemButton = new System.Windows.Controls.Button();
                             itemButton.Click += Button_Any_Click_Req;
 
@@ -1145,8 +1319,9 @@ namespace DesARMA
 
                             i++;
                         }
-
                     }
+
+
                     for (int j = 0; j < stackPanel1.Children.Count; j++)
                     {
                         var b = stackPanel1.Children[j] as System.Windows.Controls.Button;
@@ -1179,12 +1354,26 @@ namespace DesARMA
                     var itemButtonAdd = new System.Windows.Controls.Button();
                     itemButtonAdd.Click += Button_Click_1;
                     itemButtonAdd.Name = "AddButton";
-                    itemButtonAdd.Content = "+";
+                    itemButtonAdd.Tag = "0";
+                    itemButtonAdd.Content = "Відкрити запит";
                     itemButtonAdd.Foreground = this.Resources[$"{1}ColorStyle"] as SolidColorBrush;
                     itemButtonAdd.Background = this.Resources[$"{4}ColorStyle"] as SolidColorBrush;
                     stackPanel1.Children.Add(itemButtonAdd);
 
-                    Button_Any_Click_Req(currentButton, new RoutedEventArgs());
+
+                    // Button_Any_Click_Req(currentButton, new RoutedEventArgs());
+                    numberKPTextBox.Text = reqItAdd.CpNumber;
+                    dateInTextBox.Text = InStrDate(reqItAdd.DtInput);
+                    dateControlTextBox.Text = InStrDate(reqItAdd.DtCheck);
+                    numberInTextBox.Text = reqItAdd.NumbInput;
+                    ReadFromMainDBToCenter(reqItAdd);
+
+                    
+
+                    //TODO Save chackB
+
+
+                    Button_ClickUpdate(new object(), new RoutedEventArgs());
                 }
             }
             catch (Exception e2)
@@ -1194,43 +1383,32 @@ namespace DesARMA
         }
         private void ClickСonnectedPeopleButton(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
-                var mainR = from b in modelContext.Mains
+                var m = (from b in modelContext.Mains
                             where b.Id.Equals((decimal)currentButton.Tag)
-                            select b;
-
-                Main m = null!;
-                foreach (var item in mainR)
-                {
-                    m = item;
-                    break;
-                }
+                            select b).ToList().First();
 
                 if (m != null)
                 {
                     
-                    ListDefendantsWindow listDefendantsWindow = new ListDefendantsWindow(modelContext, numberInTextBox.Text, "Перелік фігурантів", true);
+                    ListDefendantsWindow listDefendantsWindow = new ListDefendantsWindow(modelContext, numberInTextBox.Text, "Перелік пов'язаних осіб", true);
+                    listDefendantsWindow.Owner = this;
+                    listDefendantsWindow.Show();
 
-                    if (listDefendantsWindow.ShowDialog() == true)
-                    {
-
-                    }
-                    else
-                    {
-
-                    }
-
-
+                    //listDefendantsWindow.Close();
                 }
             }
             catch (Exception e2)
             {
                 System.Windows.MessageBox.Show(e2.Message);
             }
+            inactivityTimer.Start();
         }
         private void textBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 System.Windows.Controls.TextBox dp = (System.Windows.Controls.TextBox)sender;
@@ -1329,18 +1507,7 @@ namespace DesARMA
             {
                 System.Windows.MessageBox.Show(exp.Message);
             }
-        }
-        private void textBox_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            try
-            {
-                System.Windows.Controls.TextBox dp = (System.Windows.Controls.TextBox)sender;
-                dp.SelectionStart = 0;
-            }
-            catch (Exception exp)
-            {
-                System.Windows.MessageBox.Show(exp.Message);
-            }
+            inactivityTimer.Start();
         }
         private void App_Closing(object sender, CancelEventArgs e)
         {
@@ -1399,6 +1566,7 @@ namespace DesARMA
         }
         private void DatePicker_TextInput(object sender, TextCompositionEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 System.Windows.Controls.DatePicker dp = (System.Windows.Controls.DatePicker)sender;
@@ -1496,13 +1664,15 @@ namespace DesARMA
             {
                 System.Windows.MessageBox.Show(exp.Message);
             }
+            inactivityTimer.Start();
         }
         private void ClickReqButton(object sender, RoutedEventArgs e)
         {
-            if(!(numberInTextBox.Text == null || numberInTextBox.Text == ""))
+            inactivityTimer.Stop();
+            if (!(numberInTextBox.Text == null || numberInTextBox.Text == ""))
             {
                 var items = from f in modelContext.Figurants
-                            where f.NumbInput == numberInTextBox.Text && f.Status == false
+                            where f.NumbInput == numberInTextBox.Text && f.Status == 1
                             select f;
                 if (items.ToList().Count == 0)
                 {
@@ -1523,49 +1693,32 @@ namespace DesARMA
                     }
                 }
             }
-            
+            inactivityTimer.Start();
 
-
-            //RequestsWindow requestsWindow = new RequestsWindow(numberInTextBox.Text.ToString(), modelContext);
-
-            //if (requestsWindow.ShowDialog() == true)
-            //{
-
-            //}
-            //else
-            //{
-
-            //}
         }
         private bool SaveAllDB()
         {
             bool ret = true;
 
-            var mainR = from b in modelContext.Mains
+            var m = (from b in modelContext.Mains
                         where b.NumbInput.Equals(numberInTextBox.Text)
-                        select b;
+                        select b).ToList().FirstOrDefault();
 
-            Main m = null!;
-            foreach (var item in mainR)
+            if (m != null)
             {
-                m = item;
-                break;
-            }
+                ret = ret && ReadFromCenterToMainDB(m);
 
-            ret = ret && ReadFromCenterToMainDB(m);
-            
-                var mcs = from b in modelContext.MainConfigs
+                var mc = (from b in modelContext.MainConfigs
                           where b.NumbInput.Equals(numberInTextBox.Text)
-                          select b;
+                          select b).First();
 
-                MainConfig mc = null!;
-                foreach (var item in mcs)
-                {
-                    mc = item;
-                    break;
-                }
-
-            ret = ret && ReadFromCheckBoxesToStringDB(mc);
+                ret = ret && ReadFromCheckBoxesToStringDB(mc);
+            }
+            else
+            {
+                return false;
+            }
+            
 
             return ret;
         }
@@ -1592,7 +1745,7 @@ namespace DesARMA
                 //if (!)
                 //{System.Windows.MessageBox.Show($"Не вдалося зчитати Статус звернення з бази запату {m.NumbInput}");
                 //}
-                typeAppealList.SelectedIndex = typeA;
+                typeAppealList.SelectedIndex = typeA - 1;
 
                 return true;
             }
@@ -1604,6 +1757,7 @@ namespace DesARMA
             if (m != null)
             {
                 m.IdAcc = GetIdFromDicForNameTypeOrgan(typeorgansList.SelectedIndex);
+                m.LoginName = CurrentUser.LoginName;
                 m.NumbOutInit = numberRequestTextBox.Text;
                 m.DtOutInit = dateRequestDatePicker.SelectedDate;
                 m.AgencyDep = vidOrgTextBox.Text;
@@ -1616,7 +1770,7 @@ namespace DesARMA
                 m.Folder = TEKATextBox.Text;
                 m.Art = article_CCUTextBox.Text;
                 m.Notes = noteTextBox.Text;
-                m.Status = (typeAppealList.SelectedIndex + 1).ToString() /*== 1 ? "в роботі": "закрито"*/;
+                m.Status = typeAppealList.SelectedIndex == -1 ? null : (typeAppealList.SelectedIndex + 1).ToString();//(typeAppealList.SelectedIndex + 1).ToString() /*== 1 ? "в роботі": "закрито"*/;
                 modelContext.SaveChanges();
                 return true;
             }
@@ -1664,109 +1818,119 @@ namespace DesARMA
         }
         private bool ReadFromStringDBToCheckBoxes(MainConfig? mc)
         {
-            if (mc == null) return false;
+            //if (mc == null) return false;
 
-            var listCont = GetBoolsFromString(mc.Control);
+            //var listCont = GetBoolsFromString(mc.Control);
 
-            int k = 0;
-            foreach (var item in listCont)
-            {
-                if (treeView1.Items.Count >= k)
-                {
-                    var trV = treeView1.Items[k++] as System.Windows.Controls.CheckBox;
-                    if (trV != null)
-                    {
-                        trV.IsChecked = item as bool?;
-                    }
-                }
-            }
+            //int k = 0;
+            //if(listCont != null)
+            //foreach (var item in listCont)
+            //{
+            //    if (treeView1.Items.Count >= k)
+            //    {
+            //        var trV = treeView1.Items[k++] as System.Windows.Controls.CheckBox;
+            //        if (trV != null)
+            //        {
+            //            trV.IsChecked = item as bool?;
+            //        }
+            //    }
+            //}
 
-            var listShema = GetBoolsFromString(mc.Shema);
+            //var listShema = GetBoolsFromString(mc.Shema);
 
-            k = 0;
-            foreach (var item in listShema)
-            {
-                if (treeView1.Items.Count >= k)
-                {
-                    var trV = treeView1.Items[k++] as System.Windows.Controls.CheckBox;
-                    if (trV != null)
-                    {
-                        var trVC = trV.Content as System.Windows.Controls.CheckBox;
-                        if (trVC != null)
-                        {
-                            trVC.IsChecked = item as bool?;
-                        }
-                    }
-                }
-            }
+            //k = 0;
+            //if(listShema != null)
+            //foreach (var item in listShema)
+            //{
+            //    if (treeView1.Items.Count >= k)
+            //    {
+            //        var trV = treeView1.Items[k++] as System.Windows.Controls.CheckBox;
+            //        if (trV != null)
+            //        {
+            //            var trVC = trV.Content as System.Windows.Controls.CheckBox;
+            //            if (trVC != null)
+            //            {
+            //                trVC.IsChecked = item as bool?;
+            //            }
+            //        }
+            //    }
+            //}
             return true;
         }
         private bool ReadFromCheckBoxesToStringDB(MainConfig? mc)
         {
-            bool ret = true;
+            //bool ret = true;
 
-            if (mc == null) return false;
-            List<bool> listC = new List<bool>();
-            List<bool> listS = new List<bool>();
-            foreach (var item in treeView1.Items)
-            {
-                if(item != null)
-                {
-                    var cb = item as System.Windows.Controls.CheckBox;
-                    if (cb != null)
-                    {
-                        var isc = cb.IsChecked;
-                        if (isc != null)
-                        {
-                            listC.Add((bool)isc);
-                        }
-                        else
-                        {
-                            listS.Add(false);
-                        }
+            //if (mc == null) return false;
+            //List<bool> listC = new List<bool>();
+            //List<bool> listS = new List<bool>();
+            //foreach (var item in treeView1.Items)
+            //{
+            //    if(item != null)
+            //    {
+            //        var cb = item as System.Windows.Controls.CheckBox;
+            //        if (cb != null)
+            //        {
+            //            var isc = cb.IsChecked;
+            //            if (isc != null)
+            //            {
+            //                listC.Add((bool)isc);
+            //            }
+            //            else
+            //            {
+            //                listS.Add(false);
+            //            }
 
-                        var cbC = cb.Content as System.Windows.Controls.CheckBox;
-                        if (cbC!=null)
-                        {
-                            var iscbC = cbC.IsChecked;
-                            if(iscbC != null)
-                            {
-                                listS.Add((bool)iscbC);
-                            }
-                            else
-                            {
-                                listS.Add(false);
-                            }
+            //            var cbC = cb.Content as System.Windows.Controls.CheckBox;
+            //            if (cbC!=null)
+            //            {
+            //                var iscbC = cbC.IsChecked;
+            //                if(iscbC != null)
+            //                {
+            //                    listS.Add((bool)iscbC);
+            //                }
+            //                else
+            //                {
+            //                    listS.Add(false);
+            //                }
                             
-                        }
-                    }
-                    else
-                    {
-                        ret = false;
-                    }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            ret = false;
+            //        }
 
 
-                }
-                else
-                {
-                    ret = false;
-                }
+            //    }
+            //    else
+            //    {
+            //        ret = false;
+            //    }
                 
                 
-            }
+            //}
 
+            //var strC = GetStringFromBools(listC);
+            //var strS = GetStringFromBools(listS);
 
-            var strC = GetStringFromBools(listC);
-            var strS = GetStringFromBools(listS);
+            //mc.Control = strC;
+            //mc.Shema = strS;
 
-            mc.Control = strC;
-            mc.Shema = strS;
+            var main = (from m in modelContext.Mains where m.NumbInput == mc.NumbInput select m).First();
+            AllDirectories allDirectories = new AllDirectories(main, mc, ClickOnCheckBox, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
+                    this.Resources["GreenEmpty"] as SolidColorBrush, treeView1, modelContext
+                     );
+
+            allDirectories.SaveToDB();
+
             modelContext.SaveChanges();
 
             return true;
         }
         private void Button_ClickSave(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 System.Windows.MessageBoxResult result = System.Windows.MessageBox.Show(this, "Зберегти дані запиту?",
@@ -1782,9 +1946,9 @@ namespace DesARMA
             }
             catch (Exception e2)
             {
-                System.Windows.MessageBox.Show(e2.Message);
+                System.Windows.MessageBox.Show("Виникла помилка збереження\n" + e2.Message);
             }
-
+            inactivityTimer.Start();
         }
         private List<bool> GetBoolsFromString(string? str)
         {
@@ -1814,54 +1978,110 @@ namespace DesARMA
             }
             return st;
         }
-
         private void ToDiskButtonClick(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 if (currentButton == AddButton) return;
 
                 var prevMc = modelContext.MainConfigs.Find(numberInTextBox.Text);
 
+                if(prevMc != null)
                 if (Directory.Exists(prevMc.Folder))
                 {
                     //Отримання масиву вмісту папки запиту(реєстрів)
                     string[] dirs = Directory.GetDirectories(prevMc.Folder);
                     int i = 1;
-                    int numDod = 1;
+
+                    var listR = new List<string>();
                     // Прохід по кожному реєстрі зі списку
-                    foreach (string itemSNazyv in Reest.sNazyv)
+                    foreach (string itemAbbreviatedName in Reest.abbreviatedName)
                     {
                         // пошук реєстру за порядеом в папці 
                         foreach (var itemDir in dirs)
                         {
                             // якщо знайдено папку з поточним реєстром
-                            if ((new DirectoryInfo(itemDir)).Name == $"{i}. " + itemSNazyv)
+                            if ((new DirectoryInfo(itemDir)).Name == $"{i}. " + itemAbbreviatedName)
                             {
                                
                                 if (!(Directory.GetDirectories(itemDir).Length == 0 &&
                                      Directory.GetFiles(itemDir).Length == 0)
                                 )
                                 {
-                                    Directory.CreateDirectory(prevMc.Folder + $"\\На диск\\Додаток {numDod}");
-                                    perebor_updates(prevMc.Folder + $"\\{i}. " + itemSNazyv, prevMc.Folder + $"\\На диск\\Додаток {numDod++}");
+                                    listR.Add(Reest.sRodov[Reest.abbreviatedName.IndexOf(itemAbbreviatedName)]);
+                                    //Directory.CreateDirectory(prevMc.Folder + $"\\На диск\\Додаток {numDod}");
+                                    //perebor_updates(prevMc.Folder + $"\\{i}. " + itemSNazyv, prevMc.Folder + $"\\На диск\\Додаток {numDod++}");
 
                                 }
                             }
 
                         }
                         i++;
-                       
                     }
+
+                    var listNumering = Orders(listR);
+                    i = 1;
+                    int ind = 0;
+
+                    if (Directory.Exists(prevMc.Folder + $"\\На диск")) // Путь
+                    {
+                        Directory.Delete(prevMc.Folder + $"\\На диск", true);
+                    }
+                    
+                    
+                    Directory.CreateDirectory(prevMc.Folder + $"\\На диск");
+
+                    foreach (string itemAbbreviatedName in Reest.abbreviatedName)
+                    {
+                        // пошук реєстру за порядеом в папці 
+                        foreach (var itemDir in dirs)
+                        {
+                            // якщо знайдено папку з поточним реєстром
+                            if ((new DirectoryInfo(itemDir)).Name == $"{i}. " + itemAbbreviatedName)
+                            {
+
+                                if (!(Directory.GetDirectories(itemDir).Length == 0 &&
+                                     Directory.GetFiles(itemDir).Length == 0)
+                                )
+                                {
+                                    Directory.CreateDirectory(prevMc.Folder + $"\\На диск\\Додаток {listNumering[ind]}");
+                                    perebor_updates(prevMc.Folder + $"\\{i}. " + itemAbbreviatedName, prevMc.Folder + $"\\На диск\\Додаток {listNumering[ind]}");
+                                    ind++;
+                                }
+                            }
+
+                        }
+                        i++;
+                    }
+
+                        //int ind = 0;
+                        //foreach (var item in listNumering)
+                        //{
+                        //    Directory.CreateDirectory(prevMc.Folder + $"\\На диск\\Додаток {item}");
+                        //    perebor_updates(prevMc.Folder + $"\\{i}. " + Reest.sNazyv[Reest.sRodov.IndexOf(listNumering)] itemSNazyv, prevMc.Folder + $"\\На диск\\Додаток {numDod++}");
+                        //    ind++;
+                        //}
+
+
+                        
+                    if (!(Directory.GetDirectories(prevMc.Folder + "\\" + $"{i}. Схеми").Length == 0 &&
+                                     Directory.GetFiles(prevMc.Folder + "\\" + $"{i}. Схеми").Length == 0)){
+
+                        Directory.CreateDirectory(prevMc.Folder + $"\\На диск\\Додаток {listNumering.Count + 1}");
+                        perebor_updates(prevMc.Folder + $"\\{i}. Схеми", prevMc.Folder + $"\\На диск\\Додаток {listNumering.Count + 1}");
+
+                    }
+
                     System.Windows.MessageBox.Show("Додатки збережено в папку: " + prevMc.Folder + "\\На диск");
                 }
             }
             catch (Exception e1)
             {
-                Console.WriteLine(e1.ToString());
+                Console.WriteLine(e1.Message.ToString());
             }
+            inactivityTimer.Start();
         }
-
         void perebor_updates(string begin_dir, string end_dir)
         {
             //Берём нашу исходную папку
@@ -1888,9 +2108,9 @@ namespace DesARMA
                 File.Copy(file, end_dir + "\\" + filik, true);
             }
         }
-
         private void ChangeFolderButtonClick(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 if (currentButton == AddButton) return;
@@ -1946,7 +2166,7 @@ namespace DesARMA
                                         .Replace('|', '-');
                                 Directory.CreateDirectory(FBD.SelectedPath + $"\\{strF}");
                                 int index = 1;
-                                foreach (var item in Reest.sNazyv)
+                                foreach (var item in Reest.abbreviatedName)
                                 {
                                     Directory.CreateDirectory(FBD.SelectedPath + $"\\{strF}\\{index++}. {item}");
                                 }
@@ -1966,65 +2186,146 @@ namespace DesARMA
             {
                 Console.WriteLine(e1.ToString());
             }
+            inactivityTimer.Start();
         }
-        
-        private void ClickOnCheckBox(object sender, RoutedEventArgs e)
+        public void ClickOnCheckBox(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try 
-            { 
-            var prevMc = modelContext.MainConfigs.Find(numberInTextBox.Text);
-            if(prevMc != null)
             {
-                var ch = sender as System.Windows.Controls.CheckBox;
-
-                if (ch != null)
+                
+                var prevMc = modelContext.MainConfigs.Find(numberInTextBox.Text);
+                if(prevMc != null)
                 {
-                    var chIn = ch.Content as System.Windows.Controls.CheckBox;
-                    if (chIn != null)
+                    //натиснутий прапорець
+                    var ch = sender as System.Windows.Controls.CheckBox;
+
+                    System.Windows.MessageBox.Show(ch.Tag + "");
+                    if (ch != null)
                     {
-                        var item = chIn.Content as System.Windows.Controls.TreeViewItem;
-                        if (item != null)
+                        var chIn = ch.Content as System.Windows.Controls.CheckBox;
+                        //чи має натиснутий прапорець в контенті прапорець
+                        //якщо має то це прапорець контролю
+                        if (chIn != null)
                         {
-                            
-                                if (!Directory.Exists(prevMc.Folder + "\\" + item.Header))
+                            var item = chIn.Content as System.Windows.Controls.TreeViewItem;
+                            if (item != null)
+                            {
+                                    if (!Directory.Exists(prevMc.Folder + "\\" + item.Header))
+                                    {
+                                        ch.IsChecked = false;
+                                    }
+                                    else
+                                    {
+                                        //var boolTag = ch.Tag;
+                                        //if(ch.Tag != null)
+                                        //if ((bool)ch.Tag)
+                                        //{
+                                        //        ch.IsChecked = !ch.IsChecked;
+                                            
+                                        //}
+                                        //else
+                                        //{
+                                        //        ch.Tag = true;
+                                        //        // The event was triggered by code
+                                        //}
+                                    }
+                               
+                                }
+                        }
+                        //якщо не має, то прапорець схем
+                        else
+                        {
+                            var itemTreeViewItem = ch.Content as System.Windows.Controls.TreeViewItem;
+                            if (itemTreeViewItem != null)
+                            {
+                                if (!Directory.Exists(prevMc.Folder + "\\" + itemTreeViewItem.Header))
                                 {
                                     ch.IsChecked = false;
                                 }
-                        }
-                    }
-                    else
-                    {
-                        var itemTreeViewItem = ch.Content as System.Windows.Controls.TreeViewItem;
-                        if (itemTreeViewItem != null)
-                        {
-                            if (!Directory.Exists(prevMc.Folder + "\\" + itemTreeViewItem.Header))
-                            {
-                                ch.IsChecked = false;
-                            }
-                            else
-                            {
-                                var chLast = treeView1.Items[treeView1.Items.Count - 1] as System.Windows.Controls.CheckBox;
-                                if (chLast != null)
+                                else
                                 {
-                                    chLast.IsChecked = true;
+                                    var chLast = treeView1.Items[treeView1.Items.Count - 1] as System.Windows.Controls.CheckBox;
+                                    if (chLast != null)
+                                    {
+                                        chLast.IsChecked = true;
+                                    }
                                 }
-                            }
 
+                            }
                         }
                     }
                 }
-            }
 
             }
             catch (Exception exp1)
             {
                 System.Windows.MessageBox.Show("" + exp1.Message);
             }
+            inactivityTimer.Start();
         }
-
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
 
+        }
+        private void panelMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            System.Windows.MessageBox.Show("scroll");
+        }
+        private void Button_ClickCreateDelDir(object sender, RoutedEventArgs e)
+        {
+            inactivityTimer.Stop();
+            try
+            {
+                var mc = modelContext.MainConfigs.Find(numberInTextBox.Text);
+                var main = modelContext.Mains.Find(numberInTextBox.Text);
+                if (mc != null && main != null)
+                {
+                    AllDirectories allDirectories = new AllDirectories(main, mc, ClickOnCheckBox,
+                        this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
+                        this.Resources["GreenEmpty"] as SolidColorBrush
+                        , treeView1, modelContext
+                         );
+
+                    //allDirectories.CreateNewTree(treeView1);
+                    //System.Windows.MessageBox.Show("Finish");
+
+                    CreateDelDirWindow c = new CreateDelDirWindow(allDirectories, Button_ClickUpdate);
+                    c.Owner = this;
+                    c.ShowDialog();
+                }
+            }
+            catch(Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message.ToString());
+            }
+            inactivityTimer.Start();
+        }
+
+        private void ContentChangedEventHandler(object sender, TextChangedEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+
+        private void ContentComboBoxChangedEventHandler(object sender, SelectionChangedEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+
+        private void Button_ClickInsertDataIntoMultipleRequest(object sender, RoutedEventArgs e)
+        {
+            inactivityTimer.Stop();
+            System.Windows.MessageBox.Show("В процесі розробки");
+            inactivityTimer.Start();
+        }
+
+        private void Button_ClickCombinedRespon(object sender, RoutedEventArgs e)
+        {
+            inactivityTimer.Stop();
+            System.Windows.MessageBox.Show("В процесі розробки");
+            inactivityTimer.Start();
         }
     }
 }

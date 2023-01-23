@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0">Логін:</TextBlock>
-        <TextBox Name="loginBox" Grid.Row="1" MinWidth="250">max_sho</TextBox>
+        <TextBox Name="loginBox" Grid.Row="1" MinWidth="250"></TextBox>
 
         <TextBlock Grid.Row="2">Пароль:</TextBlock>
         <PasswordBox Name="passwordBox" Grid.Row="3" MinWidth="250"></PasswordBox>

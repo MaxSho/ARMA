@@ -6,7 +6,25 @@
         xmlns:local="clr-namespace:DesARMA"
         mc:Ignorable="d"
         Title="Створення запиту" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen">
-    <Grid Margin="10">
+    <Window.Resources>
+        <SolidColorBrush x:Key="1ColorStyle" Color="#2C3333" />
+        <SolidColorBrush x:Key="2ColorStyle" Color="#395B64" />
+        <SolidColorBrush x:Key="3ColorStyle" Color="#A5C9CA" />
+        <SolidColorBrush x:Key="4ColorStyle" Color="#E7F6F2" />
+        <Style TargetType="Label">
+            <Setter Property="Label.Background" Value="{StaticResource 2ColorStyle}" />
+            <Setter Property="Label.Foreground" Value="{StaticResource 3ColorStyle}" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="TextBox.Background" Value="{StaticResource 3ColorStyle}" />
+            <Setter Property="TextBox.Foreground" Value="{StaticResource 1ColorStyle}" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Background"  Value="{StaticResource 3ColorStyle}"/>
+            <Setter Property="Foreground"  Value="{StaticResource 1ColorStyle}"/>
+        </Style>
+    </Window.Resources >
+    <Grid Background="{StaticResource 2ColorStyle}">
         <Grid.RowDefinitions>
             <RowDefinition Height="20" />
             <RowDefinition Height="20" />
@@ -14,7 +32,7 @@
         </Grid.RowDefinitions>
 
         <TextBlock>Введіть номер запиту:</TextBlock>
-        <TextBox Name="createBox" Grid.Row="1" MinWidth="250">0000/27-22</TextBox>
+        <TextBox Name="createBox" Grid.Row="1" MinWidth="250">0000/27-23</TextBox>
         <WrapPanel Grid.Row="2" HorizontalAlignment="Right" Margin="0,15,0,0">
             <Button IsDefault="True" Click="Accept_Click" MinWidth="60" Margin="0,0,10,0">OK</Button>
             <Button IsCancel="True" MinWidth="60">Відміна</Button>

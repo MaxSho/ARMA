@@ -1,6 +1,7 @@
 ﻿using DesARMA.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,26 +23,44 @@ namespace DesARMA
     {
         public Figurant figurant = new Figurant();
         public bool isDelete = false;
+        private System.Windows.Forms.Timer inactivityTimer = new System.Windows.Forms.Timer();
         public Def_UO_Window(Figurant figurant, bool isConn)
         {
-            InitializeComponent();
-            this.figurant = figurant;
+            try 
+            { 
+                InitializeComponent();
+                this.figurant = figurant;
 
-            nameTextBox.Text = figurant.Name;
-            codeTextBox.Text = figurant.Code;
-            residentTextBox.IsChecked = figurant.ResUr == null ? false: figurant.ResUr;
-            figurant.Status = isConn;
-        }
+                nameTextBox.Text = figurant.Name;
+                codeTextBox.Text = figurant.Code;
+                residentTextBox.IsChecked = figurant.ResUr == 2;
+                figurant.Status = isConn ? 2 : 1;
+
+                string shif = ConfigurationManager.AppSettings["hv"].ToString();
+                inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
+                inactivityTimer.Tick += (sender, args) =>
+                {
+                    Environment.Exit(0);
+                };
+                inactivityTimer.Start();
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+}
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             figurant.Name = nameTextBox.Text;
             figurant.Code = codeTextBox.Text;
             var chbis = residentTextBox.IsChecked;
+
             if(chbis!=null)
-                figurant.ResUr = (bool)(chbis);
+                figurant.ResUr = chbis.Value ? 2 : 1;
             else
-                figurant.ResUr = false;
+                figurant.ResUr = null;
 
             if (nameTextBox.Text == "" ||  codeTextBox.Text == "")
             {
@@ -51,12 +70,15 @@ namespace DesARMA
             {
                 this.DialogResult = true;
             }
+            inactivityTimer.Start();
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             isDelete = true;
             this.DialogResult = true;
+            inactivityTimer.Start();
         }
     }
 }

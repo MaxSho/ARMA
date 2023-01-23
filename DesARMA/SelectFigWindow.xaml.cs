@@ -13,7 +13,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using static NPOI.HSSF.Util.HSSFColor;
+using System.Timers;
+using System.Configuration;
+using System.Collections.ObjectModel;
 
 namespace DesARMA
 {
@@ -22,9 +26,11 @@ namespace DesARMA
     /// </summary>
     public partial class SelectFigWindow : Window
     {
+       
         string inputNumber = "";
         ModelContext modelContext;
         EnumExtReq enumExtReq;
+        private System.Windows.Forms.Timer inactivityTimer = new System.Windows.Forms.Timer();
         public SelectFigWindow(string inputNumbet, ModelContext modelContext, EnumExtReq enumExtReq, string nameWin)
         {
             InitializeComponent();
@@ -38,7 +44,7 @@ namespace DesARMA
             this.Title += ". " + nameWin;
 
             var items = from f in modelContext.Figurants
-                       where f.NumbInput == inputNumber && f.Status == false
+                       where f.NumbInput == inputNumber && f.Status == 1
                        select f;
 
             
@@ -52,7 +58,11 @@ namespace DesARMA
                 check.Tag = item.Id;
 
                 Label label = new Label();
-                label.Content = $"{item.Name} {item.Ipn}";
+                    if(item.ResFiz!=null)
+                            label.Content = $"{item.Fio} {item.Ipn}";
+                    else
+                        label.Content = $"{item.Name} {item.Code}";
+
                 label.Padding = new Thickness(0);
                 label.Margin = new Thickness(0);
                 label.FontSize = 16;
@@ -75,7 +85,17 @@ namespace DesARMA
             }
             else if (enumExtReq == EnumExtReq.ExternalRequestsToDerzhpratsi)
             {
-                
+                var l = stackPanelAddElse.Children[0] as Label;
+                var itemOrganName = stackPanelAddElse.Children[1] as ComboBox;
+
+                    if (l!= null && itemOrganName!=null)
+                    {
+                        l.Content = "Назва органу";
+                        List<string> listBankName = (from b in modelContext.DictAgWorks
+                                                     select b.Name).ToList();
+                        listBankName.Sort();
+                        itemOrganName.ItemsSource = listBankName;
+                    }
             }
             else if (enumExtReq == EnumExtReq.ExternalRequestsToAntymonopolnyi)
             {
@@ -97,14 +117,29 @@ namespace DesARMA
             {
                 stackPanelAddElse.Children.RemoveAt(2);
 
-                var itemBankName =  stackPanelAddElse.Children[1] as ComboBox;
-                if(itemBankName != null)
+                var itemBankNameComboBox =  stackPanelAddElse.Children[1] as ComboBox;
+                if(itemBankNameComboBox != null)
                 {
                     List<string> listBankName = (from b in modelContext.DictBanks
                                 select b.Nb).ToList();
                     listBankName.Sort();
-                    itemBankName.ItemsSource = listBankName;
-                }
+                    ObservableCollection<string> listBanks = new ObservableCollection<string>();
+                    foreach(string bankName in listBankName)
+                    {
+                        listBanks.Add(bankName);
+                    }
+
+                    CollectionViewSource cvs = new CollectionViewSource();
+                    cvs.Source = listBanks;
+
+                        //itemBankName.ItemsSource = listBankName;
+                        itemBankNameComboBox.ItemsSource = cvs.View;
+
+                        itemBankNameComboBox.KeyUp += (s, e) =>
+                        {
+                            cvs.View.Filter = (item) => (item as string).Contains(itemBankNameComboBox.Text);
+                        };
+                    }
             }
             else
             {
@@ -137,11 +172,19 @@ namespace DesARMA
             {
                 MessageBox.Show("" + exp1.Message);
             }
-            //MessageBox.Show(str);
+
+            string shif = ConfigurationManager.AppSettings["hv"].ToString();
+            inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
+            inactivityTimer.Tick += (sender, args) =>
+            {
+                Environment.Exit(0);
+            };
+            inactivityTimer.Start();
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             for (int i = 0; i < stackPanelAdd.Children.Count; i++)
             {
                 var ch = stackPanelAdd.Children[i] as CheckBox;
@@ -150,16 +193,17 @@ namespace DesARMA
                     ch.IsChecked = chAll.IsChecked;
                 }
             }
-            
+            inactivityTimer.Start();
         }
 
         private void CreateReq(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 var listF = GetNumInpSelFig();
                 var items = from f in modelContext.Figurants
-                            where f.NumbInput == inputNumber && f.Status == false
+                            where f.NumbInput == inputNumber && f.Status == 1
                             select f;
 
                 List<Figurant> figs = new List<Figurant>();
@@ -190,13 +234,22 @@ namespace DesARMA
             {
                 MessageBox.Show(ex.Message);
             }
+            inactivityTimer.Start();
         }
         private void exMeth(List<Figurant> figs, string? fold)
         {
-            if(enumExtReq == EnumExtReq.ExternalRequestsToMytna)
+            if (enumExtReq == EnumExtReq.ExternalRequestsToMytna)
             {
-                ExternalRequests.ExternalRequestsToMytna(figs, fold);
-                MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Запит Держмитслужба");
+                var m = modelContext.Mains.Find(inputNumber);
+                if (m != null)
+                {
+                    var numKP = m.CpNumber;
+                    if (numKP != null)
+                    {
+                        ExternalRequests.ExternalRequestsToMytna(figs, fold, numKP);
+                        MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Запит Держмитслужба");
+                    }
+                }   
             }
             else if(enumExtReq == EnumExtReq.ExternalRequestsToIntelektualnyi)
             {
@@ -210,13 +263,28 @@ namespace DesARMA
             }
             else if (enumExtReq == EnumExtReq.ExternalRequestsToDerzhpratsi)
             {
-                //var addr = stackPanelAddElse.Children[1] as TextBox;
-                //var name = stackPanelAddElse.Children[3] as TextBox;
-                //if (addr != null && name!= null)
-                //{
-                //    ExternalRequests.ExternalRequestsToDerzhpratsi(figs, fold, addr.Text, name.Text);
-                //    MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {name.Text}.docx");
-                //}
+                var itemOrganName = stackPanelAddElse.Children[1] as ComboBox;
+
+
+                if (itemOrganName != null)
+                {
+                    if(itemOrganName.SelectedIndex == -1)
+                    {
+                        MessageBox.Show("Не вибрано орган");
+                        return;
+                    }
+                    var addr = (from b in modelContext.DictAgWorks
+                                where b.Name == itemOrganName.SelectedItem as string
+                                select b.Addr).ToList();
+
+                    var dfs = itemOrganName.SelectedItem as string;
+                    if (addr != null && dfs != null)
+                    {
+                        ExternalRequests.ExternalRequestsToDerzhpratsi(figs, fold, addr[0], dfs);
+                        MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {itemOrganName.SelectedItem}.docx");
+                    }
+
+                }
             }
             else if(enumExtReq == EnumExtReq.ExternalRequestsToAntymonopolnyi)
             {
@@ -272,14 +340,13 @@ namespace DesARMA
 
                     var itemBank = (from b1 in modelContext.DictBanks
                                     where b1.Nb == nameBank.Text
-                                    select b1).ToList();
+                                    select b1).ToList().First();
                     string? addr = "";
                     decimal? mfo = 0;
-                    foreach (var item in itemBank)
-                    {
-                        addr = $"{item.Adress}, м. {item.Np}, {GetStringPI(item.Pi)}";
-                        mfo = item.Mfo;
-                    }
+                    
+
+                    addr = $"{itemBank.Adress}, м. {itemBank.Np}, {GetStringPI(itemBank.Pi)}";
+                    mfo = itemBank.Mfo;
 
                     var numKP = m.CpNumber;
 
@@ -287,7 +354,6 @@ namespace DesARMA
                     {
                         ExternalRequests.ExternalRequestsToBank(figs, fold,  numKP, nameBank.Text, mfo + "", addr);
                         MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Банки\\Запит {nameBank.Text.Replace('\"', ' ')} - ... .docx");
-
                     }
                 }
             }
@@ -313,13 +379,14 @@ namespace DesARMA
             }
             return list;
         }
-        private void GenerationFromTheSiteButtonClick(object sender, RoutedEventArgs e)
+        private async void GenerationFromTheSiteButtonClick(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 var listF = GetNumInpSelFig();
                 var items = from f in modelContext.Figurants
-                            where f.NumbInput == inputNumber && f.Status == false
+                            where f.NumbInput == inputNumber && f.Status == 1
                             select f;
 
                 List<Figurant> figs = new List<Figurant>();
@@ -345,46 +412,85 @@ namespace DesARMA
 
                         foreach (var itemFig in figs)
                         {
-                            var reqPars = Req.Pars(itemFig);
-                            resFigUpr.Add(itemFig, reqPars);
+                            
+                            var reqPars = await Req.Pars(itemFig);
 
-                            foreach (var itemReqPars in reqPars)
+                            
+                            if (reqPars!= null)
                             {
-                                if (resStr.ContainsKey(itemReqPars))
+                                resFigUpr.Add(itemFig,  reqPars);
+
+                                foreach (var itemReqPars in  reqPars)
                                 {
-                                    resStr[itemReqPars].Add(itemFig);
+                                    if (resStr.ContainsKey(itemReqPars))
+                                    {
+                                        resStr[itemReqPars].Add(itemFig);
+                                    }
+                                    else
+                                    {
+                                        resStr.Add(itemReqPars, new List<Figurant>());
+                                        resStr[itemReqPars].Add(itemFig);
+                                    }
+                                    res += itemReqPars + "\n";
                                 }
-                                else
-                                {
-                                    resStr.Add(itemReqPars, new List<Figurant>());
-                                    resStr[itemReqPars].Add(itemFig);
-                                }
-                                res += itemReqPars + "\n";
+                                res += "*******************\n";
                             }
-                            res +=  "*******************\n";
+                           
                         }
                         MessageBox.Show(res);
 
+                        string strAnsw = "";
+
                         foreach (var item in resStr)
                         {
-                            //TODO adress from DB
-                            ExternalRequests.ExternalRequestsToDerzhpratsi(item.Value, fold, "адреса по фрейду", item.Key);
-                            MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {item.Key}.docx");
+                            // is has convert db
+                            var dictWorks = (from b in modelContext.DictWorks where b.Name == item.Key select b).ToList();
 
+                            if (dictWorks != null)
+                            {
+                                if (dictWorks.Count > 0)
+                                {
+                                    var addr = dictWorks.First().Addr;
+                                    var nameMian = dictWorks.First().NameMain;
+                                    if (addr != null)
+                                    {
+                                        ExternalRequests.ExternalRequestsToDerzhpratsi(item.Value, fold, addr, nameMian);
+                                        MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {nameMian}.docx");
+                                    }
+                                    else
+                                    {
+                                        ExternalRequests.ExternalRequestsToDerzhpratsi(item.Value, fold, "", nameMian);
+                                        MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {nameMian}.docx");
+                                    }
+                                }
+                                else
+                                {
+                                    ExternalRequests.ExternalRequestsToDerzhpratsi(item.Value, fold, "", item.Key);
+                                    strAnsw += item.Key + ";\n";
+                                    MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {item.Key}.docx");
+                                }
+                            }
+                            else
+                            {
+                                ExternalRequests.ExternalRequestsToDerzhpratsi(item.Value, fold, "", item.Key);
+                                strAnsw += item.Key + ";\n";
+                                MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {item.Key}.docx");
+                            }
                         }
+                        if(strAnsw!="")
+                            MessageBox.Show("Не знайдено в базі даних органи:\n" +strAnsw+"\n\nВ запит вписано орган, отриманий зі сайту без адреси");
 
                         //exMeth(figs, fold);
 
                     }
                 }
 
-
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Не вдалося згенерувати. Помилка:\n\n"+ex.Message);
             }
-            
+            inactivityTimer.Start();
         }
         private string GetStringPI(decimal? pi)
         {

@@ -1,20 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using NPOI.POIFS.FileSystem;
 
 namespace DesARMA.Models
 {
     public partial class ModelContext : DbContext
     {
+        private string strCon = null!;
         public ModelContext()
         {
+            this.strCon = GetStr();
         }
 
         public ModelContext(DbContextOptions<ModelContext> options)
             : base(options)
         {
+            this.strCon = GetStr();
         }
+        private string GetStr()
+        {
+            string shif = ConfigurationManager.AppSettings["sh"].ToString();
+            List<byte> arrByteReturn = new List<byte>();
+            List<byte> arrByteReturnDecrypt = new List<byte>();
+            for (int i = 3; i <= shif.Length; i += 3)
+            {
+                var subStr = shif.Substring(i - 3, 3);
+                arrByteReturn.Add(Convert.ToByte(subStr));
+
+            }
+
+            List<byte> key = new List<byte>();
+            for (int i = arrByteReturn.Count - 8; i < arrByteReturn.Count; i++)
+            {
+                key.Add(arrByteReturn[i]);
+            }
+
+            for (int i = 0; i < arrByteReturn.Count - key.Count; i++)
+            {
+                arrByteReturnDecrypt.Add(Convert.ToByte(arrByteReturn[i] ^ key[i % key.Count]));
+            }
+
+            string result2 = System.Text.Encoding.UTF8.GetString(arrByteReturnDecrypt.ToArray());
+            return result2;
+        }
+
         public bool? isAuth;
         public virtual DbSet<DictAgWork> DictAgWorks { get; set; } = null!;
         public virtual DbSet<DictAgency> DictAgencies { get; set; } = null!;
@@ -34,26 +66,20 @@ namespace DesARMA.Models
         public virtual DbSet<Request> Requests { get; set; } = null!;
         public virtual DbSet<Stat> Stats { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
+        public virtual DbSet<DictWork> DictWorks { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseOracle("Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = 10.10.110.20)(PORT = 1521))(CONNECT_DATA = (SERVER = DEDICATED)(SERVICE_NAME = arma)));Password=oracle;User ID=stat");
+                //optionsBuilder.UseOracle("Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = 10.10.110.20)(PORT = 1521))(CONNECT_DATA = (SERVER = DEDICATED)(SERVICE_NAME = arma)));Password=oracle;User ID=stat");
+                optionsBuilder.UseOracle(this.strCon);
             }
         }
-        public string ActivePostCountForBlog(string p_Password) => throw new NotImplementedException();
-       
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
-            modelBuilder.HasDbFunction(typeof(ModelContext).GetMethod(nameof(ActivePostCountForBlog),
-                new[] { typeof(string) }))
-                    //.HasName("PKG_SECURITY.AUTHENTICATE_USER");
-                    .HasName("dbms_obfuscation_toolkit.md5")
-                    .HasSchema("PUBLIC");
-                    ;
 
             modelBuilder.HasDefaultSchema("STAT")
                 .UseCollation("USING_NLS_COMP");
@@ -414,6 +440,16 @@ namespace DesARMA.Models
                     .IsUnicode(false)
                     .HasColumnName("NUMB_INPUT");
 
+                entity.Property(e => e.Control)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("CONTROL");
+
+                entity.Property(e => e.Shema)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("SHEMA");
+
                 entity.Property(e => e.ResFiz)
                     .HasPrecision(1)
                     .HasColumnName("RES_FIZ");
@@ -546,7 +582,7 @@ namespace DesARMA.Models
                     .HasColumnName("NUMB_INPUT");
 
                 entity.Property(e => e.Addr)
-                    .HasMaxLength(300)
+                    .HasMaxLength(3)
                     .IsUnicode(false)
                     .HasColumnName("ADDR");
 
@@ -901,6 +937,37 @@ namespace DesARMA.Models
                     .HasColumnName("USER_ROLE");
             });
 
+            modelBuilder.Entity<DictWork>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("DICT_WORK");
+
+                entity.Property(e => e.Addr)
+                    .HasMaxLength(70)
+                    .IsUnicode(false)
+                    .HasColumnName("ADDR");
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("NUMBER")
+                    .HasColumnName("ID");
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(130)
+                    .IsUnicode(false)
+                    .HasColumnName("NAME");
+
+                entity.Property(e => e.NameMain)
+                    .HasMaxLength(150)
+                    .IsUnicode(false)
+                    .HasColumnName("NAME_MAIN");
+
+                entity.Property(e => e.Status)
+                    .HasColumnType("NUMBER")
+                    .HasColumnName("STATUS");
+
+            });
+            
             modelBuilder.HasSequence("SEQ_FIGURANT_ID");
 
             modelBuilder.HasSequence("SEQ_FINAL_ID");

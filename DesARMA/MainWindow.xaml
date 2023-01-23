@@ -10,12 +10,13 @@
         Title="DeskAPMA" MinHeight="800" MinWidth="800" FontSize="16" WindowState="Maximized"
         ResizeMode="CanResizeWithGrip" Closing="App_Closing">
     <Window.Resources>
-        
         <SolidColorBrush x:Key="1ColorStyle" Color="#2C3333" />
         <SolidColorBrush x:Key="2ColorStyle" Color="#395B64" />
         <SolidColorBrush x:Key="3ColorStyle" Color="#A5C9CA" />
         <SolidColorBrush x:Key="4ColorStyle" Color="#E7F6F2" />
         <SolidColorBrush x:Key="5ColorStyle" Color="#009900" />
+        <SolidColorBrush x:Key="RedEmpty" Color="#E64E4E" />
+        <SolidColorBrush x:Key="GreenEmpty" Color="#21C25C" />
         <Style TargetType="Label">
             <Setter Property="Label.Background" Value="{StaticResource 2ColorStyle}" />
             <Setter Property="Label.Foreground" Value="{StaticResource 3ColorStyle}" />
@@ -24,8 +25,11 @@
             <Setter Property="Label.Background" Value="{StaticResource 3ColorStyle}" />
             <Setter Property="Label.Foreground" Value="{StaticResource 1ColorStyle}" />
         </Style>
+        <ContextMenu x:Key="cmButton">
+            <MenuItem Header="Видалити папку" />
+        </ContextMenu>
     </Window.Resources>
-    <Grid Margin="0,0,0,0" x:Name="grid1" >
+    <Grid Margin="0,0,0,0" x:Name="grid1">
 
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
@@ -52,23 +56,16 @@
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.3*" />
+            <ColumnDefinition Width="50" />
             <ColumnDefinition Width="1.7*" />
             <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="0.3*" />
             <ColumnDefinition Width="3*" />
-            <ColumnDefinition Width="4*" />
         </Grid.ColumnDefinitions>
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         <GridSplitter Grid.Column="2" ShowsPreview="False" Width="3"
         HorizontalAlignment="Center" Margin="0,0,0,34" Grid.RowSpan="2" />
@@ -89,14 +86,30 @@
             <Button Background="{StaticResource 4ColorStyle}"
                     Click="Button_ClickSave"  Width="50" Grid.Column="0" Grid.Row="4" ToolTip="Зберегти дані про поточний запит в базу даних">
                 <Image Margin="1"
-                   Source="https://icon-library.com/images/file-save-icon/file-save-icon-28.jpg" 
+                   Source="https://icon-library.com/images/file-save-icon/file-save-icon-28.jpg" HorizontalAlignment="Left"
                    ></Image>
             </Button>
-        <StackPanel Grid.Column="0" Grid.Row="5" Grid.RowSpan="19"  
-                    Background="{StaticResource 1ColorStyle}"  ></StackPanel>
+        <Button Background="{StaticResource 4ColorStyle}"
+                    Click="Button_ClickCreateDelDir"  Width="50" Grid.Column="0" Grid.Row="5" ToolTip="Відновити видалену папку">
+            <Image Margin="1"
+                   Source="https://cdn3.iconfinder.com/data/icons/files-folders-line/100/new_folder-512.png" HorizontalAlignment="Left"
+                   ></Image>
+        </Button>
+        <Button Background="{StaticResource 4ColorStyle}"
+                    Click="Button_ClickInsertDataIntoMultipleRequest"  Width="50" Grid.Column="0" Grid.Row="6" ToolTip="Вставити дані в декілька запитів">
+            <Image Margin="1"
+                   Source="https://img.freepik.com/free-icon/database_318-359818.jpg" HorizontalAlignment="Left">
+            </Image>
+        </Button>
+        <TextBlock Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right" Margin="0,50,0,33" Grid.RowSpan="3" Width="50">sdd</TextBlock>
+        <StackPanel Grid.Column="0" Grid.Row="8" Grid.RowSpan="20"  
+                    Background="{StaticResource 1ColorStyle}"  >
+            
+        </StackPanel>
 
-        <ScrollViewer  Grid.Column="1" Grid.RowSpan="24" Grid.Row="2">
-            <StackPanel x:Name="stackPanel1"  Grid.Column="1" Background="{StaticResource 1ColorStyle}" Grid.RowSpan="23"
+        
+        <ScrollViewer  Grid.Column="1" Grid.RowSpan="23" Grid.Row="2"><!--23-->
+            <StackPanel x:Name="stackPanel1"  Grid.Column="1" Background="{StaticResource 1ColorStyle}" 
                           Grid.Row="2">
                 <Button x:Name="AddButton" Background="{StaticResource 4ColorStyle}" Foreground="{StaticResource 1ColorStyle}" Content="Відкрити запит" Click="Button_Click_1" Tag="0"/>
             </StackPanel>
@@ -112,7 +125,8 @@
 
         <Label Grid.Column="2" Grid.Row="1"  Content="Номер КП"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"/>
-        <TextBox x:Name="numberKPTextBox" Grid.Column="3" Grid.Row="1" Padding="5" Text="" IsReadOnly="True" Foreground="{StaticResource 5ColorStyle}"/>
+        <TextBox x:Name="numberKPTextBox" Grid.Column="3" Grid.Row="1" Padding="5" Text="" IsReadOnly="True" 
+                 Foreground="{StaticResource 5ColorStyle}" />
 
         <Label Grid.Column="2" Grid.Row="2"  Content="Вхідний номер"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"   
@@ -133,7 +147,7 @@
         <Label Grid.Column="2" Grid.Row="5"  Content="Тип звернення" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
-        <ComboBox Grid.Column="3" Grid.Row="5" Padding="5" Height="45"
+        <ComboBox Grid.Column="3" Grid.Row="5" Padding="5" Height="45" SelectionChanged="ContentComboBoxChangedEventHandler"
                  Foreground="{StaticResource 2ColorStyle}" Name="typeorgansList" VerticalAlignment="Top" >
             <!--<TextBlock>ДБР</TextBlock>
             <TextBlock>БЕБ</TextBlock>
@@ -144,7 +158,7 @@
         <Label Grid.Column="2" Grid.Row="6"  Content="Номер запиту"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
-        <TextBox Grid.Column="3" Grid.Row="6" Padding="5" Text=""
+        <TextBox Grid.Column="3" Grid.Row="6" Padding="5" Text="" TextChanged="ContentChangedEventHandler"
                  x:Name="numberRequestTextBox"/>
 
         <Label Grid.Column="2" Grid.Row="7"  Content="Дата запиту"
@@ -152,73 +166,78 @@
                />
         <!--<TextBox Grid.Column="3" Grid.Row="7" Padding="5" Text="__.__.____" PreviewMouseDown ="textBox_MouseDown" TextChanged="textBox_TextChanged"
                  x:Name="dateRequestTextBox" />-->
-        <DatePicker SelectedDateFormat="Short" Grid.Column="3" Grid.Row="7" x:Name="dateRequestDatePicker"></DatePicker>
+        <DatePicker SelectedDateFormat="Short" Grid.Column="3" Grid.Row="7" x:Name="dateRequestDatePicker"
+                    SelectedDateChanged="ContentComboBoxChangedEventHandler"></DatePicker>
 
 
 
         <Label Grid.Column="2" Grid.Row="8"  Content="Орган суб'єкта звернення"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft" 
                />
-        <TextBox Grid.Column="3" Grid.Row="8" Padding="5" x:Name="vidOrgTextBox"
-                 />
+        <TextBox Grid.Column="3" Grid.Row="8" Padding="5" x:Name="vidOrgTextBox" MaxLength="100"
+                 TextChanged="ContentChangedEventHandler"/>
 
         <Label Grid.Column="2" Grid.Row="9"  Content="Адреса органу"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
-        <TextBox Grid.Column="3" Grid.Row="9" Padding="5" Text=""
-                 x:Name="addressOrgTextBox"/>
+        <TextBox Grid.Column="3" Grid.Row="9" Padding="5" Text="" MaxLength="100" TextChanged="ContentChangedEventHandler"
+                 x:Name="addressOrgTextBox" />
 
         <Label Grid.Column="2" Grid.Row="10"  Content="Посада суб'єкта звернення"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"  
                />
-        <TextBox Grid.Column="3" Grid.Row="10" Padding="5" Text=""
+        <TextBox Grid.Column="3" Grid.Row="10" Padding="5" Text="" MaxLength="300" TextChanged="ContentChangedEventHandler"
                  x:Name="positionSubTextBox"/>
 
         <Label Grid.Column="2" Grid.Row="11"  Content="ПІБ суб'єкта звернення" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
-        <TextBox Grid.Column="3" Grid.Row="11"  Padding="5" Text=""
+        <TextBox Grid.Column="3" Grid.Row="11"  Padding="5" Text=""  MaxLength="30" TextChanged="ContentChangedEventHandler"
                  x:Name="nameSubTextBox"/>
 
         <Label Grid.Column="2" Grid.Row="12"  Content="Вихідний номер" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
         <TextBox Grid.Column="3" Grid.Row="12"  Padding="5" Text="" x:Name="numberOutTextBox"
-                 />
+                 TextChanged="ContentChangedEventHandler"/>
 
         <Label Grid.Column="2" Grid.Row="13"  Content="Вихідна дата" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
         <!--<TextBox Grid.Column="3" Grid.Row="13"  Padding="5" x:Name="dateOutTextBox" Text="__.__.____" PreviewMouseDown ="textBox_MouseDown" TextChanged="textBox_TextChanged"
                  />-->
-        <DatePicker SelectedDateFormat="Short" Grid.Column="3" Grid.Row="13" x:Name="dateOutDatePicker" ></DatePicker>
+        <DatePicker SelectedDateFormat="Short" Grid.Column="3" Grid.Row="13" x:Name="dateOutDatePicker" 
+                    SelectedDateChanged="ContentComboBoxChangedEventHandler"></DatePicker>
 
         <Label Grid.Column="2" Grid.Row="14"  Content="Співвиконавець" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
         <TextBox Grid.Column="3" Grid.Row="14"  Padding="5" Text="" x:Name="co_executorTextBox"
+                  MaxLength="200" TextChanged="ContentChangedEventHandler"
                  />
         <Label Grid.Column="2" Grid.Row="15"  Content="ТЕКА" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
-        <TextBox Grid.Column="3" Grid.Row="15"  Padding="5" Text="" x:Name="TEKATextBox"
-                 />
+        <TextBox Grid.Column="3" Grid.Row="15"  Padding="5" Text="" x:Name="TEKATextBox" MaxLength="10"
+                 TextChanged="ContentChangedEventHandler"/>
 
         <Label Grid.Column="2" Grid.Row="16"  Content="Стаття ККУ" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
         <TextBox Grid.Column="3" Grid.Row="16"  Padding="5" Text="" x:Name="article_CCUTextBox"
+                 MaxLength="150" TextChanged="ContentChangedEventHandler"
                  />
 
         <Label Grid.Column="2" Grid.Row="17"  Content="Примітка" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
         <TextBox Grid.Column="3" Grid.Row="17"  Padding="5" Text="" x:Name="noteTextBox"
+                  MaxLength="500" TextChanged="ContentChangedEventHandler"
                  />
         <Label Grid.Column="2" Grid.Row="18"  Content="Статус звернення" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
-        <ComboBox Grid.Column="3" Grid.Row="18" Padding="5" Height="45"
+        <ComboBox Grid.Column="3" Grid.Row="18" Padding="5" Height="45" SelectionChanged="ContentComboBoxChangedEventHandler"
                  Foreground="{StaticResource 2ColorStyle}" Name="typeAppealList" VerticalAlignment="Top" >
             <TextBlock>В роботі</TextBlock>
             <TextBlock>Закрито</TextBlock>
@@ -244,18 +263,34 @@
         <Button Grid.Column="3" Grid.Row="21" Content="Перелік запитів" Click="ClickReqButton"
                 x:Name="ReqButton" Foreground="{StaticResource 2ColorStyle}" Height="45"   VerticalAlignment="Top"></Button>
 
-
-        <Label  FontSize="18"  Foreground="{StaticResource 4ColorStyle}" 
-               x:Name="nameVykon" Grid.ColumnSpan="2" FlowDirection="RightToLeft"
-                Grid.Column="4" Grid.Row="22"
+        <Label Grid.Column="2" Grid.Row="22" FlowDirection="RightToLeft">
+            Автоматизація
+        </Label>
+        <Button Grid.Column="3" Grid.Row="22" Foreground="{StaticResource 2ColorStyle}">
+            Перелік реєстрів
+        </Button>
+        
+        
+        
+        <Label  FontSize="19"  Foreground="{StaticResource 4ColorStyle}" 
+               x:Name="nameVykon" Grid.ColumnSpan="4" FlowDirection="RightToLeft"
+                Grid.Column="2" Grid.Row="24"
                >
-            ФІО
+            
+            <Label.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Menu item 1" />
+                    <MenuItem Header="Menu item 2" />
+                    <Separator />
+                    <MenuItem Header="Menu item 3" />
+                </ContextMenu>
+            </Label.ContextMenu>
         </Label>
 
 
 
         <Menu Margin="0 0 0 0" Height="30" VerticalAlignment="Top" Grid.Column="0" 
-                  Grid.ColumnSpan="5" Grid.Row="0" Background="#395B64" Foreground="#A5C9CA"
+                  Grid.ColumnSpan="6" Grid.Row="0" Background="#395B64" Foreground="#A5C9CA"
                   FontSize="14">
             <MenuItem Header="File" Background="#395B64" Foreground="#A5C9CA">
                 <MenuItem Margin="0 0 0 0" Header="New Project" Foreground="#395B64" Padding="0 0 0 0"></MenuItem>
@@ -268,36 +303,54 @@
             </MenuItem>
             <MenuItem Header="Edit" ></MenuItem>
             <MenuItem Header="View" ></MenuItem>
-
+            <Label>Version 1.1</Label>
         </Menu>
 
-        <StackPanel Grid.Column="4" Grid.Row="2" Grid.RowSpan="20"  
+        
+        <ScrollViewer Grid.Column="4" Grid.Row="3"  Grid.RowSpan="21" Background="{StaticResource 1ColorStyle}"
+                      VerticalScrollBarVisibility="Auto">
+            <StackPanel 
+                        x:Name="stackPanelButtonsGetData">
+            
+            </StackPanel>
+        </ScrollViewer>
+        <Label Grid.Column="4" Grid.Row="2" Padding="15 15 0 0" Background="{StaticResource 1ColorStyle}" 
+               x:Name="contShLabel" Grid.ColumnSpan="2" FontSize="10">Автоматизація/Контроль/Схема</Label>
+        <ScrollViewer  Grid.Column="5" Grid.Row="3" Grid.RowSpan="21" MouseWheel="panelMouseWheel" 
+                       VerticalScrollBarVisibility="Auto" >
+            <!--HorizontalScrollBarVisibility="Visible"-->
+            <StackPanel   
                     Background="{StaticResource 1ColorStyle}"  >
-            <Label Margin="15" Background="{StaticResource 1ColorStyle}" x:Name="contShLabel">Контроль/Схема</Label>
-            <TreeView x:Name="treeView1" 
+            
+                <TreeView x:Name="treeView1" 
                   Background="#2C3333">
-                <CheckBox Checked="CheckBox_Checked" >
-                    <TreeViewItem Foreground="{StaticResource 4ColorStyle}" Header="1. Приклад" >
-                        <TreeViewItem Foreground="{StaticResource 4ColorStyle}" Header="1.xlsx"  />
-                    </TreeViewItem>
-                </CheckBox>
-                <CheckBox>
-                    <CheckBox Margin="1">
+                    <!--<CheckBox Checked="CheckBox_Checked" >
                         <TreeViewItem Foreground="{StaticResource 4ColorStyle}" Header="1. Приклад" >
                             <TreeViewItem Foreground="{StaticResource 4ColorStyle}" Header="1.xlsx"  />
                         </TreeViewItem>
                     </CheckBox>
-                </CheckBox>
-            </TreeView>
-        </StackPanel>
+                    <CheckBox>
+                        <CheckBox Margin="1">
+                            <TreeViewItem Foreground="{StaticResource 4ColorStyle}" Header="1. Приклад" >
+                                <TreeViewItem Foreground="{StaticResource 4ColorStyle}" Header="1.xlsx"  />
+                            </TreeViewItem>
+                        </CheckBox>
+                    </CheckBox>-->
+                </TreeView>
+            </StackPanel>
+        </ScrollViewer>
         <!--Click="Button_ClickRespon"-->
-        <Button x:Name="Button1" Content="Відповідь"  Grid.ColumnSpan="2"
-                Grid.Column="2" Grid.Row="22" Background="{StaticResource 5ColorStyle}"
+        <Button x:Name="Button1" Content="Відповідь"  Grid.ColumnSpan="1"
+                Grid.Column="3" Grid.Row="23" Background="{StaticResource 5ColorStyle}"
                 Foreground="{StaticResource 4ColorStyle}" Click="Button_ClickRespon"/>
+        <Button x:Name="Button2" Content="Об'єднана відповідь"  Grid.ColumnSpan="1"
+                Grid.Column="2" Grid.Row="23" Background="{StaticResource 5ColorStyle}"
+                Foreground="{StaticResource 4ColorStyle}" Click="Button_ClickCombinedRespon"/>
         
         <Button x:Name="ButtonUpdate" Content="Оновити" Click="Button_ClickUpdate"
                 Grid.Column="4" Grid.Row="1" Background="{StaticResource 4ColorStyle}"
-                Foreground="{StaticResource 1ColorStyle}"/>
+                Foreground="{StaticResource 1ColorStyle}"
+                Grid.ColumnSpan="2"/>
         
         
         

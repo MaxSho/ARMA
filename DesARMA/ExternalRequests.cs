@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace DesARMA
 {
@@ -46,12 +47,11 @@ namespace DesARMA
             fileInfo.CopyTo(path3, true);
             doc1 = new XWPFDocument(OPCPackage.Open(path3));
 
-            Console.WriteLine(doc1.Paragraphs[14].Text + "\n");
             var par = doc1.Paragraphs[14];
             par.ReplaceText(par.Text, $"{name}");
             par = doc1.Paragraphs[16];
             par.ReplaceText(par.Text, addr);
-            // Console.WriteLine(doc1.Paragraphs[21].Text);
+            
 
             for (int i = 0; i < figs.Count; i++)
             {
@@ -147,8 +147,9 @@ namespace DesARMA
                 doc1 = new XWPFDocument(OPCPackage.Open(path3));
 
 
-                Console.WriteLine(doc1.Paragraphs[14].Text + "\n");
-                var par = doc1.Paragraphs[18];
+                
+
+                var par = doc1.Paragraphs[17];
                 par.ReplaceText("42022010000000016", numKP);
 
                 par = doc1.Paragraphs[14];
@@ -721,7 +722,7 @@ namespace DesARMA
             File.Delete(path4);
         }
         //+++
-        static public  void ExternalRequestsToMytna(List<Figurant> figs, string? pathEnt)
+        static public  void ExternalRequestsToMytna(List<Figurant> figs, string? pathEnt, string numKP)
         {
             XWPFDocument doc1;
             Directory.CreateDirectory(pathEnt + "\\Запити\\Держмитслужба");
@@ -740,6 +741,9 @@ namespace DesARMA
             fileInfo.CopyTo(path3, true);
             doc1 = new XWPFDocument(OPCPackage.Open(path3));
 
+            var par = doc1.Paragraphs[22];
+            MessageBox.Show(par.Text);
+            par.ReplaceText("42022000000000480", numKP);
 
             for (int i = 0; i < figs.Count; i++)
             {
@@ -809,19 +813,19 @@ namespace DesARMA
             if(d.ResFiz != null)
             {
                 string strDt = "";
-                if (d.DtBirth != null)
+                var birth = d.DtBirth;
+                if (birth != null)
                 {
-                    return $"{d.Name}, {d.DtBirth.ToString().Substring(0, 10)} р.н., РНОКПП {d.Ipn}";
+                    return $"{d.Fio}, {birth.ToString().Substring(0, 10)} р.н., РНОКПП {d.Ipn}";
                 }
-                return $"{d.Name}, РНОКПП {d.Ipn}";
+                return $"{d.Fio}, РНОКПП {d.Ipn}";
             }
             else
             {
-                if(d.ResUr == false)
+                if(d.ResUr == 2)
                     return $"{d.Name}";
                 return $"{d.Name} (ЄДРПОУ {d.Code})";
             }
-            return null;
         }
     }
         

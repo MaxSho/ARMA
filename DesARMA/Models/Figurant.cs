@@ -12,15 +12,16 @@ namespace DesARMA.Models
         public string? NumbInput { get; set; }
         public string? Fio { get; set; }
         public string? Ipn { get; set; }
-        public bool? ResFiz { get; set; }
+        public int? ResFiz { get; set; }
         public string? Name { get; set; }
         public string? Code { get; set; }
-        public bool? ResUr { get; set; }
-        public bool? Status { get; set; }
+        public int? ResUr { get; set; }
+        public int? Status { get; set; }
         public bool? FCheck { get; set; }
         public string? Notes { get; set; }
         public DateTime? DtBirth { get; set; }
-
+        public string? Shema { get; set; }
+        public string? Control { get; set; }
         public virtual Main? NumbInputNavigation { get; set; }
     }
 }

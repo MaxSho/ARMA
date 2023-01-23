@@ -41,7 +41,7 @@
             <StackPanel x:Name="stackPanelAddElse">
 
                 <Label  Content="Назва банку" FontSize="16" Tag="8Назва_банкуLabel"></Label>
-                <ComboBox FontSize="16" Tag="9Назва_банкуComboBox" Foreground="{StaticResource 2ColorStyle}" VerticalAlignment="Top" ></ComboBox>
+                <ComboBox IsEditable="True"  FontSize="16" Tag="9Назва_банкуComboBox" Foreground="{StaticResource 2ColorStyle}" VerticalAlignment="Top" ></ComboBox>
                 <Button Tag="12ПошукButton" FontSize="16" Click="GenerationFromTheSiteButtonClick">Згенерувати із реєстру дозволів</Button>
             </StackPanel>
         </ScrollViewer>

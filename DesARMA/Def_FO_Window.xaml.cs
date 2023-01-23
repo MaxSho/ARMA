@@ -1,6 +1,7 @@
 ﻿using DesARMA.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,33 +23,51 @@ namespace DesARMA
     {
         public bool isDelete;
         public Figurant figurant;
-
+        private System.Windows.Forms.Timer inactivityTimer = new System.Windows.Forms.Timer();
 
         public Def_FO_Window(Figurant figurant, bool isConn)
         {
-            InitializeComponent();
-            this.figurant = figurant;
-            nameTextBox.Text = figurant.Name;
-            codeTextBox.Text = figurant.Ipn;
-            dateDatePicker.Text = InStrDate(figurant.DtBirth);
-            figurant.Status = isConn;
+            try
+            {
+                InitializeComponent();
+                this.figurant = figurant;
+                nameTextBox.Text = figurant.Fio;
+                codeTextBox.Text = figurant.Ipn;
+                dateDatePicker.Text = InStrDate(figurant.DtBirth);
+                residentTextBox.IsChecked = figurant.ResFiz == 2;
+                figurant.Status = isConn ? 2 : 1;
+
+                string shif = ConfigurationManager.AppSettings["hv"].ToString();
+                inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
+                inactivityTimer.Tick += (sender, args) =>
+                {
+                    Environment.Exit(0);
+                };
+                inactivityTimer.Start();
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            
         }
 
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            figurant.Name = nameTextBox.Text;
+            inactivityTimer.Stop();
+            figurant.Fio = nameTextBox.Text;
             figurant.Ipn = codeTextBox.Text;
             figurant.DtBirth = IsCorectDate(dateDatePicker.Text);
             var chbIsch = residentTextBox.IsChecked;
 
             if (chbIsch != null)
             {
-                figurant.ResFiz = (bool)(chbIsch);
+                figurant.ResFiz = chbIsch.Value? 2 : 1;
             }
             else
             {
-                figurant.ResFiz = false;
+                figurant.ResFiz = null;
             }
 
             if(nameTextBox.Text == "" ||  dateDatePicker.SelectedDate == null)
@@ -59,17 +78,21 @@ namespace DesARMA
             {
                 this.DialogResult = true;
             }
+            inactivityTimer.Start();
         }
       
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             isDelete = true;
 
             this.DialogResult = true;
+            inactivityTimer.Start();
         }
         private void textBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 TextBox dp = (TextBox)sender;
@@ -174,10 +197,12 @@ namespace DesARMA
             {
                 MessageBox.Show(exp.Message);
             }
+            inactivityTimer.Start();
         }
 
         private void textBox_MouseDown(object sender, MouseEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 TextBox dp = (TextBox)sender;
@@ -187,10 +212,12 @@ namespace DesARMA
             {
                 MessageBox.Show(exp.Message);
             }
+            inactivityTimer.Start();
         }
 
         private void CalcDateBut(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             if (codeTextBox.Text.Length<5)
             {
                 MessageBox.Show("ІПН менше 5 цифр");
@@ -214,7 +241,7 @@ namespace DesARMA
             {
                 MessageBox.Show("Невдалось конвертувати");
             }
-                
+            inactivityTimer.Start();
         }
         private DateTime? IsCorectDate(string value)
         {
