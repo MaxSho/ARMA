@@ -16,45 +16,73 @@ using System.Windows.Shapes;
 namespace DesARMA
 {
     /// <summary>
-    /// Interaction logic for SelectionOfQueriesToInsertWindow.xaml
+    /// Interaction logic for CreateCombinedResponseWindow.xaml
     /// </summary>
-    public partial class SelectionOfQueriesToInsertWindow : Window
+    public partial class CreateCombinedResponseWindow : Window
     {
         public List<string> listNumbIn = new List<string>();
         ModelContext modelContext;
-        System.Windows.Forms.Timer inactivityTimer;
         public User CurrentUser { get; set; } = null!;
-        public SelectionOfQueriesToInsertWindow(ModelContext modelContext, User CurrentUser, System.Windows.Forms.Timer inactivityTimer)
+        private System.Windows.Forms.Timer inactivityTimer = new System.Windows.Forms.Timer();
+        Main main;
+        public CreateCombinedResponseWindow(ModelContext modelContext, User CurrentUser, Main main, System.Windows.Forms.Timer inactivityTimer)
         {
             InitializeComponent();
 
             this.modelContext = modelContext;
             this.CurrentUser = CurrentUser;
+            this.main = main;
             this.inactivityTimer = inactivityTimer;
 
+            
             var mains = (from b in modelContext.Mains
                          where b.Executor == CurrentUser.IdUser
             &&
                 (from o in modelContext.MainConfigs
                  where o.NumbInput == b.NumbInput
                  select o).Count() == 1
+            &&
+                b.CpNumber == main.CpNumber
+            orderby b.NumbInput.Substring(b.NumbInput.Length - 2, 2) descending,
+                    GetStringWithZero(b.NumbInput.Split(new char[] {'/'}).First()) descending
                          select b
-                    ).ToList();
+            ).ToList();
 
+            
             stackPanel1.Children.Clear();
-            foreach (var main in mains)
+            foreach (var mainItem in mains)
             {
                 CheckBox ch = new CheckBox();
-                ch.Content = $"{main.NumbInput}";
-                ch.Tag = main.NumbInput;
+                ch.Content = $"{mainItem.NumbInput}";
+                ch.Tag = mainItem.NumbInput;
+                ch.Click += (x,y) => {
+                    inactivityTimer.Stop();
+                    inactivityTimer.Start();
+                };
                 ch.HorizontalAlignment = HorizontalAlignment.Center;
                 stackPanel1.Children.Add(ch);
             }
             inactivityTimer.Start();
         }
-        private void Button_Click_Add(object sender, RoutedEventArgs e)
+        public static string GetStringWithZero(string str)
         {
-            inactivityTimer.Stop();
+            string ret = "";
+
+            foreach (var item in str)
+            {
+                if (item == '/') break;
+                ret += item;
+            }
+
+            while (ret.Length < 7)
+            {
+                ret = "0" + str;
+            }
+            return ret;
+        }
+        private void Create_Button_Click(object sender, RoutedEventArgs e)
+        {
+            inactivityTimer.Start();
             try
             {
                 listNumbIn.Clear();
@@ -82,7 +110,7 @@ namespace DesARMA
             {
                 MessageBox.Show(ex.Message);
             }
-            inactivityTimer.Start();
+            inactivityTimer.Stop();
         }
 
         private void Window_MouseMove(object sender, MouseEventArgs e)

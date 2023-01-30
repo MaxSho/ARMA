@@ -25,24 +25,25 @@ namespace DesARMA
         public Figurant figurant;
         private System.Windows.Forms.Timer inactivityTimer = new System.Windows.Forms.Timer();
 
-        public Def_FO_Window(Figurant figurant, bool isConn)
+        public Def_FO_Window(Figurant figurant, bool isConn, System.Windows.Forms.Timer inactivityTimer)
         {
             try
             {
                 InitializeComponent();
                 this.figurant = figurant;
+                this.inactivityTimer = inactivityTimer;
                 nameTextBox.Text = figurant.Fio;
                 codeTextBox.Text = figurant.Ipn;
                 dateDatePicker.Text = InStrDate(figurant.DtBirth);
                 residentTextBox.IsChecked = figurant.ResFiz == 2;
                 figurant.Status = isConn ? 2 : 1;
 
-                string shif = ConfigurationManager.AppSettings["hv"].ToString();
-                inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
-                inactivityTimer.Tick += (sender, args) =>
-                {
-                    Environment.Exit(0);
-                };
+                //string shif = ConfigurationManager.AppSettings["hv"].ToString();
+                //inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
+                //inactivityTimer.Tick += (sender, args) =>
+                //{
+                //    Environment.Exit(0);
+                //};
                 inactivityTimer.Start();
             }
             catch(Exception e)
@@ -56,27 +57,34 @@ namespace DesARMA
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
-            figurant.Fio = nameTextBox.Text;
-            figurant.Ipn = codeTextBox.Text;
-            figurant.DtBirth = IsCorectDate(dateDatePicker.Text);
-            var chbIsch = residentTextBox.IsChecked;
+            try
+            {
+                figurant.Fio = nameTextBox.Text;
+                figurant.Ipn = codeTextBox.Text;
+                figurant.DtBirth = IsCorectDate(dateDatePicker.Text);
+                var chbIsch = residentTextBox.IsChecked;
 
-            if (chbIsch != null)
-            {
-                figurant.ResFiz = chbIsch.Value? 2 : 1;
-            }
-            else
-            {
-                figurant.ResFiz = null;
-            }
+                if (chbIsch != null)
+                {
+                    figurant.ResFiz = chbIsch.Value ? 2 : 1;
+                }
+                else
+                {
+                    figurant.ResFiz = null;
+                }
 
-            if(nameTextBox.Text == "" ||  dateDatePicker.SelectedDate == null)
-            {
-                MessageBox.Show("Не заповнені поля");
+                if (nameTextBox.Text == "")
+                {
+                    MessageBox.Show("Не заповнені поля");
+                }
+                else
+                {
+                    this.DialogResult = true;
+                }
             }
-            else
+            catch(Exception ex)
             {
-                this.DialogResult = true;
+                MessageBox.Show(ex.Message);
             }
             inactivityTimer.Start();
         }
@@ -199,7 +207,6 @@ namespace DesARMA
             }
             inactivityTimer.Start();
         }
-
         private void textBox_MouseDown(object sender, MouseEventArgs e)
         {
             inactivityTimer.Stop();
@@ -214,7 +221,6 @@ namespace DesARMA
             }
             inactivityTimer.Start();
         }
-
         private void CalcDateBut(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
@@ -274,6 +280,25 @@ namespace DesARMA
             }
 
             return "";
+        }
+        private void Window_MouseMove(object sender, MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+        private void Window_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            inactivityTimer.Stop();
+        }
+        private void nameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
         }
     }
 }

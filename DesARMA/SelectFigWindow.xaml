@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DesARMA"
         mc:Ignorable="d"
-        Title="Вибір фігурантів" Height="600" Width="800" WindowStartupLocation="CenterScreen">
+        Title="Вибір фігурантів" Height="600" Width="800" WindowStartupLocation="CenterScreen"
+        Closing="Window_Closing" MouseMove="Window_MouseMove" PreviewMouseMove="Window_PreviewMouseMove">
     <Window.Resources>
         <SolidColorBrush x:Key="1ColorStyle" Color="#2C3333" />
         <SolidColorBrush x:Key="2ColorStyle" Color="#395B64" />
@@ -41,7 +42,7 @@
             <StackPanel x:Name="stackPanelAddElse">
 
                 <Label  Content="Назва банку" FontSize="16" Tag="8Назва_банкуLabel"></Label>
-                <ComboBox IsEditable="True"  FontSize="16" Tag="9Назва_банкуComboBox" Foreground="{StaticResource 2ColorStyle}" VerticalAlignment="Top" ></ComboBox>
+                <ComboBox  IsEditable="True"  TextBoxBase.TextChanged="ComboBox_TextChanged" MouseWheel="ComboBox_MouseWheel"  FontSize="16" Tag="9Назва_банкуComboBox" Foreground="{StaticResource 2ColorStyle}" VerticalAlignment="Top" ></ComboBox>
                 <Button Tag="12ПошукButton" FontSize="16" Click="GenerationFromTheSiteButtonClick">Згенерувати із реєстру дозволів</Button>
             </StackPanel>
         </ScrollViewer>

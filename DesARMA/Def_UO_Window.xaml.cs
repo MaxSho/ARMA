@@ -24,24 +24,24 @@ namespace DesARMA
         public Figurant figurant = new Figurant();
         public bool isDelete = false;
         private System.Windows.Forms.Timer inactivityTimer = new System.Windows.Forms.Timer();
-        public Def_UO_Window(Figurant figurant, bool isConn)
+        public Def_UO_Window(Figurant figurant, bool isConn, System.Windows.Forms.Timer inactivityTimer)
         {
             try 
             { 
                 InitializeComponent();
                 this.figurant = figurant;
-
+                this.inactivityTimer = inactivityTimer;
                 nameTextBox.Text = figurant.Name;
                 codeTextBox.Text = figurant.Code;
                 residentTextBox.IsChecked = figurant.ResUr == 2;
                 figurant.Status = isConn ? 2 : 1;
 
-                string shif = ConfigurationManager.AppSettings["hv"].ToString();
-                inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
-                inactivityTimer.Tick += (sender, args) =>
-                {
-                    Environment.Exit(0);
-                };
+                //string shif = ConfigurationManager.AppSettings["hv"].ToString();
+                //inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
+                //inactivityTimer.Tick += (sender, args) =>
+                //{
+                //    Environment.Exit(0);
+                //};
                 inactivityTimer.Start();
             }
             catch(Exception e)
@@ -62,7 +62,7 @@ namespace DesARMA
             else
                 figurant.ResUr = null;
 
-            if (nameTextBox.Text == "" ||  codeTextBox.Text == "")
+            if (nameTextBox.Text == "")
             {
                 MessageBox.Show("Не заповнені поля");
             }
@@ -78,6 +78,30 @@ namespace DesARMA
             inactivityTimer.Stop();
             isDelete = true;
             this.DialogResult = true;
+            inactivityTimer.Start();
+        }
+
+        private void Window_MouseMove(object sender, MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+
+        private void Window_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+
+        private void nameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            inactivityTimer.Stop();
             inactivityTimer.Start();
         }
     }

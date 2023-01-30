@@ -31,155 +31,157 @@ namespace DesARMA
         ModelContext modelContext;
         EnumExtReq enumExtReq;
         private System.Windows.Forms.Timer inactivityTimer = new System.Windows.Forms.Timer();
-        public SelectFigWindow(string inputNumbet, ModelContext modelContext, EnumExtReq enumExtReq, string nameWin)
+        public SelectFigWindow(string inputNumbet, ModelContext modelContext, EnumExtReq enumExtReq, string nameWin, System.Windows.Forms.Timer inactivityTimer)
         {
             InitializeComponent();
             try
             {
+                this.inactivityTimer = inactivityTimer;
+                this.inputNumber = inputNumbet;
+                this.modelContext = modelContext;
+                this.enumExtReq = enumExtReq;
 
-            this.inputNumber = inputNumbet;
-            this.modelContext = modelContext;
-            this.enumExtReq = enumExtReq;
+                this.Title += ". " + nameWin;
 
-            this.Title += ". " + nameWin;
-
-            var items = from f in modelContext.Figurants
-                       where f.NumbInput == inputNumber && f.Status == 1
-                       select f;
+                var items = from f in modelContext.Figurants
+                           where f.NumbInput == inputNumber && f.Status == 1
+                           select f;
 
             
-            foreach (var item in items)
-            {
-                CheckBox check = new CheckBox();
-                check.IsChecked = true;
-                check.Margin = new Thickness(10);
-                check.Padding = new Thickness(10, - 4, 0, 0);
-                check.Background = this.Resources[$"3ColorStyle"] as SolidColorBrush;
-                check.Tag = item.Id;
-
-                Label label = new Label();
-                    if(item.ResFiz!=null)
-                            label.Content = $"{item.Fio} {item.Ipn}";
-                    else
-                        label.Content = $"{item.Name} {item.Code}";
-
-                label.Padding = new Thickness(0);
-                label.Margin = new Thickness(0);
-                label.FontSize = 16;
-
-                check.Content = label;
-                stackPanelAdd.Children.Add(check);
-            }
-
-            if (enumExtReq == EnumExtReq.ExternalRequestsToMytna)
-            {
-                stackPanelAddElse.Children.Clear();
-            }
-            else if (enumExtReq == EnumExtReq.ExternalRequestsToIntelektualnyi)
-            {
-                stackPanelAddElse.Children.Clear();
-            }
-            else if (enumExtReq == EnumExtReq.ExternalRequestsToHeolohii)
-            {
-                stackPanelAddElse.Children.Clear();
-            }
-            else if (enumExtReq == EnumExtReq.ExternalRequestsToDerzhpratsi)
-            {
-                var l = stackPanelAddElse.Children[0] as Label;
-                var itemOrganName = stackPanelAddElse.Children[1] as ComboBox;
-
-                    if (l!= null && itemOrganName!=null)
-                    {
-                        l.Content = "Назва органу";
-                        List<string> listBankName = (from b in modelContext.DictAgWorks
-                                                     select b.Name).ToList();
-                        listBankName.Sort();
-                        itemOrganName.ItemsSource = listBankName;
-                    }
-            }
-            else if (enumExtReq == EnumExtReq.ExternalRequestsToAntymonopolnyi)
-            {
-                stackPanelAddElse.Children.Clear();
-            }
-            else if (enumExtReq == EnumExtReq.ExternalRequestsToFondovyi1)
-            {
-                stackPanelAddElse.Children.Clear();
-            }
-            else if (enumExtReq == EnumExtReq.ExternalRequestsToFondovyiOsnovnyi2)
-            {
-                stackPanelAddElse.Children.Clear();
-            }
-            else if (enumExtReq == EnumExtReq.ExternalRequestsToNAPZK)
-            {
-                stackPanelAddElse.Children.Clear();
-            }
-            else if (enumExtReq == EnumExtReq.ExternalRequestsToBank)
-            {
-                stackPanelAddElse.Children.RemoveAt(2);
-
-                var itemBankNameComboBox =  stackPanelAddElse.Children[1] as ComboBox;
-                if(itemBankNameComboBox != null)
+                foreach (var item in items)
                 {
-                    List<string> listBankName = (from b in modelContext.DictBanks
-                                select b.Nb).ToList();
-                    listBankName.Sort();
-                    ObservableCollection<string> listBanks = new ObservableCollection<string>();
-                    foreach(string bankName in listBankName)
-                    {
-                        listBanks.Add(bankName);
-                    }
+                    CheckBox check = new CheckBox();
+                    check.IsChecked = true;
+                    check.Margin = new Thickness(10);
+                    check.Padding = new Thickness(10, - 4, 0, 0);
+                    check.Background = this.Resources[$"3ColorStyle"] as SolidColorBrush;
+                    check.Tag = item.Id;
 
-                    CollectionViewSource cvs = new CollectionViewSource();
-                    cvs.Source = listBanks;
+                    Label label = new Label();
+                        if(item.ResFiz!=null)
+                                label.Content = $"{item.Fio} {item.Ipn}";
+                        else
+                            label.Content = $"{item.Name} {item.Code}";
 
-                        //itemBankName.ItemsSource = listBankName;
-                        itemBankNameComboBox.ItemsSource = cvs.View;
+                    label.Padding = new Thickness(0);
+                    label.Margin = new Thickness(0);
+                    label.FontSize = 16;
 
-                        itemBankNameComboBox.KeyUp += (s, e) =>
+                    check.Content = label;
+                    stackPanelAdd.Children.Add(check);
+                }
+
+                if (enumExtReq == EnumExtReq.ExternalRequestsToMytna)
+                {
+                    stackPanelAddElse.Children.Clear();
+                }
+                else if (enumExtReq == EnumExtReq.ExternalRequestsToIntelektualnyi)
+                {
+                    stackPanelAddElse.Children.Clear();
+                }
+                else if (enumExtReq == EnumExtReq.ExternalRequestsToHeolohii)
+                {
+                    stackPanelAddElse.Children.Clear();
+                }
+                else if (enumExtReq == EnumExtReq.ExternalRequestsToDerzhpratsi)
+                {
+                    var l = stackPanelAddElse.Children[0] as Label;
+                    var itemOrganName = stackPanelAddElse.Children[1] as ComboBox;
+
+                        if (l!= null && itemOrganName!=null)
                         {
-                            cvs.View.Filter = (item) => (item as string).Contains(itemBankNameComboBox.Text);
-                        };
+                            l.Content = "Назва органу";
+                            List<string> listBankName = (from b in modelContext.DictAgWorks
+                                                         select b.Name).ToList();
+                            listBankName.Sort();
+                            itemOrganName.ItemsSource = listBankName;
+                        }
+                }
+                else if (enumExtReq == EnumExtReq.ExternalRequestsToAntymonopolnyi)
+                {
+                    stackPanelAddElse.Children.Clear();
+                }
+                else if (enumExtReq == EnumExtReq.ExternalRequestsToFondovyi1)
+                {
+                    stackPanelAddElse.Children.Clear();
+                }
+                else if (enumExtReq == EnumExtReq.ExternalRequestsToFondovyiOsnovnyi2)
+                {
+                    stackPanelAddElse.Children.Clear();
+                }
+                else if (enumExtReq == EnumExtReq.ExternalRequestsToNAPZK)
+                {
+                    stackPanelAddElse.Children.Clear();
+                }
+                else if (enumExtReq == EnumExtReq.ExternalRequestsToBank)
+                {
+                    stackPanelAddElse.Children.RemoveAt(2);
+
+                    var itemBankNameComboBox =  stackPanelAddElse.Children[1] as ComboBox;
+                    if(itemBankNameComboBox != null)
+                    {
+                        List<string> listBankName = (from b in modelContext.DictBanks
+                                    select b.Nb).ToList();
+                        listBankName.Sort();
+                        ObservableCollection<string> listBanks = new ObservableCollection<string>();
+                        foreach(string bankName in listBankName)
+                        {
+                            listBanks.Add(bankName);
+                        }
+
+                        CollectionViewSource cvs = new CollectionViewSource();
+                        cvs.Source = listBanks;
+
+                            //itemBankName.ItemsSource = listBankName;
+                            itemBankNameComboBox.ItemsSource = cvs.View;
+
+                            itemBankNameComboBox.KeyUp += (s, e) =>
+                            {
+                                cvs.View.Filter = (item) => (item as string).ToLower().Contains(itemBankNameComboBox.Text.ToLower());
+                                itemBankNameComboBox.IsDropDownOpen = true;
+                            };
+                        }
+                }
+                else
+                {
+                    stackPanelAddElse.Children.RemoveAt(stackPanelAddElse.Children.Count - 1);
+                }
+
+                string str = "";
+                foreach (var item in stackPanelAddElse.Children)
+                {
+                    var l = item as Label;
+                    var t = item as TextBox;
+                    var d = item as DatePicker;
+
+                    if (t != null)
+                    {
+                        str += $"{t.Tag}\n";
                     }
-            }
-            else
-            {
-                stackPanelAddElse.Children.RemoveAt(stackPanelAddElse.Children.Count - 1);
-            }
-
-            string str = "";
-            foreach (var item in stackPanelAddElse.Children)
-            {
-                var l = item as Label;
-                var t = item as TextBox;
-                var d = item as DatePicker;
-
-                if (t != null)
-                {
-                    str += $"{t.Tag}\n";
+                    else if(d != null)
+                    {
+                        str += $"{d.Tag}\n";
+                    }
+                    else if(l != null)
+                    {
+                        str += $"{l.Tag}\n";
+                    }
                 }
-                else if(d != null)
-                {
-                    str += $"{d.Tag}\n";
-                }
-                else if(l != null)
-                {
-                    str += $"{l.Tag}\n";
-                }
-            }
 
+                inactivityTimer.Start();
             }
             catch (Exception exp1)
             {
                 MessageBox.Show("" + exp1.Message);
             }
 
-            string shif = ConfigurationManager.AppSettings["hv"].ToString();
-            inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
-            inactivityTimer.Tick += (sender, args) =>
-            {
-                Environment.Exit(0);
-            };
-            inactivityTimer.Start();
+            //string shif = ConfigurationManager.AppSettings["hv"].ToString();
+            //inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
+            //inactivityTimer.Tick += (sender, args) =>
+            //{
+            //    Environment.Exit(0);
+            //};
+            //inactivityTimer.Start();
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
@@ -508,6 +510,35 @@ namespace DesARMA
                
             }
             return "";
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            inactivityTimer.Stop();
+        }
+
+        private void Window_MouseMove(object sender, MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+
+        private void Window_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+
+        private void ComboBox_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+
+        private void ComboBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
         }
     }
 }

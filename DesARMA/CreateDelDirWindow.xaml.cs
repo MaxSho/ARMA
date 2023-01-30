@@ -24,7 +24,7 @@ namespace DesARMA
         private System.Windows.Forms.Timer inactivityTimer = new System.Windows.Forms.Timer();
         AllDirectories allDirectories { get; set; } = null!;
         UpdateDel updateDel = null!;
-        public CreateDelDirWindow(AllDirectories allDirectories, UpdateDel updateDel)
+        public CreateDelDirWindow(AllDirectories allDirectories, UpdateDel updateDel, System.Windows.Forms.Timer inactivityTimer)
         {
             try
             {
@@ -32,14 +32,17 @@ namespace DesARMA
 
                 this.allDirectories = allDirectories;
                 this.updateDel = updateDel;
+                this.inactivityTimer = inactivityTimer;
+                this.inactivityTimer = inactivityTimer;
                 ShowButtons();
 
-                string shif = ConfigurationManager.AppSettings["hv"].ToString();
-                inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
-                inactivityTimer.Tick += (sender, args) =>
-                {
-                    Environment.Exit(0);
-                };
+                //string shif = ConfigurationManager.AppSettings["hv"].ToString();
+                //inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
+                //inactivityTimer.Tick += (sender, args) =>
+                //{
+                //    Environment.Exit(0);
+                //};
+
                 inactivityTimer.Start();
             }
             catch(Exception e)
@@ -50,18 +53,24 @@ namespace DesARMA
         }
         public void ShowButtons()
         {
-            
-            stackPanel1.Children.Clear();
-            var list = allDirectories.GetAllNotAvailableDirectories();
-            for (int i = 0; i < list.Count; i++)
+            inactivityTimer.Stop();
+            try
             {
-                Button b = new Button();
-                b.Click += CreateDirectory;
-                b.Content = list[i];
-                stackPanel1.Children.Add(b);
+                stackPanel1.Children.Clear();
+                var list = allDirectories.GetAllNotAvailableDirectories();
+                for (int i = 0; i < list.Count; i++)
+                {
+                    Button b = new Button();
+                    b.Click += CreateDirectory;
+                    b.Content = list[i];
+                    stackPanel1.Children.Add(b);
+                }
             }
-
-            
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            inactivityTimer.Start();
         }
         public void CreateDirectory(object sender, RoutedEventArgs e)
         {
@@ -81,11 +90,9 @@ namespace DesARMA
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-            }
-            
+            } 
             inactivityTimer.Start();
         }
-
         private void CreateAll(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
@@ -99,7 +106,6 @@ namespace DesARMA
                         Directory.CreateDirectory($"{allDirectories.mainConfig.Folder}\\{curB.Content.ToString()}");
                     }
                 }
-
                 ShowButtons();
                 updateDel(null!, null!);
             }
@@ -108,6 +114,20 @@ namespace DesARMA
                 MessageBox.Show(ex.Message);
             }
             inactivityTimer.Start();
+        }
+        private void Window_MouseMove(object sender, MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+        private void Window_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            inactivityTimer.Stop();
         }
     }
 }

@@ -27,12 +27,12 @@ namespace DesARMA
             {
                 InitializeComponent();
 
-                string shif = ConfigurationManager.AppSettings["hv"].ToString();
-                inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
-                inactivityTimer.Tick += (sender, args) =>
-                {
-                    Environment.Exit(0);
-                };
+                //string shif = ConfigurationManager.AppSettings["hv"].ToString();
+                //inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
+                //inactivityTimer.Tick += (sender, args) =>
+                //{
+                //    Environment.Exit(0);
+                //};
                 inactivityTimer.Start();
             }
             catch(Exception e)
@@ -49,6 +49,29 @@ namespace DesARMA
         public string CodeRequest
         {
             get { return createBox.Text; }
+        }
+
+        private void Window_MouseMove(object sender, MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+
+        private void Window_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            inactivityTimer.Start();
+        }
+
+        private void createBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
         }
     }
 }

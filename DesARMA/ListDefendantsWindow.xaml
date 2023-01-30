@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DesARMA"
         mc:Ignorable="d"
         Title="Перелік фігурантів" Width="400" MinHeight="100" MaxHeight="800" WindowStartupLocation="CenterScreen"
-         Closing="Window_Closing" Loaded="OnLoad"
+         Closing="Window_Closing" Loaded="OnLoad" MouseMove="Window_MouseMove" PreviewMouseMove="Window_PreviewMouseMove"
         >
     <Window.Resources>
         <SolidColorBrush x:Key="1ColorStyle" Color="#2C3333" />

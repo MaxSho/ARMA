@@ -108,11 +108,11 @@ namespace DesARMA
         public static List<int> sGrupa = new List<int>();
         public static List<string> sub = new List<string>
         {
-            "зазначених", "зазначеної"
+            "зазначених", "зазначеної", "зазначеним", "зазначеній"
         };
         public static List<string> sub2 = new List<string>
         {
-            "осіб", "особи"
+            "осіб", "особи", "особам", "особі",
         };
         public static List<string> organs = new List<string>()
         {

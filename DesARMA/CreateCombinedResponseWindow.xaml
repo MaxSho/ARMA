@@ -1,13 +1,12 @@
-﻿<Window x:Class="DesARMA.SelectionOfQueriesToInsertWindow"
+﻿<Window x:Class="DesARMA.CreateCombinedResponseWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DesARMA"
         mc:Ignorable="d"
-        Title="Вибір запитів спільної для вставки даних" Height="400" Width="500"
-        WindowStartupLocation="CenterScreen" MouseMove="Window_MouseMove" PreviewMouseMove="Window_PreviewMouseMove"
-        Closing="Window_Closing">
+        Title="Створення об'єднаного запиту" Height="450" Width="800" WindowStartupLocation="CenterScreen" 
+        MouseMove="Window_MouseMove" PreviewMouseMove="Window_PreviewMouseMove" Closing="Window_Closing">
     <Window.Resources>
         <SolidColorBrush x:Key="1ColorStyle" Color="#2C3333" />
         <SolidColorBrush x:Key="2ColorStyle" Color="#395B64" />
@@ -49,7 +48,7 @@
             <RowDefinition Height="10*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
         </Grid.RowDefinitions>
-        <Button Content="Перейти до заповнення даних" Grid.Row="2" Click="Button_Click_Add"></Button>
+        <Button Content="Створити об'єднаний запит" Grid.Row="2" Click="Create_Button_Click"></Button>
         <ScrollViewer Grid.Row="1">
             <StackPanel Name="stackPanel1">
                 <CheckBox Content="Запит 1236/54-23" HorizontalAlignment="Center"></CheckBox>
@@ -58,6 +57,5 @@
                 <CheckBox Content="Запит 1239/54-23" HorizontalAlignment="Center"></CheckBox>
             </StackPanel>
         </ScrollViewer>
-        
     </Grid>
 </Window>

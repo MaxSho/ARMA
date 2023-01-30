@@ -24,18 +24,19 @@ namespace DesARMA
         string inputNumbet;
         ModelContext modelContext;
         private System.Windows.Forms.Timer inactivityTimer = new System.Windows.Forms.Timer();
-        public RequestsWindow(string inputNumbet, ModelContext modelContext)
+        public RequestsWindow(string inputNumbet, ModelContext modelContext, System.Windows.Forms.Timer inactivityTimer)
         {
             InitializeComponent();
             this.modelContext = modelContext;
             this.inputNumbet = inputNumbet;
+            this.inactivityTimer = inactivityTimer;
 
-            string shif = ConfigurationManager.AppSettings["hv"].ToString();
-            inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
-            inactivityTimer.Tick += (sender, args) =>
-            {
-                Environment.Exit(0);
-            };
+            //string shif = ConfigurationManager.AppSettings["hv"].ToString();
+            //inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
+            //inactivityTimer.Tick += (sender, args) =>
+            //{
+            //    Environment.Exit(0);
+            //};
             inactivityTimer.Start();
         }
 
@@ -47,90 +48,171 @@ namespace DesARMA
         private void DMSButton_Click1(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
-            SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToMytna, "Держмитслужба");
-            this.Hide();
-            selectFigWindow.ShowDialog();
-            this.Show();
+            try
+            {
+                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToMytna, "Держмитслужба", inactivityTimer);
+                this.Hide();
+                selectFigWindow.ShowDialog();
+                this.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             inactivityTimer.Start();
         }
 
         private void UPButton_Click2(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
-            SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToIntelektualnyi, "Укрпатент");
-            this.Hide();
-            selectFigWindow.ShowDialog();
-            this.Show();
+            try
+            {
+                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToIntelektualnyi, "Укрпатент", inactivityTimer);
+                this.Hide();
+                selectFigWindow.ShowDialog();
+                this.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             inactivityTimer.Start();
         }
 
         private void GNButton_Click3(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
-            SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToHeolohii, "Геонадра");
-            this.Hide();
-            selectFigWindow.ShowDialog();
-            this.Show();
+            try
+            {
+                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToHeolohii, "Геонадра", inactivityTimer);
+                this.Hide();
+                selectFigWindow.ShowDialog();
+                this.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             inactivityTimer.Start();
         }
 
         private void DPButton_Click4(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
-            SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToDerzhpratsi, "Держпраці");
-            this.Hide();
-            selectFigWindow.ShowDialog();
-            this.Show();
+            try
+            {
+                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToDerzhpratsi, "Держпраці", inactivityTimer);
+                this.Hide();
+                selectFigWindow.ShowDialog();
+                this.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             inactivityTimer.Start();
         }
 
         private void AMKButton_Click5(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
-            SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToAntymonopolnyi, "АМК");
-            this.Hide();
-            selectFigWindow.ShowDialog();
-            this.Show();
+            try
+            {
+                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToAntymonopolnyi, "АМК", inactivityTimer);
+                this.Hide();
+                selectFigWindow.ShowDialog();
+                this.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             inactivityTimer.Start();
         }
 
         private void NKCPFRButton_Click6(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
-            SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToFondovyi1, "НКЦПФР 1");
-            this.Hide();
-            selectFigWindow.ShowDialog();
-            this.Show();
+            try
+            {
+                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToFondovyi1, "НКЦПФР 1", inactivityTimer);
+                this.Hide();
+                selectFigWindow.ShowDialog();
+                this.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             inactivityTimer.Start();
         }
 
         private void NKCPFR2Button_Click7(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
-            SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToFondovyiOsnovnyi2, "НКЦПФР 2");
-            this.Hide();
-            selectFigWindow.ShowDialog();
-            this.Show();
+            try
+            {
+                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToFondovyiOsnovnyi2, "НКЦПФР 2", inactivityTimer);
+                this.Hide();
+                selectFigWindow.ShowDialog();
+                this.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             inactivityTimer.Start();
         }
 
         private void NAZKButton_Click8(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
-            SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToNAPZK, "НАЗК");
-            this.Hide();
-            selectFigWindow.ShowDialog();
-            this.Show();
+            try
+            {
+                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToNAPZK, "НАЗК", inactivityTimer);
+                this.Hide();
+                selectFigWindow.ShowDialog();
+                this.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             inactivityTimer.Start();
         }
 
         private void BankButton_Click9(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
-            SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToBank, "Банки");
-            this.Hide();
-            selectFigWindow.ShowDialog();
-            this.Show();
+            try
+            {
+                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToBank, "Банки", inactivityTimer);
+                this.Hide();
+                selectFigWindow.ShowDialog();
+                this.Show();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            inactivityTimer.Start();
+        }
+
+        private void Window_MouseMove(object sender, MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+
+        private void Window_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            inactivityTimer.Stop();
             inactivityTimer.Start();
         }
     }

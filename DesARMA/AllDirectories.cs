@@ -15,6 +15,9 @@ using System.Windows.Documents;
 using System.Diagnostics;
 using SixLabors.Fonts.Tables.AdvancedTypographic;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using SixLabors.ImageSharp.Drawing;
+using System.Windows.Media.Imaging;
+using System.Threading;
 
 namespace DesARMA
 {
@@ -31,6 +34,7 @@ namespace DesARMA
         ModelContext modelContext = null!;  
         RoutedEventHandler routedEventHandler = null!;
         System.Windows.Controls.TreeView treeView1 = null!;
+
         List<bool> listContr;
         List<bool> listSh;
         List<List<bool>?> listFigurantCheckListSHEMA;
@@ -39,18 +43,6 @@ namespace DesARMA
         SolidColorBrush RedSolidColorBrush = null!;
         SolidColorBrush WhiteSolidColorBrush = null!;
         SolidColorBrush GreenSolidColorBrush = null!;
-
-        //public List<bool> GetListContr 
-        //{ 
-        //    get 
-        //    { 
-        //        return GetBoolsFromString(mainConfig.Control); 
-        //    } 
-        //    private set 
-        //    {
-        //        mainConfig.Control = GetStringFromBools()
-        //    } 
-        //}
 
         public AllDirectories(Main main, MainConfig mainConfig, RoutedEventHandler routedEventHandler,
             SolidColorBrush RedSolidColorBrush, SolidColorBrush WhiteSolidColorBrush, SolidColorBrush GreenSolidColorBrush,
@@ -90,7 +82,7 @@ namespace DesARMA
 
             return treeView1;
         }
-        public StackPanel СreatePosition(int idNum, string name)
+        private StackPanel СreatePosition(int idNum, string name)
         {
             StackPanel stackPanel = new StackPanel();
             stackPanel.Orientation = Orientation.Horizontal;
@@ -176,7 +168,7 @@ namespace DesARMA
             stackPanel.Children.Add(tree);
             return stackPanel;
         }
-        public string? СreatePositionFigurantText(int idNumFig)
+        private string? СreatePositionFigurantText(int idNumFig)
         {
             var treeIn = new TreeViewItem();
 
@@ -191,99 +183,6 @@ namespace DesARMA
             }
             return null;
         }
-        public TreeViewItem СreatePositionFigurant(int idNumReestr, int idNumFig, SolidColorBrush color)
-        {
-            var treeIn = new TreeViewItem();
-
-            if (figurants != null)
-            {
-                var w1 = figurants[idNumFig - 1];
-            
-                if (w1 != null)
-                {
-                    treeIn.Header = GetDefInString(w1);
-                    treeIn.Foreground = color;
-                    treeIn.Margin = new Thickness(-10, -3, 0, 0);
-
-                    if (idNumReestr < Reest.abbreviatedName.Count)
-                    {
-                        var contextmenu = new ContextMenu();
-                        treeIn.ContextMenu = contextmenu;
-
-                        var mi = new MenuItem();
-                        mi.Header = "Видалити";
-                        mi.Tag = $"{idNumReestr}. {Reest.abbreviatedName[idNumReestr - 1]}";
-                        mi.Click += DeleteDir;
-                        contextmenu.Items.Add(mi);
-                    }
-                }
-            }
-            
-            return treeIn;
-        }
-        //public CheckBox? СreatePositionFigurantCheckBoxYes(int idNumReestr, int idNumFig, SolidColorBrush color)
-        //{
-        //    var checkBox = new CheckBox();
-
-        //    if (figurants != null)
-        //    {
-        //        var w1 = figurants[idNumFig - 1];
-
-        //        if (w1 != null)
-        //        {
-        //            if (w1.Control != null)
-        //            {
-        //                var w2 = GetBoolsFromString(w1.Control);
-        //                if (w2 != null)
-        //                {
-        //                    checkBox.IsChecked = w2[idNumReestr - 1];
-        //                }
-        //                checkBox.Content = СreatePositionFigurantCheckBoxNo(idNumReestr, idNumFig, color);
-        //                checkBox.Click += ClickCheckBoxFigurantYES;
-        //                checkBox.Tag = new Tuple<int, int, FigYesNo>(idNumFig, idNumReestr, FigYesNo.Yes);
-        //                checkBox.Foreground = WhiteSolidColorBrush;
-        //                checkBox.Margin = new Thickness(-20, 3, 0, 0);
-        //            }
-        //            else
-        //            {
-        //                return null;
-        //            }
-        //        }
-        //    }
-        //    return checkBox;
-        //}
-        //public CheckBox? СreatePositionFigurantCheckBoxNo(int idNumReestr, int idNumFig, SolidColorBrush color)
-        //{
-        //    var checkBox = new CheckBox();
-
-        //    if (figurants != null)
-        //    {
-        //        var w1 = figurants[idNumFig - 1];
-
-        //        if (w1 != null)
-        //        {
-        //            if (w1.Shema != null)
-        //            {
-        //                var w2 = GetBoolsFromString(w1.Shema);
-        //                if (w2 != null)
-        //                {
-        //                    checkBox.IsChecked = w2[idNumReestr - 1];
-        //                }
-        //                checkBox.Content = СreatePositionFigurant(idNumReestr, idNumFig, color);
-        //                checkBox.Click += ClickCheckBoxFigurantNO;
-        //                checkBox.Tag = new Tuple<int, int, FigYesNo>(idNumFig, idNumReestr, FigYesNo.No);
-        //                checkBox.Foreground = WhiteSolidColorBrush;
-        //                checkBox.Margin = new Thickness(0, 1, 0, 0);
-        //            }
-        //            else
-        //            {
-        //                return null;
-        //            }
-        //        }
-        //    }
-
-        //    return checkBox;
-        //}
         public StackPanel CreatePozFig(int idNumReestr, int idNumFig, SolidColorBrush color)
         {
             StackPanel stackPanel = new StackPanel();
@@ -350,16 +249,167 @@ namespace DesARMA
                 }
             }
 
-            TextBlock textBlock = new TextBlock();
-            textBlock.Text = СreatePositionFigurantText(idNumFig);
-            textBlock.FontSize = 14;
-            textBlock.Margin = new Thickness(+20, 0, 0, 0);
-            
+            //TextBlock textBlock = new TextBlock();
+            //textBlock.Text = СreatePositionFigurantText(idNumFig);
+            //textBlock.FontSize = 14;
+            //textBlock.Margin = new Thickness(+20, 0, 0, 0);
             stackPanel.Children.Add(checkBox);
             stackPanel.Children.Add(checkBox2);
-            stackPanel.Children.Add(textBlock);
+
+            //stackPanel.Children.Add(textBlock);
+
+            var listTB = CreateControls(СreatePositionFigurantText(idNumFig));
+            foreach (var item in listTB)
+            {
+                stackPanel.Children.Add(item);
+            }
+
 
             return stackPanel;
+        }
+        private Image GetNewImageCopy()
+        {
+            Image image = new Image();
+            BitmapImage bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri("https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Edit-copy_green.svg/2048px-Edit-copy_green.svg.png");
+            bitmap.DecodePixelWidth = 25;
+            bitmap.EndInit();
+            image.Source = bitmap;
+            return image;
+        }
+        private List<UIElement> CreateControls(string? str)
+        {
+            List<UIElement> listRet = new List<UIElement>();
+            if(str != null)
+            {
+                var list = str!.Split('^');
+                if(list.Length == 6)
+                {
+                    TextBlock textBlock = new TextBlock();
+                    textBlock.Text = list[0];
+                    textBlock.FontSize = 14;
+                    textBlock.PreviewMouseDown += (w, r) => {try{System.Windows.Clipboard.SetText(textBlock.Text);}catch (Exception ex) { }};
+                    textBlock.MouseEnter += (w, r) => {  textBlock.Opacity = 0.5; };
+                    textBlock.MouseLeave += (w, r) => {  textBlock.Opacity = 1; };
+                    textBlock.Padding = new Thickness(20, 0, 0, 0);
+                    textBlock.ToolTip = "Натисніть, щоб скопіювати";
+                    listRet.Add(textBlock);
+
+
+                    TextBlock textBlockTemp = new TextBlock();
+                    textBlockTemp.Text = list[1];
+                    textBlockTemp.FontSize = 14; 
+                    listRet.Add(textBlockTemp);
+
+
+
+                    TextBlock textBlock1 = new TextBlock();
+                    textBlock1.Text = list[2];
+                    textBlock1.FontSize = 14;
+                    textBlock1.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock1.Text); } catch (Exception ex) { } };
+                    textBlock1.MouseEnter += (w, r) => { textBlock1.Opacity = 0.5; };
+                    textBlock1.MouseLeave += (w, r) => { textBlock1.Opacity = 1; };
+                    textBlock1.ToolTip = "Натисніть, щоб скопіювати";
+                    listRet.Add(textBlock1);
+
+                    TextBlock textBlockTemp2 = new TextBlock();
+                    textBlockTemp2.Text = list[3];
+                    textBlockTemp2.FontSize = 14;
+                    listRet.Add(textBlockTemp2);
+
+                    TextBlock textBlockTemp3 = new TextBlock();
+                    textBlockTemp3.Text = list[4];
+                    textBlockTemp3.FontSize = 14;
+                    listRet.Add(textBlockTemp3);
+
+                    TextBlock textBlock2 = new TextBlock();
+                    textBlock2.Text = list[5];
+                    textBlock2.FontSize = 14;
+                    textBlock2.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock2.Text); } catch (Exception ex) { } };
+                    textBlock2.MouseEnter += (w, r) => { textBlock2.Opacity = 0.5; };
+                    textBlock2.MouseLeave += (w, r) => { textBlock2.Opacity = 1;};
+                    textBlock2.ToolTip = "Натисніть, щоб скопіювати";
+                    listRet.Add(textBlock2);
+                }
+                else if(list.Length == 4)
+                {
+                    TextBlock textBlock = new TextBlock();
+                    textBlock.Text = list[0];
+                    textBlock.FontSize = 14;
+                    textBlock.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock.Text); } catch (Exception ex) { } };
+                    textBlock.MouseEnter += (w, r) => { textBlock.Opacity = 0.5; };
+                    textBlock.MouseLeave += (w, r) => { textBlock.Opacity = 1; };
+                    textBlock.Padding = new Thickness(20, 0, 0, 0);
+                    textBlock.ToolTip = "Натисніть, щоб скопіювати";
+                    listRet.Add(textBlock);
+
+
+                    TextBlock textBlockTemp = new TextBlock();
+                    textBlockTemp.Text = list[1];
+                    textBlockTemp.FontSize = 14;
+                    listRet.Add(textBlockTemp);
+
+
+
+                    TextBlock textBlock1 = new TextBlock();
+                    textBlock1.Text = list[2];
+                    textBlock1.FontSize = 14;
+                    textBlock1.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock1.Text); } catch (Exception ex) { } };
+                    textBlock1.MouseEnter += (w, r) => { textBlock1.Opacity = 0.5; };
+                    textBlock1.MouseLeave += (w, r) => { textBlock1.Opacity = 1; };
+                    textBlock1.ToolTip = "Натисніть, щоб скопіювати";
+                    listRet.Add(textBlock1);
+
+                    TextBlock textBlockTemp2 = new TextBlock();
+                    textBlockTemp2.Text = list[3];
+                    textBlockTemp2.FontSize = 14;
+                    listRet.Add(textBlockTemp2);
+                }
+                else if(list.Length == 3)
+                {
+                    TextBlock textBlock = new TextBlock();
+                    textBlock.Text = list[0];
+                    textBlock.FontSize = 14;
+                    textBlock.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock.Text); } catch (Exception ex) { } };
+                    textBlock.MouseEnter += (w, r) => { textBlock.Opacity = 0.5; };
+                    textBlock.MouseLeave += (w, r) => { textBlock.Opacity = 1; };
+                    textBlock.Padding = new Thickness(20, 0, 0, 0);
+                    textBlock.ToolTip = "Натисніть, щоб скопіювати";
+                    listRet.Add(textBlock);
+
+
+                    TextBlock textBlockTemp = new TextBlock();
+                    textBlockTemp.Text = list[1];
+                    textBlockTemp.FontSize = 14;
+                    listRet.Add(textBlockTemp);
+
+
+
+                    TextBlock textBlock1 = new TextBlock();
+                    textBlock1.Text = list[2];
+                    textBlock1.FontSize = 14;
+                    textBlock1.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock1.Text); } catch (Exception ex) { } };
+                    textBlock1.MouseEnter += (w, r) => { textBlock1.Opacity = 0.5; };
+                    textBlock1.MouseLeave += (w, r) => { textBlock1.Opacity = 1; };
+                    textBlock1.ToolTip = "Натисніть, щоб скопіювати";
+                    listRet.Add(textBlock1);
+                }
+                else if(list.Length == 1)
+                {
+                    TextBlock textBlock = new TextBlock();
+                    textBlock.Text = list[0];
+                    textBlock.FontSize = 14;
+                    textBlock.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock.Text); } catch (Exception ex) { } };
+                    textBlock.MouseEnter += (w, r) => { textBlock.Opacity = 0.5; };
+                    textBlock.MouseLeave += (w, r) => { textBlock.Opacity = 1; };
+                    textBlock.Padding = new Thickness(20, 0, 0, 0);
+                    textBlock.ToolTip = "Натисніть, щоб скопіювати";
+                    listRet.Add(textBlock);
+                }
+                
+            }
+            return listRet;
         }
         private void DeleteDir(object sender, RoutedEventArgs e)
         {
@@ -395,12 +445,11 @@ namespace DesARMA
                                         che2.IsChecked = false;
                                     }
                                 }
-
+                                SaveToDB();
                                 CreateNewTree();
                             }
                         }
                     }
-
                 }
                 Update();
             }
@@ -520,17 +569,16 @@ namespace DesARMA
                 var birth = d.DtBirth;
                 if (birth != null)
                 {
-                    return $"{d.Fio}, {birth.ToString().Substring(0, 10)} р.н., РНОКПП {d.Ipn}";
+                    return $"{d.Fio}^, ^{birth.ToString().Substring(0, 10)}^ р.н.^, РНОКПП ^{d.Ipn}";
                 }
-                return $"{d.Fio}, РНОКПП {d.Ipn}";
+                return $"{d.Fio}^, РНОКПП ^{d.Ipn}";
             }
             else
             {
-                if (d.ResUr == 2)
+                if (d.Code == null || d.Code == "")
                     return $"{d.Name}";
-                return $"{d.Name} (ЄДРПОУ {d.Code})";
+                return $"{d.Name}^ (ЄДРПОУ ^{d.Code}^)";
             }
-            return null;
         }
         private void ClickCheckBoxFigurantYES(object sender, RoutedEventArgs e)
         {
@@ -608,36 +656,53 @@ namespace DesARMA
                 if(idNumReestr != null)
                 {
                     Tuple<int, int, FigYesNo> tag = (Tuple<int, int, FigYesNo>)idNumReestr;
-                    if (!Directory.Exists(mainConfig.Folder + $"\\{tag.Item2}. {Reest.abbreviatedName[tag.Item2 - 1]}"))
+                    if(Reest.abbreviatedName.Count > tag.Item2 - 1)
                     {
-                        checkBox.IsChecked = false;
+                        if (!Directory.Exists(mainConfig.Folder + $"\\{tag.Item2}. {Reest.abbreviatedName[tag.Item2 - 1]}"))
+                        {
+                            checkBox.IsChecked = false;
+                        }
+                        else
+                        {
+                            var list = GetFigListTupleCheckBoxes(tag.Item2);
+                            if (list != null)
+                            {
+                                var tr = list[tag.Item1 - 1];
+                                if (tr != null)
+                                {
+                                    if (tr.Item1!.IsChecked!.Value && tr.Item2!.IsChecked!.Value)
+                                    {
+                                        tr.Item1!.IsChecked = false;
+                                    }
+                                }
+                            }
+
+                        }
                     }
                     else
                     {
-                        var list = GetFigListTupleCheckBoxes(tag.Item2);
-                        if(list != null)
+                        if (!Directory.Exists(mainConfig.Folder + $"\\{Reest.abbreviatedName.Count + 1}. Схеми"))
                         {
-                            var tr = list[tag.Item1 - 1];
-                            if (tr != null)
+                            checkBox.IsChecked = false;
+                        }
+                        else
+                        {
+                            var list = GetFigListTupleCheckBoxes(tag.Item2);
+                            if (list != null)
                             {
-                                if (tr.Item1!.IsChecked!.Value && tr.Item2!.IsChecked!.Value)
+                                var tr = list[tag.Item1 - 1];
+                                if (tr != null)
                                 {
-                                    tr.Item1!.IsChecked = false;
+                                    if (tr.Item1!.IsChecked!.Value && tr.Item2!.IsChecked!.Value)
+                                    {
+                                        tr.Item1!.IsChecked = false;
+                                    }
                                 }
                             }
+
                         }
-                        
-                        //var st = treeView1.Items[tag.Item2 - 1] as StackPanel;
-                        //if(st != null)
-                        //{
-                        //    var ch = st.Children[0] as CheckBox;
-                        //    if (ch != null)
-                        //    {
-                        //        ch.Tag = false;
-                        //        ch.IsChecked = isAllFigChecked(tag);
-                        //    }
-                        //}
                     }
+                    
                 }
             }
             Update();
@@ -730,7 +795,7 @@ namespace DesARMA
                                             {
                                                 listBoolControl.Add(new List<bool>());
                                             }
-                                            listBoolControl[iTVI - 1]!.Add(IsCheckedTreeViewFigControl.Value);
+                                            listBoolControl[iTVI - 1]?.Add(IsCheckedTreeViewFigControl.Value);
                                         }
                                         else
                                         {
@@ -738,7 +803,7 @@ namespace DesARMA
                                             {
                                                 listBoolControl.Add(new List<bool>());
                                             }
-                                            listBoolControl[iTVI - 1]!.Add(false);
+                                            listBoolControl[iTVI - 1]?.Add(false);
                                         }
 
                                         var IsCheckedTreeViewFigShema = treeViewFigShema.IsChecked;
@@ -762,6 +827,18 @@ namespace DesARMA
                                         if (!listBoolShema[iTVI - 1]!.Last() && !listBoolControl[iTVI - 1]!.Last())
                                         {
                                             isControlNice = false;
+                                        }
+                                        else
+                                        {
+                                            //TODO 
+                                            for (int indexF = 2; indexF < treeViewFigStackPanel.Children.Count; indexF++)
+                                            {
+                                                var itemF = treeViewFigStackPanel.Children[indexF] as TextBlock;
+                                                if(itemF != null)
+                                                {
+                                                    itemF.Foreground = Brushes.CornflowerBlue;
+                                                }
+                                            }
                                         }
 
                                     }
@@ -923,28 +1000,6 @@ namespace DesARMA
         {
             return (treeView1.Items[id - 1] as StackPanel).Children[2] as TreeViewItem;
         }
-        //public Tuple<List<CheckBox?>, List<CheckBox?>>? GetFigTupleListCheckBoxes(int id)
-        //{
-        //    List<CheckBox?> checkBoxesYes = new List<CheckBox?>();
-        //    List<CheckBox?> checkBoxesNo = new List<CheckBox?>();
-        //    TreeViewItem? treeViewItem = GetTreeViewItem(id);
-
-        //    if(treeViewItem != null)
-        //    {
-        //        if (treeViewItem.Items != null)
-        //        for (int i = 0; i < treeViewItem.Items!.Count; i++)
-        //        {
-        //            var stackPanel = treeViewItem.Items[i] as StackPanel;
-
-                    
-
-        //            checkBoxesYes.Add(stackPanel!.Children[0] as CheckBox);
-        //            checkBoxesNo.Add(stackPanel!.Children[1] as CheckBox);
-        //        }
-        //        return Tuple.Create(checkBoxesYes, checkBoxesNo);
-        //    }
-        //    return null;
-        //}
         public List<Tuple<CheckBox?, CheckBox?>>? GetFigListTupleCheckBoxes(int id)
         {
             TreeViewItem? treeViewItem = GetTreeViewItem(id);

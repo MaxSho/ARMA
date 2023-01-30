@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DesARMA"
         mc:Ignorable="d"
-        Title="Створення запиту" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen">
+        Title="Створення запиту" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen"
+        MouseMove="Window_MouseMove" PreviewMouseMove="Window_PreviewMouseMove" Closing="Window_Closing">
     <Window.Resources>
         <SolidColorBrush x:Key="1ColorStyle" Color="#2C3333" />
         <SolidColorBrush x:Key="2ColorStyle" Color="#395B64" />
@@ -32,7 +33,7 @@
         </Grid.RowDefinitions>
 
         <TextBlock>Введіть номер запиту:</TextBlock>
-        <TextBox Name="createBox" Grid.Row="1" MinWidth="250">0000/27-23</TextBox>
+        <TextBox Name="createBox" Grid.Row="1" MinWidth="250" TextChanged="createBox_TextChanged">0000/27-23</TextBox>
         <WrapPanel Grid.Row="2" HorizontalAlignment="Right" Margin="0,15,0,0">
             <Button IsDefault="True" Click="Accept_Click" MinWidth="60" Margin="0,0,10,0">OK</Button>
             <Button IsCancel="True" MinWidth="60">Відміна</Button>

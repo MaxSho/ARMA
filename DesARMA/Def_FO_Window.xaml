@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DesARMA"
         mc:Ignorable="d"
-        Title="ФО" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen">
+        Title="ФО" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen" MouseMove="Window_MouseMove"
+        PreviewMouseMove="Window_PreviewMouseMove" Closing="Window_Closing">
     <Window.Resources>
         <SolidColorBrush x:Key="1ColorStyle" Color="#2C3333" />
         <SolidColorBrush x:Key="2ColorStyle" Color="#395B64" />
@@ -42,13 +43,13 @@
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"   
                />
         <TextBox Grid.Column="1" Grid.Row="0" Padding="5" Text="Іваненченко Іван Іваненко" Margin="0 10 10 0"
-                 x:Name="nameTextBox" FontSize="16"/>
+                 x:Name="nameTextBox" FontSize="16" TextChanged="nameTextBox_TextChanged"/>
 
         <Label Grid.Column="0" Grid.Row="1"  Content="ІПН" Margin="10 0 0 0"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"   
                />
         <TextBox Grid.Column="1" Grid.Row="1" Padding="5" Text="9999999" Margin="0 0 10 0"
-                 x:Name="codeTextBox" FontSize="16"/>
+                 x:Name="codeTextBox" FontSize="16" TextChanged="nameTextBox_TextChanged"/>
 
         <Label Grid.Column="0" Grid.Row="2"  Content="Дата народження" Margin="10 0 0 0"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"   

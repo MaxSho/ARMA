@@ -38,7 +38,7 @@ namespace DesARMA
         MainWindow? win;
         bool isMeInWin = false;
         
-        public ListDefendantsWindow(ModelContext modelContext, string numberIn, string tit, bool isConn)
+        public ListDefendantsWindow(ModelContext modelContext, string numberIn, string tit, bool isConn, System.Windows.Forms.Timer inactivityTimer)
         {
             try
             {
@@ -60,12 +60,12 @@ namespace DesARMA
 
                 UpdateListButton();
 
-                string shif = ConfigurationManager.AppSettings["hv"].ToString();
-                inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
-                inactivityTimer.Tick += (sender, args) =>
-                {
-                    Environment.Exit(0);
-                };
+                //string shif = ConfigurationManager.AppSettings["hv"].ToString();
+                //inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
+                //inactivityTimer.Tick += (sender, args) =>
+                //{
+                //    Environment.Exit(0);
+                //};
                 inactivityTimer.Start();
             }
             catch(Exception ex)
@@ -77,23 +77,37 @@ namespace DesARMA
    
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if(isMeInWin)
-            (this.Owner as MainWindow).isOpenWindFig = false;
+            try
+            {
+                if (isMeInWin)
+                    (this.Owner as MainWindow).isOpenWindFig = false;
+            }
+            catch(Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
+            }
+            inactivityTimer.Stop();
         }
         void OnLoad(object sender, RoutedEventArgs e)
         {
-           
-            if((this.Owner as MainWindow).isOpenWindFig)
+            try
             {
-                isMeInWin = false;
+                if ((this.Owner as MainWindow).isOpenWindFig)
+                {
+                    isMeInWin = false;
+                    this.Close();
+                }
+                else
+                {
+                    isMeInWin = true;
+                    (this.Owner as MainWindow).isOpenWindFig = true;
+                }
+            }
+            catch(Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
                 this.Close();
             }
-            else
-            {
-                isMeInWin = true;
-                (this.Owner as MainWindow).isOpenWindFig = true;
-            }
-
         }
         private void GetFig(string numberIn)
         {
@@ -123,7 +137,7 @@ namespace DesARMA
 
             try 
             { 
-                Def_FO_Window def_FO_Window = new Def_FO_Window(new Figurant(), isConn);
+                Def_FO_Window def_FO_Window = new Def_FO_Window(new Figurant(), isConn, inactivityTimer);
                 def_FO_Window.figurant.NumbInput = this.numberIn;
                 def_FO_Window.figurant.Control = new string('0', Reest.abbreviatedName.Count + 1);
                 def_FO_Window.figurant.Shema   = new string('0', Reest.abbreviatedName.Count + 1);
@@ -176,7 +190,7 @@ namespace DesARMA
 
             try
             {
-                Def_UO_Window def_UO_Window = new Def_UO_Window(new Figurant(), isConn);
+                Def_UO_Window def_UO_Window = new Def_UO_Window(new Figurant(), isConn, inactivityTimer);
                 def_UO_Window.figurant.NumbInput = this.numberIn;
 
                 def_UO_Window.figurant.Control = new string('0', Reest.abbreviatedName.Count + 1);
@@ -249,7 +263,7 @@ namespace DesARMA
                 
                     if(def.ResUr != null)
                     {
-                        Def_UO_Window def_UO_Window = new Def_UO_Window(def, isConn);
+                        Def_UO_Window def_UO_Window = new Def_UO_Window(def, isConn, inactivityTimer);
                         if (def_UO_Window.ShowDialog() == true)
                         {
                             //MessageBox.Show($"{def_UO_Window.uo.name} \n {def_UO_Window.uo.code}  \n {def_UO_Window.uo.isResid}");
@@ -272,7 +286,7 @@ namespace DesARMA
                     }
                     else
                     {
-                        Def_FO_Window def_FO_Window = new Def_FO_Window(def, isConn);
+                        Def_FO_Window def_FO_Window = new Def_FO_Window(def, isConn, inactivityTimer);
                         if (def_FO_Window.ShowDialog() == true)
                         {
                             //MessageBox.Show($"{def_UO_Window.uo.name} \n {def_UO_Window.uo.code}  \n {def_UO_Window.uo.isResid}");
@@ -343,7 +357,18 @@ namespace DesARMA
                         stackPanel1.Children.Add(b);
                     }
             }
-        
+
+        private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+
+        private void Window_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
     }
 
     public interface Def
