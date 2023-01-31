@@ -411,10 +411,35 @@ namespace DesARMA
                         (from o in modelContext.MainConfigs
                          where o.NumbInput == b.NumbInput
                          select o).Count() == 1
-                    orderby b.NumbInput.Substring(8, 2),
-                            CreateCombinedResponseWindow.GetStringWithZero(b.NumbInput)
+                    //orderby /*b.NumbInput.Substring(8, 2),*/
+                    //        b.NumbInput.Split(new char[] { '/' }, 1)[0]//CreateCombinedResponseWindow.GetStringWithZero(b.NumbInput)
                              select b
-                    ).ToList();
+                    )
+                    .AsEnumerable()
+                    .OrderBy(b => {
+                        int result;
+                        if (int.TryParse(b.NumbInput.Split(new char[] { '/' }, 2)[0], out result))
+                        {
+                            return result;
+                        }
+                        else
+                        {
+                            return 0;
+                        }
+                    })
+                    .OrderBy(b => {
+                        int result;
+                        if (int.TryParse(b.NumbInput.Split(new char[] { '-' }, 2)[1], out result))
+                        {
+                            return result;
+                        }
+                        else
+                        {
+                            return 0;
+                        }
+                    })
+                    
+                    .ToList();
 
                 //stackPanel1.Children.Clear();
                 //var AddButton = new System.Windows.Controls.Button();
@@ -963,9 +988,6 @@ namespace DesARMA
                 System.Windows.MessageBox.Show(str);
                 return false;
             }
-
-           
-
             return true;
         }
         private void Button_ClickRespon(object sender, RoutedEventArgs e)

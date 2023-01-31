@@ -34,21 +34,57 @@ namespace DesARMA
             this.main = main;
             this.inactivityTimer = inactivityTimer;
 
-            
+
+            //var mains = (from b in modelContext.Mains
+            //             where b.Executor == CurrentUser.IdUser
+            //&&
+            //    (from o in modelContext.MainConfigs
+            //     where o.NumbInput == b.NumbInput
+            //     select o).Count() == 1
+            //&&
+            //    b.CpNumber == main.CpNumber
+            //orderby b.NumbInput.Substring(b.NumbInput.Length - 2, 2) descending,
+            //        GetStringWithZero(b.NumbInput.Split(new char[] {'/'}).First()) descending
+            //             select b
+            //).ToList();
             var mains = (from b in modelContext.Mains
                          where b.Executor == CurrentUser.IdUser
-            &&
-                (from o in modelContext.MainConfigs
-                 where o.NumbInput == b.NumbInput
-                 select o).Count() == 1
-            &&
-                b.CpNumber == main.CpNumber
-            orderby b.NumbInput.Substring(b.NumbInput.Length - 2, 2) descending,
-                    GetStringWithZero(b.NumbInput.Split(new char[] {'/'}).First()) descending
+                &&
+                    (from o in modelContext.MainConfigs
+                     where o.NumbInput == b.NumbInput
+                     select o).Count() == 1
+                         //orderby /*b.NumbInput.Substring(8, 2),*/
+                         //        b.NumbInput.Split(new char[] { '/' }, 1)[0]//CreateCombinedResponseWindow.GetStringWithZero(b.NumbInput)
+                &&
+                    b.CpNumber == main.CpNumber
                          select b
-            ).ToList();
+                    )
+                    .AsEnumerable()
+                    .Where(b => { return b.NumbInput.Split(new char[] { '-' }, 2)[1] == DateTime.Now.Year.ToString().Substring(2, 2); })
+                    .OrderByDescending(b => {
+                        int result;
+                        if (int.TryParse(b.NumbInput.Split(new char[] { '/' }, 2)[0], out result))
+                        {
+                            return result;
+                        }
+                        else
+                        {
+                            return 0;
+                        }
+                    })
+                    .OrderByDescending(b => {
+                        int result;
+                        if (int.TryParse(b.NumbInput.Split(new char[] { '-' }, 2)[1], out result))
+                        {
+                            return result;
+                        }
+                        else
+                        {
+                            return 0;
+                        }
+                    })
+                    .ToList();
 
-            
             stackPanel1.Children.Clear();
             foreach (var mainItem in mains)
             {
@@ -103,7 +139,13 @@ namespace DesARMA
                 }
                 else
                 {
-                    this.Close();
+                    MessageBox.Show("Перевірка ...");
+                    
+                    CombinedResponseWindows.SelectionOfCombinedQueryFieldsWindow win =
+                        new CombinedResponseWindows.SelectionOfCombinedQueryFieldsWindow(modelContext, main, listNumbIn);
+                    this.Hide();
+                    win.Show();
+                    //this.Close();
                 }
             }
             catch(Exception ex)

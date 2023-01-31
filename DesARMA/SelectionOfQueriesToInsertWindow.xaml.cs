@@ -32,14 +32,52 @@ namespace DesARMA
             this.CurrentUser = CurrentUser;
             this.inactivityTimer = inactivityTimer;
 
+            //var mains = (from b in modelContext.Mains
+            //             where b.Executor == CurrentUser.IdUser
+            //&&
+            //    (from o in modelContext.MainConfigs
+            //     where o.NumbInput == b.NumbInput
+            //     select o).Count() == 1
+            //             select b
+            //        ).ToList();
+
+
+
+
             var mains = (from b in modelContext.Mains
                          where b.Executor == CurrentUser.IdUser
-            &&
-                (from o in modelContext.MainConfigs
-                 where o.NumbInput == b.NumbInput
-                 select o).Count() == 1
+                &&
+                    (from o in modelContext.MainConfigs
+                     where o.NumbInput == b.NumbInput
+                     select o).Count() == 1
+                         //orderby /*b.NumbInput.Substring(8, 2),*/
+                         //        b.NumbInput.Split(new char[] { '/' }, 1)[0]//CreateCombinedResponseWindow.GetStringWithZero(b.NumbInput)
                          select b
-                    ).ToList();
+                   )
+                   .AsEnumerable()
+                   .OrderByDescending(b => {
+                       int result;
+                       if (int.TryParse(b.NumbInput.Split(new char[] { '/' }, 2)[0], out result))
+                       {
+                           return result;
+                       }
+                       else
+                       {
+                           return 0;
+                       }
+                   })
+                   .OrderByDescending(b => {
+                       int result;
+                       if (int.TryParse(b.NumbInput.Split(new char[] { '-' }, 2)[1], out result))
+                       {
+                           return result;
+                       }
+                       else
+                       {
+                           return 0;
+                       }
+                   })
+                   .ToList();
 
             stackPanel1.Children.Clear();
             foreach (var main in mains)

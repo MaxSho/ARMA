@@ -742,7 +742,7 @@ namespace DesARMA
             doc1 = new XWPFDocument(OPCPackage.Open(path3));
 
             var par = doc1.Paragraphs[22];
-            MessageBox.Show(par.Text);
+            
             par.ReplaceText("42022000000000480", numKP);
 
             for (int i = 0; i < figs.Count; i++)
@@ -822,7 +822,7 @@ namespace DesARMA
             }
             else
             {
-                if(d.ResUr == 2)
+                if(d.Code == null || d.Code == "")
                     return $"{d.Name}";
                 return $"{d.Name} (ЄДРПОУ {d.Code})";
             }

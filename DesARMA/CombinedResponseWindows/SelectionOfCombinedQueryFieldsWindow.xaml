@@ -1,12 +1,11 @@
-﻿<Window x:Class="DesARMA.CreateCombinedResponseWindow"
+﻿<Window x:Class="DesARMA.CombinedResponseWindows.SelectionOfCombinedQueryFieldsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DesARMA"
+        xmlns:local="clr-namespace:DesARMA.CombinedResponseWindows"
         mc:Ignorable="d"
-        Title="Створення об'єднаного запиту" Height="450" Width="800" WindowStartupLocation="CenterScreen" 
-        MouseMove="Window_MouseMove" PreviewMouseMove="Window_PreviewMouseMove" Closing="Window_Closing">
+        Title="SelectionOfCombinedQueryFieldsWindow" Height="450" Width="800">
     <Window.Resources>
         <SolidColorBrush x:Key="1ColorStyle" Color="#2C3333" />
         <SolidColorBrush x:Key="2ColorStyle" Color="#395B64" />
@@ -20,6 +19,7 @@
             <Setter Property="Label.Foreground" Value="{StaticResource 3ColorStyle}" />
             <Setter Property="Label.FontFamily" Value="Arial"/>
             <Setter Property="Label.FontSize" Value="16"/>
+            <Setter Property="FlowDirection" Value="RightToLeft"/>
         </Style>
         <Style TargetType="TextBlock">
             <Setter Property="Label.Background" Value="{StaticResource 2ColorStyle}" />
@@ -49,22 +49,33 @@
     </Window.Resources>
     <Grid Background="{StaticResource 2ColorStyle}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"></RowDefinition>
-            <RowDefinition Height="10*"></RowDefinition>
-            <RowDefinition Height="1*"></RowDefinition>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" HorizontalAlignment="Center" TextWrapping="Wrap">
-            На основі запиту № 0000/00-00 знайдено наступні запити, що мають спільний з ним номер КП, за 2023 рік adsdas:
-        </TextBlock>
-        
-        <Button Content="Створити об'єднаний запит" Grid.Row="2" Click="Create_Button_Click"></Button>
-        <ScrollViewer Grid.Row="1">
-            <StackPanel Name="stackPanel1">
-                <CheckBox Content="Запит 1236/54-23" HorizontalAlignment="Center"></CheckBox>
-                <CheckBox Content="Запит 1237/54-23" HorizontalAlignment="Center"></CheckBox>
-                <CheckBox Content="Запит 1238/54-23" HorizontalAlignment="Center"></CheckBox>
-                <CheckBox Content="Запит 1239/54-23" HorizontalAlignment="Center"></CheckBox>
-            </StackPanel>
-        </ScrollViewer>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" Content="Тип звернення"/>
+        <Label Grid.Row="1" Grid.Column="0" Content="Орган суб'єкта звернення"/>
+        <Label Grid.Row="2" Grid.Column="0" Content="Адреса органу"/>
+        <Label Grid.Row="3" Grid.Column="0" Content="Посада суб'єкта звернення"/>
+        <Label Grid.Row="4" Grid.Column="0" Content="ПІБ суб'єкта звернення"/>
+
+        <ComboBox Grid.Row="0" Grid.Column="1"/>
+        <TextBox Grid.Row="1" Grid.Column="1"/>
+        <TextBox Grid.Row="2" Grid.Column="1"/>
+        <TextBox Grid.Row="3" Grid.Column="1"/>
+        <TextBox Grid.Row="4" Grid.Column="1"/>
+
+        <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Content="Занести поля в запити" Click="Button_Click"/>
     </Grid>
 </Window>
