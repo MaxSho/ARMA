@@ -7,7 +7,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="DeskAPMA" MinHeight="800" MinWidth="800" FontSize="16" WindowState="Maximized"
+        Title="DeskAPMA" MinHeight="400" MinWidth="400" FontSize="16" WindowState="Maximized"
         ResizeMode="CanResizeWithGrip" Closing="App_Closing" PreviewMouseMove="Window_PreviewMouseMove"  MouseMove="Window_MouseMove" 
         Loaded="Window_Loaded">
     <Window.Resources>

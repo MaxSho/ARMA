@@ -142,7 +142,8 @@ namespace DesARMA
         public void CreateTimer()
         {
             inactivityTimer = new Timer();
-            string shif = ConfigurationManager.AppSettings["hv"].ToString();
+            //string shif = ConfigurationManager.AppSettings["hv"].ToString();
+            string shif = "60";
             inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
             //inactivityTimer.Interval = 5_000;
 
@@ -1134,7 +1135,7 @@ namespace DesARMA
 
 
 
-                ////Створення списків реєстрів родовий і давальний
+                //Створення списків реєстрів родовий і давальний
                 //List<string> listSRod = new List<string>();
                 //List<string> listSDav = new List<string>();
 
@@ -1194,15 +1195,17 @@ namespace DesARMA
 
 
 
-                DocResponse docResponse = new DocResponse(prevM, new List<int>() { indexSub, whatIndex, count_Shemat }, new List<string>() {
-                name,
-                address1,
-                date1,
-                date2,
-                number1,
-                number2,
-                vidOrgan,
-                positionSub
+                DocResponse docResponse = new DocResponse(new List<MainConfig>() { prevM }, 
+                    new List<int>() { indexSub, whatIndex, count_Shemat }, //TODO визначити кількість схематичного відображення
+                    new List<string>() {
+                    name,
+                    address1,
+                    date1,
+                    date2,
+                    number1,
+                    number2,
+                    vidOrgan,
+                    positionSub
                 });
 
 

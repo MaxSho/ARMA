@@ -2,6 +2,7 @@
 using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,9 +32,10 @@ namespace DesARMA.CombinedResponseWindows
     public partial class EntryOfPersonsInvolvedInTheCombinedRegistersWindow : System.Windows.Window
     {
         List<string> listNumIn;
+        List<int> numbColorInReestr;
         ModelContext modelContext;
         Main main;
-        List<Figurant> figurants;
+        public List<Figurant> figurants;
         public EntryOfPersonsInvolvedInTheCombinedRegistersWindow(ModelContext modelContext, Main main, List<string> listNumIn)
         {
             InitializeComponent();
@@ -41,36 +43,129 @@ namespace DesARMA.CombinedResponseWindows
             this.listNumIn = listNumIn;
             this.modelContext = modelContext;
             this.main = main;
-
             figurants = (from f in modelContext.Figurants where listNumIn.Contains(f.NumbInput) select f).ToList();
 
+            ToCheckFolders();
+            CreateTreeView1();
+            SetColor();
 
+        }
+        private void SetColor()
+        {
+            for (int i = 1; i < treeView1.Items.Count; i++)
+            {
+                var st = treeView1.Items[i] as StackPanel;
+                if(st != null)
+                {
+                    var ti = st.Children[2] as TreeViewItem;
+                    if(ti != null)
+                    {
+                        var tiH = ti.Header as TextBlock;
+                        if(tiH != null)
+                        {
+                            if (numbColorInReestr[i - 1] == 3)
+                            {
+                                tiH.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush; ;
+                            }
+                            else if (numbColorInReestr[i - 1] == 2)
+                            {
+                                tiH.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush;// new SolidColorBrush(Colors.White);
+                            }
+                            else if (numbColorInReestr[i - 1] == 1)
+                            {
+                                tiH.Foreground = this.Resources["RedEmpty"] as SolidColorBrush; //new SolidColorBrush(Colors.Red);
+                            }
+                        }
+                        foreach (var itemF in ti.Items)
+                        {
+                            var stF = itemF as StackPanel;
+                            if(stF != null)
+                            {
+                                foreach (var itemTB in stF.Children)
+                                {
+                                    var cutTB = itemTB as TextBlock;
+                                    if(cutTB != null)
+                                    {
+                                        if (numbColorInReestr[i - 1] == 3)
+                                        {
+                                            cutTB.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush; ;
+                                        }
+                                        else if (numbColorInReestr[i - 1] == 2)
+                                        {
+                                            cutTB.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush;// new SolidColorBrush(Colors.White);
+                                        }
+                                        else if (numbColorInReestr[i - 1] == 1)
+                                        {
+                                            cutTB.Foreground = this.Resources["RedEmpty"] as SolidColorBrush; //new SolidColorBrush(Colors.Red);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } 
+                }
+
+            }
+        }
+        private void CreateTreeView1()
+        {
             treeView1.Items.Add($"Контроль/Схема");
 
 
             for (int i = 0; i < Reest.abbreviatedName.Count; i++)
             {
                 treeView1.Items.Add(CreateItem(i + 1));
-                //StackPanel stackPanel = new StackPanel();
-                //stackPanel.Orientation = Orientation.Horizontal;
-                //CheckBox checkBoxC = new CheckBox();
-                //CheckBox checkBoxS = new CheckBox();
-                //TreeViewItem treeViewItem = new TreeViewItem();
-
-                //treeViewItem.Margin = new Thickness(0, 4, 0, 0);
-                //treeViewItem.Header = $"{i + 1}. {Reest.abbreviatedName[i]}";
-
-                //treeViewItem.Items.Add("так ні");
-                //foreach (var itemF in figurants)
-                //{
-                //    treeViewItem.Items.Add($"{itemF.Name}{itemF.Fio}");
-                //}
-
-                //stackPanel.Children.Add(checkBoxC);
-                //stackPanel.Children.Add(checkBoxS);
-                //stackPanel.Children.Add(treeViewItem);
-                //treeView1.Items.Add(stackPanel);
             }
+        }
+        private void ToCheckFolders()
+        {
+            List<int> numbColorInReestr = new List<int>();
+
+            foreach (var item in Reest.abbreviatedName)
+            {
+                numbColorInReestr.Add(0);
+            }
+
+
+            foreach (var itemNumbIn in listNumIn)
+            {
+                var folderCurrentNumbIn = (from f in modelContext.MainConfigs where f.NumbInput == itemNumbIn select f.Folder).First();
+                if(folderCurrentNumbIn != null)
+                {
+                    if (Directory.Exists(folderCurrentNumbIn))
+                    {
+                        for (int i = 0; i < Reest.abbreviatedName.Count; i++)
+                        {
+                            if (Directory.Exists($"{folderCurrentNumbIn}\\{i + 1}. {Reest.abbreviatedName[i]}"))
+                            {
+                                if (Directory.GetFiles($"{folderCurrentNumbIn}\\{i + 1}. {Reest.abbreviatedName[i]}").Length==0
+                                    && Directory.GetDirectories($"{folderCurrentNumbIn}\\{i + 1}. {Reest.abbreviatedName[i]}").Length 
+                                    == 0)
+                                {
+                                    numbColorInReestr[i] = Math.Max(numbColorInReestr[i], 2);
+                                }
+                                else
+                                {
+                                    numbColorInReestr[i] = Math.Max(numbColorInReestr[i], 3);
+                                }
+                            }
+                            else
+                            {
+                                numbColorInReestr[i] = Math.Max(numbColorInReestr[i], 1);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Відсутня папка запиту за розташуванням {folderCurrentNumbIn}");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"В базі даних не знайдено шлях до папки в запиті {itemNumbIn}");
+                }
+            }
+            this.numbColorInReestr = numbColorInReestr;
         }
 
         private StackPanel CreateItem(int num)
@@ -290,11 +385,15 @@ namespace DesARMA.CombinedResponseWindows
                     {
                         if (checkTuple.Item1 == CheckEnum.Control)
                         {
-                            checkBox.IsChecked = false;
+                            //checkBox.IsChecked = false;
+                            IfhaveTwoCheck(checkTuple.Item2, CheckEnum.Control);
                         }
                         else if (checkTuple.Item1 == CheckEnum.Shema)
                         {
-
+                            if (numbColorInReestr[checkTuple.Item2 - 1] == 1)
+                            {
+                                checkBox.IsChecked = false;
+                            }
                         }
                         else if (checkTuple.Item1 == CheckEnum.Yes)
                         {
@@ -307,7 +406,6 @@ namespace DesARMA.CombinedResponseWindows
                     }
                 }
             }
-            //update();
         }
         void IfhaveTwoCheck(int num, CheckEnum checkEnum)
         {
@@ -315,10 +413,26 @@ namespace DesARMA.CombinedResponseWindows
             if (st != null)
             {
                 var chC = st.Children[0] as CheckBox;
-                //var chS = st.Children[1] as CheckBox;
+                var chS = st.Children[1] as CheckBox;
                 var tri = st.Children[2] as TreeViewItem;
                 if(tri != null && chC != null)
                 {
+                    var tiH = tri.Header as TextBlock;
+                    if (tiH != null)
+                    {
+                        if (numbColorInReestr[num - 1] == 3)
+                        {
+                            tiH.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush;
+                        }
+                        else if (numbColorInReestr[num - 1] == 2)
+                        {
+                            tiH.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush;  // new SolidColorBrush(Colors.White);
+                        }
+                        else if (numbColorInReestr[num - 1] == 1)
+                        {
+                            tiH.Foreground = this.Resources["RedEmpty"] as SolidColorBrush;     //new SolidColorBrush(Colors.Red);
+                        }
+                    }
                     var isAllCh = true;
                     foreach (var itemF in tri.Items)
                     {
@@ -331,16 +445,63 @@ namespace DesARMA.CombinedResponseWindows
                             {
                                 if (checkEnum == CheckEnum.Yes)
                                 {
-                                    chNo.IsChecked = false;
+                                    chNo.IsChecked  = false;
                                 }
                                 else if (checkEnum == CheckEnum.No)
                                 {
                                     chYes.IsChecked = false;
                                 }
                             }
+
+                            if(!chNo.IsChecked.Value && !chYes.IsChecked.Value)
+                            {
+                                foreach (var itemTB in stF.Children)
+                                {
+                                    var cutTB = itemTB as TextBlock;
+                                    if (cutTB != null)
+                                    {
+                                        if (numbColorInReestr[num - 1] == 3)
+                                        {
+                                            cutTB.Foreground = this.Resources["GreenEmpty"]  as SolidColorBrush;
+                                        }
+                                        else if (numbColorInReestr[num - 1] == 2)
+                                        {
+                                            cutTB.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush; //new SolidColorBrush(Colors.White);
+                                        }
+                                        else if (numbColorInReestr[num - 1] == 1)
+                                        {
+
+                                            cutTB.Foreground = this.Resources["RedEmpty"]    as SolidColorBrush; //new SolidColorBrush(Colors.Red);
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if(numbColorInReestr[num - 1] != 1)
+                                {
+                                    foreach (var itemTB in stF.Children)
+                                    {
+                                        var cutTB = itemTB as TextBlock;
+                                        if (cutTB != null)
+                                        {
+                                            cutTB.Foreground = this.Resources["1ColorStyle"] as SolidColorBrush;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    chNo.IsChecked = false;
+                                    chYes.IsChecked = false;
+                                }
+                                
+                            }
+                            
                             isAllCh = isAllCh && (chYes.IsChecked.Value || chNo.IsChecked.Value);
                         }
                     }
+                    
+                    
                     chC.IsChecked = isAllCh;
                 }
             }
@@ -390,17 +551,9 @@ namespace DesARMA.CombinedResponseWindows
 
                             }
                         }
-
-
-                        
-
                     }
                 }
             }
-
-
-
-
         }
         static public string? GetDefInString(Figurant d)
         {
@@ -421,10 +574,6 @@ namespace DesARMA.CombinedResponseWindows
                 return $"{d.Name}^ (ЄДРПОУ ^{d.Code}^)";
             }
         }
-        //private bool GetCheckBoxYes(int num)
-        //{
-
-        //}
         private bool? GetCheckBoxControl(int num)
         {
             var st = treeView1.Items[num - 1] as StackPanel;
@@ -446,6 +595,19 @@ namespace DesARMA.CombinedResponseWindows
                 return chS.IsChecked.Value;
             }
             return null;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+
+            //TODO
+            //Зробити відповідь
+
+
+
+
+            this.DialogResult = true;
         }
     }
 }

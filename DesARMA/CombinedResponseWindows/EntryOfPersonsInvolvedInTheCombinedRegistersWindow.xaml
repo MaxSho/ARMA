@@ -12,7 +12,7 @@
         <SolidColorBrush x:Key="3ColorStyle" Color="#A5C9CA" />
         <SolidColorBrush x:Key="4ColorStyle" Color="#E7F6F2" />
         <SolidColorBrush x:Key="5ColorStyle" Color="#009900" />
-        <SolidColorBrush x:Key="RedEmpty" Color="#E64E4E" />
+        <SolidColorBrush x:Key="RedEmpty" Color="#9F0000" />
         <SolidColorBrush x:Key="GreenEmpty" Color="#21C25C" />
         <Style TargetType="Label">
             <Setter Property="Label.Background" Value="{StaticResource 2ColorStyle}" />
@@ -48,6 +48,11 @@
         </Style>
     </Window.Resources>
     <Grid Background="{StaticResource 2ColorStyle}">
-        <TreeView Name="treeView1" Background="{StaticResource 2ColorStyle}"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*"></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <TreeView Grid.Row="0" Name="treeView1" Background="{StaticResource 2ColorStyle}"/>
+        <Button Grid.Row="1" Content="Enter" Click="Button_Click"/>
     </Grid>
 </Window>

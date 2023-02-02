@@ -15,11 +15,13 @@ namespace DesARMA
     public class DocResponse
     {
         MainConfig prevM = null!;
+        List<MainConfig> listPrevM = null!;
         List<int> listInt = null!;
         List<string> listString = null!;
-        public DocResponse(MainConfig prevM, List<int> listInt, List<string> listString)
+        public DocResponse(List<MainConfig> listPrevM, List<int> listInt, List<string> listString)
         {
-            this.prevM = prevM;
+            this.listPrevM = listPrevM;
+            this.prevM = listPrevM[0];
             this.listInt = listInt;
             this.listString = listString;
         }
@@ -341,84 +343,6 @@ namespace DesARMA
         }
         public void CreateResponseOther()
         {
-            //if (currentButton == AddButton) return;
-            //int iPrap = 1;
-            //var prevM = modelContext.MainConfigs.Find(numberInTextBox.Text);
-            //if (prevM == null) return;
-
-            //var listNotCheckControl = new List<string>();
-            //foreach (var item in treeView1.Items)
-            //{
-            //    var sp = item as System.Windows.Controls.StackPanel;
-            //    if (sp != null)
-            //    {
-            //        var chB = sp.Children[0] as System.Windows.Controls.CheckBox;
-            //        if (chB != null)
-            //        {
-            //            var b = chB.IsChecked;
-            //            if (b != null)
-            //            {
-            //                if (!(bool)b)
-            //                {
-            //                    var nameReest = sp.Children[2] as System.Windows.Controls.TreeViewItem;
-
-            //                    if (nameReest != null)
-            //                    {
-            //                        if (Directory.Exists(prevM.Folder + "\\" + nameReest.Header))
-            //                        {
-
-            //                            listNotCheckControl.Add(nameReest.Header.ToString());
-            //                            //return;
-            //                        }
-            //                    }
-            //                    else
-            //                    {
-            //                        System.Windows.MessageBox.Show($"Не знайдено назву реэстру");
-            //                        return;
-            //                    }
-            //                }
-            //            }
-            //            else
-            //            {
-            //                System.Windows.MessageBox.Show($"Не відмічено контроль(null)");
-            //                return;
-            //            }
-            //        }
-            //        else
-            //        {
-            //            System.Windows.MessageBox.Show($"Прапорець номер {iPrap} контролю не визначений");
-            //            return;
-            //        }
-            //    }
-
-            //    iPrap++;
-            //}
-
-            //if (listNotCheckControl.Count > 0)
-            //{
-
-            //    string str = $"Не відмічено контроль:";
-
-            //    foreach (var item in listNotCheckControl)
-            //    {
-            //        str += "\n" + item;
-            //    }
-            //    System.Windows.MessageBox.Show(str);
-            //    return;
-            //}
-
-            //var isCountFig = (from b in modelContext.Figurants
-            //                  where b.NumbInput == numberInTextBox.Text &&
-            //                                b.Status == 1
-            //                  select b).ToList().Count;
-
-            //if (isCountFig == 0)
-            //{
-            //    System.Windows.MessageBox.Show($"Не вибрано жодного фігуранта");
-            //    return;
-            //}
-
-
             string path3 = "";
 
             //Створення документу звіту
@@ -444,9 +368,6 @@ namespace DesARMA
                 System.Windows.MessageBox.Show($"Не вдалося відкрити контекст запиту. Не знайдено його");
                 return;
             }
-
-
-
 
             bool isExReq = false;
             if (Directory.Exists(prevM.Folder + "\\Запити"))
@@ -739,6 +660,30 @@ namespace DesARMA
             File.Delete(path4);
             System.Windows.MessageBox.Show($"Відповідь збережено в папку:\n{path3}");
         }
+        public void CreateResponseCombined(List<string> listColor)
+        {
+            string path3 = "";
+
+            //Створення документу звіту
+            XWPFDocument doc1;
+
+
+            //Створення зміних, що вставляються в звіт   
+            int indexSub =  listInt[0];          // isCountFig > 1 ? 0 : 1;
+            int whatIndex = listInt[1];         // typeorgansList.SelectedIndex;
+            string name =   listString[0];        // nameSubTextBox.Text;
+            string address1 = listString[1];    // addressOrgTextBox.Text;
+            string date1 =  listString[2];       // dateRequestDatePicker.Text;
+            string date2 = listString[3];       // dateInTextBox.Text.Substring(0, 10);
+            string number1 = listString[4];     // numberRequestTextBox.Text;
+            string number2 = listString[5];     // numberInTextBox.Text;
+            string vidOrgan = listString[6];    // vidOrgTextBox.Text;
+            string positionSub = listString[7]; // positionSubTextBox.Text;
+            int count_Shemat = listInt[2];
+
+
+
+        }
         private List<int> Orders(List<string> listSRod)
         {
             int index = 1;
@@ -780,10 +725,7 @@ namespace DesARMA
             }
             return false;
         }
-        public void Create()
-        {
-            Directory.CreateDirectory("B:\\COMMON\\Program\\Comb req");
-        }
+        
     }
 
 }

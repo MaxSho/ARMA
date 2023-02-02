@@ -34,19 +34,6 @@ namespace DesARMA
             this.main = main;
             this.inactivityTimer = inactivityTimer;
 
-
-            //var mains = (from b in modelContext.Mains
-            //             where b.Executor == CurrentUser.IdUser
-            //&&
-            //    (from o in modelContext.MainConfigs
-            //     where o.NumbInput == b.NumbInput
-            //     select o).Count() == 1
-            //&&
-            //    b.CpNumber == main.CpNumber
-            //orderby b.NumbInput.Substring(b.NumbInput.Length - 2, 2) descending,
-            //        GetStringWithZero(b.NumbInput.Split(new char[] {'/'}).First()) descending
-            //             select b
-            //).ToList();
             var mains = (from b in modelContext.Mains
                          where b.Executor == CurrentUser.IdUser
                 &&
@@ -143,8 +130,42 @@ namespace DesARMA
                     
                     CombinedResponseWindows.SelectionOfCombinedQueryFieldsWindow win =
                         new CombinedResponseWindows.SelectionOfCombinedQueryFieldsWindow(modelContext, main, listNumbIn);
-                    this.Hide();
-                    win.Show();
+                    
+                    //this.Hide();
+                    //this.Visibility = Visibility.Hidden;
+                    if (win.ShowDialog() == true)
+                    {
+                        CombinedResponseWindows.EntryOfPersonsInvolvedInTheCombinedRegistersWindow
+                        entryOfPersonsInvolvedInTheCombinedRegistersWindow
+                        = new CombinedResponseWindows.EntryOfPersonsInvolvedInTheCombinedRegistersWindow(modelContext, main, listNumbIn);
+                        
+                        if (entryOfPersonsInvolvedInTheCombinedRegistersWindow.ShowDialog() == true)
+                        {
+                            //CreateResp();
+                            DocResponse docResponse = new DocResponse(GetMainConfigsList(), 
+                                new List<int>() { (entryOfPersonsInvolvedInTheCombinedRegistersWindow.figurants.Count > 1 ? 0 : 1), win.idAcc.SelectedIndex, 0 }, 
+                                new List<string>() {
+                                    win.executor.Text,
+                                    win.addr.Text,
+                                    main.DtOutInit.ToString(),
+                                    main.DtInput.ToString(),
+                                    main.NumbOutInit,
+                                    main.NumbInput,
+                                    win.agecyDep.Text,
+                                    win.work.Text
+                                    });
+                            this.DialogResult = true;
+                        }
+                        else
+                        {
+                            this.DialogResult = false;
+                        }
+                    }
+                    else
+                    {
+
+                        this.DialogResult = false;
+                    }
                     //this.Close();
                 }
             }
@@ -170,6 +191,14 @@ namespace DesARMA
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             inactivityTimer.Stop();
+        }
+        private void CreateResp()
+        {
+
+        }
+        private List<MainConfig> GetMainConfigsList()
+        {
+            return (from f in modelContext.MainConfigs where listNumbIn.Contains(f.NumbInput) select f).ToList();
         }
     }
 }

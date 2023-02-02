@@ -20,7 +20,7 @@ namespace DesARMA.CombinedResponseWindows
     /// </summary>
     public partial class SelectionOfCombinedQueryFieldsWindow : Window
     {
-        List<string> listNumIn;
+        public List<string> listNumIn;
         ModelContext modelContext;
         Main main;
         public SelectionOfCombinedQueryFieldsWindow(ModelContext modelContext, Main main, List<string> listNumIn)
@@ -37,12 +37,25 @@ namespace DesARMA.CombinedResponseWindows
         {
             try
             {
-                CombinedResponseWindows.EntryOfPersonsInvolvedInTheCombinedRegistersWindow 
-                    entryOfPersonsInvolvedInTheCombinedRegistersWindow
-                    = new CombinedResponseWindows.EntryOfPersonsInvolvedInTheCombinedRegistersWindow(modelContext, main, listNumIn);
+                this.DialogResult = true;
+                //CombinedResponseWindows.EntryOfPersonsInvolvedInTheCombinedRegistersWindow 
+                //    entryOfPersonsInvolvedInTheCombinedRegistersWindow
+                //    = new CombinedResponseWindows.EntryOfPersonsInvolvedInTheCombinedRegistersWindow(modelContext, main, listNumIn);
 
-                entryOfPersonsInvolvedInTheCombinedRegistersWindow.ShowDialog();
-                this.Hide();
+
+                ////this.Hide();
+                //this.Visibility = Visibility.Hidden;
+                //if (entryOfPersonsInvolvedInTheCombinedRegistersWindow.ShowDialog() == true)
+                //{
+                //    this.DialogResult = true;
+                //    //this.Close();
+                //}
+                //else
+                //{
+                //    this.Visibility = Visibility.Visible;
+                //}
+
+                ////this.Hide();
             }
             catch(Exception ex)
             {

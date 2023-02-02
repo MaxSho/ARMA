@@ -64,17 +64,17 @@
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0" Content="Тип звернення"/>
-        <Label Grid.Row="1" Grid.Column="0" Content="Орган суб'єкта звернення"/>
-        <Label Grid.Row="2" Grid.Column="0" Content="Адреса органу"/>
-        <Label Grid.Row="3" Grid.Column="0" Content="Посада суб'єкта звернення"/>
-        <Label Grid.Row="4" Grid.Column="0" Content="ПІБ суб'єкта звернення"/>
+        <Label Grid.Row="0" Grid.Column="0" Content="Тип звернення" />
+        <Label Grid.Row="1" Grid.Column="0" Content="Орган суб'єкта звернення" />
+        <Label Grid.Row="2" Grid.Column="0" Content="Адреса органу" />
+        <Label Grid.Row="3" Grid.Column="0" Content="Посада суб'єкта звернення" />
+        <Label Grid.Row="4" Grid.Column="0" Content="ПІБ суб'єкта звернення" />
 
-        <ComboBox Grid.Row="0" Grid.Column="1"/>
-        <TextBox Grid.Row="1" Grid.Column="1"/>
-        <TextBox Grid.Row="2" Grid.Column="1"/>
-        <TextBox Grid.Row="3" Grid.Column="1"/>
-        <TextBox Grid.Row="4" Grid.Column="1"/>
+        <ComboBox Grid.Row="0" Grid.Column="1" Name="idAcc"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Name="agecyDep"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Name="addr"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Name="work"/>
+        <TextBox Grid.Row="4" Grid.Column="1" Name="executor"/>
 
         <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Content="Занести поля в запити" Click="Button_Click"/>
     </Grid>
