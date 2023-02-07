@@ -1206,7 +1206,7 @@ namespace DesARMA
                     number2,
                     vidOrgan,
                     positionSub
-                });
+                }, modelContext);
 
 
 
@@ -2246,7 +2246,7 @@ namespace DesARMA
                     i = 1;
                     int ind = 0;
 
-                    if (Directory.Exists(prevMc.Folder + $"\\На диск")) // Путь
+                    if (Directory.Exists(prevMc.Folder + $"\\На диск")) 
                     {
                         Directory.Delete(prevMc.Folder + $"\\На диск", true);
                     }
@@ -2256,7 +2256,7 @@ namespace DesARMA
 
                     foreach (string itemAbbreviatedName in Reest.abbreviatedName)
                     {
-                        // пошук реєстру за порядеом в папці 
+                        // пошук реєстру за порядком в папці 
                         foreach (var itemDir in dirs)
                         {
                             // якщо знайдено папку з поточним реєстром

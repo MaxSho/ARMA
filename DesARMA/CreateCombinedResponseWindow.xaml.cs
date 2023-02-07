@@ -126,7 +126,7 @@ namespace DesARMA
                 }
                 else
                 {
-                    MessageBox.Show("Перевірка ...");
+                    //MessageBox.Show("Перевірка ...");
                     
                     CombinedResponseWindows.SelectionOfCombinedQueryFieldsWindow win =
                         new CombinedResponseWindows.SelectionOfCombinedQueryFieldsWindow(modelContext, main, listNumbIn);
@@ -142,18 +142,22 @@ namespace DesARMA
                         if (entryOfPersonsInvolvedInTheCombinedRegistersWindow.ShowDialog() == true)
                         {
                             //CreateResp();
+
                             DocResponse docResponse = new DocResponse(GetMainConfigsList(), 
                                 new List<int>() { (entryOfPersonsInvolvedInTheCombinedRegistersWindow.figurants.Count > 1 ? 0 : 1), win.idAcc.SelectedIndex, 0 }, 
                                 new List<string>() {
                                     win.executor.Text,
                                     win.addr.Text,
-                                    main.DtOutInit.ToString(),
-                                    main.DtInput.ToString(),
-                                    main.NumbOutInit,
+                                    GetStringFromDateTime(main.DtOutInit),
+                                    GetStringFromDateTime(main.DtInput),
+                                    main!.NumbOutInit!,
                                     main.NumbInput,
                                     win.agecyDep.Text,
                                     win.work.Text
-                                    });
+                                    },
+                                modelContext);
+                            docResponse.CreateResponseCombinedOther(entryOfPersonsInvolvedInTheCombinedRegistersWindow.numbColorInReestr);
+                            docResponse.ToDiskCombined(entryOfPersonsInvolvedInTheCombinedRegistersWindow.numbColorInReestr);
                             this.DialogResult = true;
                         }
                         else
@@ -198,7 +202,46 @@ namespace DesARMA
         }
         private List<MainConfig> GetMainConfigsList()
         {
-            return (from f in modelContext.MainConfigs where listNumbIn.Contains(f.NumbInput) select f).ToList();
+            var l = (from f in modelContext.MainConfigs 
+                     where listNumbIn.Contains(f.NumbInput) /*&& f.NumbInput != main.NumbInput*/ 
+                     select f).ToList();
+
+
+            for (int i = 0; i < l.Count; i++)
+            {
+                if (l[i].NumbInput == main.NumbInput)
+                {
+                    var m = l[i];
+                    for (int j = i; j > 0; j--)
+                    {
+                        l[j] = l[j - 1];
+                    }
+                    l[0] = m;
+                    break;
+                }
+            }
+
+
+            return l;
+        }
+        private string GetStringFromDateTime(DateTime? dateTime)
+        {
+            if (dateTime == null)
+            {
+                return "";
+            }
+            else
+            {
+                var strD = dateTime.ToString();
+                if (strD == null)
+                {
+                    return "";
+                }
+                else
+                {
+                    return strD.Substring(0, 10);
+                }
+            }
         }
     }
 }
