@@ -18,12 +18,14 @@ namespace DesARMA
         List<MainConfig> listPrevM = null!;
         List<int> listInt = null!;
         List<string> listString = null!;
-        public DocResponse(List<MainConfig> listPrevM, List<int> listInt, List<string> listString)
+        ModelContext modelContext = null!;
+        public DocResponse(List<MainConfig> listPrevM, List<int> listInt, List<string> listString, ModelContext modelContext)
         {
             this.listPrevM = listPrevM;
             this.prevM = listPrevM[0];
             this.listInt = listInt;
             this.listString = listString;
+            this.modelContext = modelContext;
         }
         public void CreateResponseMINIuST()
         {
@@ -660,20 +662,17 @@ namespace DesARMA
             File.Delete(path4);
             System.Windows.MessageBox.Show($"Відповідь збережено в папку:\n{path3}");
         }
-        public void CreateResponseCombined(List<string> listColor)
+        public void CreateResponseCombined(List<int> listColor)
         {
             string path3 = "";
-
-            //Створення документу звіту
-            XWPFDocument doc1;
-
+            string someNumbIn = GetSomeNumbInp();
 
             //Створення зміних, що вставляються в звіт   
-            int indexSub =  listInt[0];          // isCountFig > 1 ? 0 : 1;
+            int indexSub = listInt[0];          // isCountFig > 1 ? 0 : 1;
             int whatIndex = listInt[1];         // typeorgansList.SelectedIndex;
-            string name =   listString[0];        // nameSubTextBox.Text;
+            string name = listString[0];        // nameSubTextBox.Text;
             string address1 = listString[1];    // addressOrgTextBox.Text;
-            string date1 =  listString[2];       // dateRequestDatePicker.Text;
+            string date1 = listString[2];       // dateRequestDatePicker.Text;
             string date2 = listString[3];       // dateInTextBox.Text.Substring(0, 10);
             string number1 = listString[4];     // numberRequestTextBox.Text;
             string number2 = listString[5];     // numberInTextBox.Text;
@@ -682,7 +681,279 @@ namespace DesARMA
             int count_Shemat = listInt[2];
 
 
+            foreach (var itemMC in listPrevM)
+            {
+                //Створення документу звіту поточного запиту
+                XWPFDocument doc1;
+                if (itemMC != null && itemMC.Folder != null)
+                {
+                    Directory.CreateDirectory(itemMC.Folder + "\\Об'єднана відповідь");
 
+                    var exeFath = /*AppDomain.CurrentDomain.BaseDirectory*/  Environment.CurrentDirectory;
+                    var path = System.IO.Path.Combine(exeFath, "Files\\1.docx");
+
+                    FileInfo fileInfo = new FileInfo(path);
+
+                    var path2 = System.IO.Path.Combine(exeFath, "FilesRet\\2.docx");
+                    path3 = itemMC.Folder + $"\\Об'єднана відповідь\\Відповідь {itemMC.NumbInput.Replace('/', '-')}.docx";
+
+                    fileInfo.CopyTo(path3, true);
+
+                    doc1 = new XWPFDocument(OPCPackage.Open(path3));
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show($"Не вдалося відкрити контекст запиту{itemMC!.NumbInput}. Не знайдено його");
+                    continue;
+                }
+
+                bool isExReq = false;
+                if (Directory.Exists(prevM.Folder + "\\Запити"))
+                    if (!(Directory.GetDirectories(prevM.Folder + "\\Запити").Length == 0 &&
+                                        Directory.GetFiles(prevM.Folder + "\\Запити").Length == 0)
+                         )
+                    {
+                        isExReq = true;
+                    }
+
+                //Створення списків реєстрів родовий і давальний
+                List<string> listSRod = new List<string>();
+                List<string> listSDav = new List<string>();
+
+
+                //Збереження даних наявностей реєстрів
+                for (int i = 0; i < listColor.Count; i++)
+                {
+                    if (listColor[i] == 3)
+                    {
+                        listSRod.Add(Reest.sRodov[i]);
+                    }
+                    if (listColor[i] == 2)
+                    {
+                        listSRod.Add(Reest.sDav[i]);
+                    }
+                }
+                //Підрахунок схем
+                if (Directory.Exists($"{prevM.Folder}//{Reest.abbreviatedName.Count + 1 }. Схеми"))
+                {
+                    var countD = Directory.GetDirectories($"{prevM.Folder}//{Reest.abbreviatedName.Count + 1}. Схеми").Length;
+                    var countF = Directory.GetFiles($"{prevM.Folder}//{Reest.abbreviatedName.Count + 1}. Схеми").Length;
+                    count_Shemat = countD + countF;
+                }
+
+                //створення множини ідентичних груп додатків
+                var listNumering = Orders(listSRod);
+                HashSet<int> hset = new HashSet<int>();
+                foreach (var item in listNumering)
+                {
+                    hset.Add(item);
+                }
+
+
+                //Формування параграфів
+                var par = doc1.Paragraphs[22];
+                par.ReplaceText(par.Text, positionSub);
+
+
+                par = doc1.Paragraphs[21];
+                par.ReplaceText(par.Text, vidOrgan);
+
+                par = doc1.Paragraphs[23];
+                par.ReplaceText(par.Text, name);
+
+                par = doc1.Paragraphs[25];
+                par.ReplaceText(par.Text, address1);
+
+                par = doc1.Paragraphs[26];
+                par.ReplaceText(par.Text, "");
+
+                par = doc1.Paragraphs[30];
+                //par.ReplaceText("14.12.2021 № 65/16/6133 (вх. № 6018/27-21 від 21.12.2022)", $"{date1} № {number1} (вх. № {number2} від {date2})");
+                par.ReplaceText("14.12.2021", $"{date1}");
+                par.ReplaceText("65/16/6133", $"{number1}");
+                par.ReplaceText("6018/27-21", $"{number2}");
+                par.ReplaceText("21.12.2022", $"{date2}");
+
+                par.ReplaceText(par.Text, CreateCombinedNumInp(par.Text));
+                
+                par.ReplaceText("зазначених", Reest.sub[indexSub]);
+                par.ReplaceText("осіб", Reest.sub2[indexSub]);
+
+
+                par = doc1.Paragraphs[31];
+                //якщо наявні схеми
+                if (count_Shemat > 0)
+                    par.ReplaceText("додаток 10-11", $"додаток {hset.Count + 1}");
+
+                par.ReplaceText("зазначених", Reest.sub[indexSub]);
+                par.ReplaceText("осіб", Reest.sub2[indexSub]);
+
+                par = doc1.Paragraphs[32];
+                par.ReplaceText("зазначених", Reest.sub[indexSub]);
+                par.ReplaceText("осіб", Reest.sub2[indexSub]);
+
+
+                par = doc1.Paragraphs[33];
+                par.ReplaceText("зазначених", Reest.sub[indexSub]);
+                par.ReplaceText("осіб", Reest.sub2[indexSub]);
+
+                //вставка з бази абзаца про орган
+                par = doc1.Paragraphs[34];
+                if (whatIndex != -1)
+                    par.ReplaceText(par.Text, Reest.organs[whatIndex]);
+                else
+                    par.ReplaceText(par.Text, Reest.organs[0]);
+
+                //додати пусті абзаци в кінець
+                for (int i = 0; i < listSRod.Count; i++)
+                {
+                    var tmpParagraph = doc1.CreateParagraph();
+                    tmpParagraph.Alignment = ParagraphAlignment.BOTH;
+                    tmpParagraph.IndentationFirstLine = 570;
+                    var tmpRun = tmpParagraph.CreateRun();
+                    tmpRun.FontSize = 14;
+                }
+                // пересунуть 1 ліст
+                for (int i = doc1.Paragraphs.Count - listSRod.Count - 1; i >= 31; i--)
+                {
+                    var tmpParagraph = doc1.Paragraphs[i];
+                    doc1.SetParagraph(tmpParagraph, i + listSRod.Count);
+                }
+
+                // засунуть 1 ліст
+                int count_dodat = 0;
+                //var listNumering = Orders(listSRod);
+
+                foreach (var item in listSRod)
+                {
+                    var tmpParagraph = doc1.CreateParagraph();
+                    doc1.SetParagraph(tmpParagraph, 31 + count_dodat);
+                    tmpParagraph.IndentationFirstLine = 570;
+                    tmpParagraph.Alignment = ParagraphAlignment.BOTH;
+                    var tmpRun = tmpParagraph.CreateRun();
+                    tmpRun.AppendText($"{count_dodat + 1}) ");
+                    if (count_dodat == listSRod.Count - 1)
+                        tmpRun.AppendText($"{item} (додаток {listNumering[count_dodat]}).");
+                    else
+                        tmpRun.AppendText($"{item} (додаток {listNumering[count_dodat]});");
+
+
+                    tmpRun.FontSize = 14;
+                    count_dodat++;
+                }
+                //remove
+                for (int i = 0; i < listSRod.Count; i++)
+                {
+                    int pPos = doc1.GetPosOfParagraph(doc1.Paragraphs[doc1.Paragraphs.Count - 1]);
+                    doc1.RemoveBodyElement(pPos);
+                }
+
+                // в кінець 2 ліст пустий
+                for (int i = 0; i < listSDav.Count; i++)
+                {
+                    var tmpParagraph = doc1.CreateParagraph();
+                    tmpParagraph.Alignment = ParagraphAlignment.BOTH;
+                    tmpParagraph.IndentationFirstLine = 570;
+                    var tmpRun = tmpParagraph.CreateRun();
+                    tmpRun.FontSize = 14;
+                }
+
+                // пересунуть 2 ліст
+                for (int i = doc1.Paragraphs.Count - listSDav.Count - 1; i >= 33 + listSRod.Count; i--)
+                {
+                    var tmpParagraph = doc1.Paragraphs[i];
+                    doc1.SetParagraph(tmpParagraph, i + listSDav.Count);
+                }
+
+                // встувить 2 ліст
+                for (int i = 0; i < listSDav.Count; i++)
+                {
+                    var tmpParagraph = doc1.CreateParagraph();
+                    doc1.SetParagraph(tmpParagraph, 33 + listSRod.Count + i);
+                    tmpParagraph.IndentationFirstLine = 570;
+                    tmpParagraph.Alignment = ParagraphAlignment.BOTH;
+                    var tmpRun = tmpParagraph.CreateRun();
+
+
+
+                    if (i == listSDav.Count - 1)
+                        tmpRun.AppendText($"- {listSDav[i]}.");
+                    else
+                        tmpRun.AppendText($"- {listSDav[i]};");
+
+
+
+                    tmpRun.FontSize = 14;
+                }
+
+
+                //remove
+                for (int i = 0; i < listSDav.Count; i++)
+                {
+                    int pPos = doc1.GetPosOfParagraph(doc1.Paragraphs[doc1.Paragraphs.Count - 1]);
+                    doc1.RemoveBodyElement(pPos);
+                }
+
+
+                par = doc1.Paragraphs[doc1.Paragraphs.Count - 7];
+                par.ReplaceText(par.Text, $"Примірник № 1 - {vidOrgan}");
+
+
+
+
+                int indexDel = 0;
+                if (count_Shemat == 0)
+                {
+                    indexDel = 33 + listSRod.Count + listSDav.Count;
+                    for (int i = 32 + listSRod.Count; i < doc1.Paragraphs.Count; i++)
+                    {
+                        var tmpParagraph = doc1.Paragraphs[i];
+                        doc1.SetParagraph(tmpParagraph, i - 1);
+                    }
+                    doc1.SetParagraph(doc1.Paragraphs[0], doc1.Paragraphs.Count - 1);
+                }
+                else
+                {
+                    indexDel = 34 + listSRod.Count + listSDav.Count;
+                }
+
+
+                if (!isExReq)
+                {
+                    for (int i = indexDel; i < doc1.Paragraphs.Count; i++)
+                    {
+                        var tmpParagraph = doc1.Paragraphs[i];
+                        doc1.SetParagraph(tmpParagraph, i - 1);
+                    }
+                    doc1.SetParagraph(doc1.Paragraphs[0], doc1.Paragraphs.Count - 1);
+                }
+
+
+                var path4 = prevM.Folder + "\\Відповідь\\Відповідь.docx";
+
+                //Збереження звіта 
+                using (FileStream sw = File.Create(path4))
+                {
+                    doc1.Write(sw);
+                    // doc1.Close();
+                }
+
+                doc1.Close();
+                File.Delete(path4);
+                System.Windows.MessageBox.Show($"Відповідь збережено в папку:\n{path3}");
+
+            }
+
+        }
+        private string GetSomeNumbInp()
+        {
+            if (listPrevM == null || listPrevM.Count == 0) return "";
+            string retStr = listPrevM.FirstOrDefault()!.NumbInput.Replace('/', '-');
+            foreach (var item in listPrevM)
+            {
+                retStr += ", " + item.NumbInput.Replace('/', '-');
+            }
+            return retStr;
         }
         private List<int> Orders(List<string> listSRod)
         {
@@ -726,6 +997,19 @@ namespace DesARMA
             return false;
         }
         
+        private string CreateCombinedNumInp(string strInp)
+        {
+            foreach (var itemPrevM in listPrevM)
+            {
+                var main = (from m in modelContext.Mains where m.NumbInput == itemPrevM.NumbInput select m).First();
+                if(main != null)
+                {
+                    strInp = strInp.Insert(strInp.IndexOf("щодо") - 1, $", {main.DtOutInit} № {main.NumbOutInit} (вх. № {main.NumbInput} від {main.DtInput})");
+                }
+                
+            }
+            return strInp;
+        }
     }
 
 }

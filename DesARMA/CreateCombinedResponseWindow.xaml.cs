@@ -142,7 +142,7 @@ namespace DesARMA
                         if (entryOfPersonsInvolvedInTheCombinedRegistersWindow.ShowDialog() == true)
                         {
                             //CreateResp();
-                            DocResponse docResponse = new DocResponse(GetMainConfigsList(), 
+                            DocResponse docResponse = new DocResponse(GetMainConfigsList(),
                                 new List<int>() { (entryOfPersonsInvolvedInTheCombinedRegistersWindow.figurants.Count > 1 ? 0 : 1), win.idAcc.SelectedIndex, 0 }, 
                                 new List<string>() {
                                     win.executor.Text,
@@ -153,7 +153,8 @@ namespace DesARMA
                                     main.NumbInput,
                                     win.agecyDep.Text,
                                     win.work.Text
-                                    });
+                                    },
+                                modelContext);
                             this.DialogResult = true;
                         }
                         else

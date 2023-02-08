@@ -1206,7 +1206,8 @@ namespace DesARMA
                     number2,
                     vidOrgan,
                     positionSub
-                });
+                },
+                                modelContext);
 
 
 
@@ -2290,8 +2291,8 @@ namespace DesARMA
                     if (!(Directory.GetDirectories(prevMc.Folder + "\\" + $"{i}. Схеми").Length == 0 &&
                                      Directory.GetFiles(prevMc.Folder + "\\" + $"{i}. Схеми").Length == 0)){
 
-                        Directory.CreateDirectory(prevMc.Folder + $"\\На диск\\Додаток {listNumering.Count + 1}");
-                        perebor_updates(prevMc.Folder + $"\\{i}. Схеми", prevMc.Folder + $"\\На диск\\Додаток {listNumering.Count + 1}");
+                        Directory.CreateDirectory(prevMc.Folder + $"\\На диск\\Додаток {listNumering.Last() + 1}");
+                        perebor_updates(prevMc.Folder + $"\\{i}. Схеми", prevMc.Folder + $"\\На диск\\Додаток {listNumering.Last() + 1}");
 
                     }
 

@@ -317,14 +317,15 @@
         </ScrollViewer>
         <Label Grid.Column="4" Grid.Row="2" Padding="15 15 0 0" Background="{StaticResource 1ColorStyle}" 
                x:Name="contShLabel" Grid.ColumnSpan="2" FontSize="10">Автоматизація/Контроль/Схема</Label>
-        <ScrollViewer  Grid.Column="5" Grid.Row="3" Grid.RowSpan="21" MouseWheel="panelMouseWheel" 
-                       VerticalScrollBarVisibility="Auto" >
+        <!--<ScrollViewer  Grid.Column="5" Grid.Row="3" Grid.RowSpan="21" MouseWheel="panelMouseWheel" 
+                       VerticalScrollBarVisibility="Auto" >-->
             <!--HorizontalScrollBarVisibility="Visible"-->
-            <StackPanel   
-                    Background="{StaticResource 1ColorStyle}"  >
-            
-                <TreeView x:Name="treeView1" 
-                  Background="#2C3333">
+            <!--<StackPanel   Grid.Column="5" Grid.Row="3" Grid.RowSpan="21"
+                    Background="{StaticResource 1ColorStyle}"  >-->
+
+            <TreeView x:Name="treeView1" Grid.Column="5" Grid.Row="3" Grid.RowSpan="21"
+                    Background="{StaticResource 1ColorStyle}"
+                  >
                     <!--<CheckBox Checked="CheckBox_Checked" >
                         <TreeViewItem Foreground="{StaticResource 4ColorStyle}" Header="1. Приклад" >
                             <TreeViewItem Foreground="{StaticResource 4ColorStyle}" Header="1.xlsx"  />
@@ -338,8 +339,8 @@
                         </CheckBox>
                     </CheckBox>-->
                 </TreeView>
-            </StackPanel>
-        </ScrollViewer>
+            <!--</StackPanel>-->
+        <!--</ScrollViewer>-->
         <!--Click="Button_ClickRespon"-->
         <Button x:Name="Button1" Content="Відповідь"  Grid.ColumnSpan="1" MouseEnter="Button1_GotMouseCapture"
                 Grid.Column="3" Grid.Row="23" Background="{StaticResource 5ColorStyle}"
