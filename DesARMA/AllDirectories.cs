@@ -474,6 +474,10 @@ namespace DesARMA
                     ret.Add(false);
                 }
             }
+            while (ret.Count < Reest.abbreviatedName.Count + 1)
+            {
+                ret.Add(false);
+            }
             return ret;
         }
         private string? GetStringFromBools(List<bool> list)
