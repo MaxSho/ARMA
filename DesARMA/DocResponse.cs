@@ -943,7 +943,7 @@ namespace DesARMA
             }
 
 
-            System.Windows.MessageBox.Show($"Відповідь збережено в папку:\n{path3}");
+            //System.Windows.MessageBox.Show($"Відповідь збережено в папку:\n{path3}");
 
         }
         private string GetSomeNumbInp()
@@ -1026,7 +1026,7 @@ namespace DesARMA
                 }
             }
         }
-        public void ToDiskCombined(List<int> listColor)
+        public void ToDiskCombined(List<int> listColor, int numColorShema)
         {
             if (Directory.Exists(prevM.Folder))
             {
@@ -1062,7 +1062,15 @@ namespace DesARMA
                     }
                 }
 
-                
+                if (numColorShema == 3)
+                {
+                    Directory.CreateDirectory(prevM.Folder + $"\\Об'єднана відповідь\\На диск\\Додаток {listNumering.LastOrDefault() + 1}");
+                    for (int j = 0; j < listPrevM.Count; j++)
+                    {
+                        if (Directory.Exists(listPrevM[j].Folder + $"\\{Reest.abbreviatedName.Count + 1}. Схеми"))
+                             perebor_updates(listPrevM[j].Folder + $"\\{Reest.abbreviatedName.Count + 1}. Схеми", prevM.Folder + $"\\Об'єднана відповідь\\На диск\\Додаток {listNumering.LastOrDefault() + 1}");
+                    }
+                }
 
                 for (int i = 1; i < listPrevM.Count; i++)
                 {

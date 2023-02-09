@@ -160,7 +160,7 @@ namespace DesARMA
                         {
                             //CreateResp();
                             DocResponse docResponse = new DocResponse(GetMainConfigsList(),
-                                new List<int>() { (entryOfPersonsInvolvedInTheCombinedRegistersWindow.figurants.Count > 1 ? 0 : 1), win.idAcc.SelectedIndex == 2 ? 3 : win.idAcc.SelectedIndex, 0 }, 
+                                new List<int>() { (entryOfPersonsInvolvedInTheCombinedRegistersWindow.figurants.Count > 1 ? 0 : 1), win.idAcc.SelectedIndex == 2 ? 3 : win.idAcc.SelectedIndex, entryOfPersonsInvolvedInTheCombinedRegistersWindow.numbColorShema == 3 ? 1:0 }, 
                                 new List<string>() {
                                     win.executorInit.Text,
                                     win.addr.Text,
@@ -173,7 +173,9 @@ namespace DesARMA
                                     },
                                 modelContext);
                             docResponse.CreateResponseCombinedOther(entryOfPersonsInvolvedInTheCombinedRegistersWindow.numbColorInReestr);
-                            docResponse.ToDiskCombined(entryOfPersonsInvolvedInTheCombinedRegistersWindow.numbColorInReestr);
+                            docResponse.ToDiskCombined(entryOfPersonsInvolvedInTheCombinedRegistersWindow.numbColorInReestr,
+                                entryOfPersonsInvolvedInTheCombinedRegistersWindow.numbColorShema
+                                );
                             this.DialogResult = true;
                         }
                         else

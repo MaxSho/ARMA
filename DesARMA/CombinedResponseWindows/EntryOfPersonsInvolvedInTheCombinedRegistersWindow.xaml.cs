@@ -33,7 +33,7 @@ namespace DesARMA.CombinedResponseWindows
     {
         List<string> listNumIn;
         public List<int> numbColorInReestr;
-        int numbColorShema;
+        public int numbColorShema;
         ModelContext modelContext;
         Main main;
         public List<Figurant> figurants;
