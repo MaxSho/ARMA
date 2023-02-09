@@ -33,6 +33,7 @@ namespace DesARMA.CombinedResponseWindows
     {
         List<string> listNumIn;
         public List<int> numbColorInReestr;
+        int numbColorShema;
         ModelContext modelContext;
         Main main;
         public List<Figurant> figurants;
@@ -43,11 +44,17 @@ namespace DesARMA.CombinedResponseWindows
             this.listNumIn = listNumIn;
             this.modelContext = modelContext;
             this.main = main;
+            numbColorShema = 3;
             figurants = (from f in modelContext.Figurants where listNumIn.Contains(f.NumbInput) select f).ToList();
 
             ToCheckFolders();
+            ToCheckFoldersShema();
+
             CreateTreeView1();
+            CreateTreeViewShema();
+
             SetColor();
+            SetColorShema();
 
         }
         private void SetColor()
@@ -107,6 +114,60 @@ namespace DesARMA.CombinedResponseWindows
 
             }
         }
+        private void SetColorShema()
+        {
+
+            var st = treeViewShema.Items[0] as StackPanel;
+            if (st != null)
+            {
+                var ti = st.Children[2] as TreeViewItem;
+                if (ti != null)
+                {
+                    var tiH = ti.Header as TextBlock;
+                    if (tiH != null)
+                    {
+                        if (numbColorShema == 3)
+                        {
+                            tiH.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush; ;
+                        }
+                        else if (numbColorShema == 2)
+                        {
+                            tiH.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush;// new SolidColorBrush(Colors.White);
+                        }
+                        else if (numbColorShema == 1)
+                        {
+                            tiH.Foreground = this.Resources["RedEmpty"] as SolidColorBrush; //new SolidColorBrush(Colors.Red);
+                        }
+                    }
+                    foreach (var itemF in ti.Items)
+                    {
+                        var stF = itemF as StackPanel;
+                        if (stF != null)
+                        {
+                            foreach (var itemTB in stF.Children)
+                            {
+                                var cutTB = itemTB as TextBlock;
+                                if (cutTB != null)
+                                {
+                                    if (numbColorShema == 3)
+                                    {
+                                        cutTB.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush; ;
+                                    }
+                                    else if (numbColorShema == 2)
+                                    {
+                                        cutTB.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush;// new SolidColorBrush(Colors.White);
+                                    }
+                                    else if (numbColorShema == 1)
+                                    {
+                                        cutTB.Foreground = this.Resources["RedEmpty"] as SolidColorBrush; //new SolidColorBrush(Colors.Red);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         private void CreateTreeView1()
         {
             treeView1.Items.Add($"Контроль/Схема");
@@ -116,6 +177,11 @@ namespace DesARMA.CombinedResponseWindows
             {
                 treeView1.Items.Add(CreateItem(i + 1));
             }
+        }
+        private void CreateTreeViewShema()
+        {
+            treeViewShema.Items.Add(CreateItemShema(Reest.abbreviatedName.Count + 1));
+            
         }
         private void ToCheckFolders()
         {
@@ -167,7 +233,39 @@ namespace DesARMA.CombinedResponseWindows
             }
             this.numbColorInReestr = numbColorInReestr;
         }
+        private void ToCheckFoldersShema()
+        {
+            int curNumCol = 0;
+            foreach (var itemNumbIn in listNumIn)
+            {
+                var folderCurrentNumbIn = (from f in modelContext.MainConfigs where f.NumbInput == itemNumbIn select f.Folder).First();
+                if (folderCurrentNumbIn != null)
+                {
+                    if (Directory.Exists(folderCurrentNumbIn))
+                    {
+                        if(Directory.Exists($"{folderCurrentNumbIn}\\{Reest.abbreviatedName.Count + 1}. Схеми"))
+                        {
+                            if (Directory.GetDirectories($"{folderCurrentNumbIn}\\{Reest.abbreviatedName.Count + 1}. Схеми").Length == 0
+                                && Directory.GetFiles($"{folderCurrentNumbIn}\\{Reest.abbreviatedName.Count + 1}. Схеми").Length == 0)
+                            {
+                                curNumCol = Math.Max(curNumCol, 2);
+                            }
+                            else
+                            {
+                                curNumCol = Math.Max(curNumCol, 3);
+                            }
+                        }
+                        else
+                        {
+                            curNumCol = Math.Max(curNumCol, 1);
+                        }
+                    }
+                }
+            }
 
+                       
+            this.numbColorShema = curNumCol;
+        }
         private StackPanel CreateItem(int num)
         {
             StackPanel stackPanel = new StackPanel();
@@ -180,6 +278,18 @@ namespace DesARMA.CombinedResponseWindows
 
             return stackPanel;
         }
+        private StackPanel CreateItemShema(int num)
+        {
+            StackPanel stackPanel = new StackPanel();
+            stackPanel.Orientation = Orientation.Horizontal;
+            stackPanel.Margin = new Thickness(0, 10, 0, 0);
+
+            stackPanel.Children.Add(CreateCheckBoxShema(CheckEnum.Control, num));
+            stackPanel.Children.Add(CreateCheckBoxShema(CheckEnum.Shema, num));
+            stackPanel.Children.Add(CreateTreeViewItemShema(num));
+
+            return stackPanel;
+        }
         private CheckBox CreateCheckBox(CheckEnum checkEnum, int num)
         {
             CheckBox checkBox = new CheckBox();
@@ -187,6 +297,14 @@ namespace DesARMA.CombinedResponseWindows
             checkBox.Tag = new Tuple<CheckEnum, int>(checkEnum, num);
             checkBox.Click += CheckBoxClick;
             return checkBox;   
+        }
+        private CheckBox CreateCheckBoxShema(CheckEnum checkEnum, int num)
+        {
+            CheckBox checkBox = new CheckBox();
+            checkBox.Margin = new Thickness(5, 0, 0, 0);
+            checkBox.Tag = new Tuple<CheckEnum, int>(checkEnum, num);
+            checkBox.Click += CheckBoxClickShema;
+            return checkBox;
         }
         private List<UIElement> CreateUIElementFigurant(Figurant figurant)
         {
@@ -336,6 +454,13 @@ namespace DesARMA.CombinedResponseWindows
             textBlock.Text = $"{num}. {Reest.abbreviatedName[num - 1]}";
             return textBlock;
         }
+        private TextBlock CreateTextBlockShema(int num)
+        {
+            TextBlock textBlock = new TextBlock();
+            textBlock.Margin = new Thickness(10, 0, 0, 0);
+            textBlock.Text = $"{num}. Схеми";
+            return textBlock;
+        }
         private StackPanel CreateStackPanelFigurants(Figurant figurant, int num)
         {
             StackPanel stackPanel = new StackPanel();
@@ -345,6 +470,21 @@ namespace DesARMA.CombinedResponseWindows
             stackPanel.Children.Add(CreateCheckBox(CheckEnum.Yes, num));
             stackPanel.Children.Add(CreateCheckBox(CheckEnum.No, num));
             
+            foreach (var item in CreateUIElementFigurant(figurant))
+            {
+                stackPanel.Children.Add(item);
+            }
+            return stackPanel;
+        }
+        private StackPanel CreateStackPanelFigurantsShema(Figurant figurant, int num)
+        {
+            StackPanel stackPanel = new StackPanel();
+            stackPanel.Orientation = Orientation.Horizontal;
+
+
+            stackPanel.Children.Add(CreateCheckBoxShema(CheckEnum.Yes, num));
+            stackPanel.Children.Add(CreateCheckBoxShema(CheckEnum.No, num));
+
             foreach (var item in CreateUIElementFigurant(figurant))
             {
                 stackPanel.Children.Add(item);
@@ -362,6 +502,20 @@ namespace DesARMA.CombinedResponseWindows
             foreach (var itemF in figurants)
             {
                 treeViewItem.Items.Add(CreateStackPanelFigurants(itemF, num));
+            }
+            return treeViewItem;
+        }
+        private TreeViewItem CreateTreeViewItemShema(int num)
+        {
+            TreeViewItem treeViewItem = new TreeViewItem();
+
+            treeViewItem.Margin = new Thickness(0, -2, 0, 0);
+            treeViewItem.Header = CreateTextBlockShema(num);
+
+            treeViewItem.Items.Add(CreateTextBoxYesNo());
+            foreach (var itemF in figurants)
+            {
+                treeViewItem.Items.Add(CreateStackPanelFigurantsShema(itemF, num));
             }
             return treeViewItem;
         }
@@ -402,6 +556,40 @@ namespace DesARMA.CombinedResponseWindows
                         else if (checkTuple.Item1 == CheckEnum.No)
                         {
                             IfhaveTwoCheck(checkTuple.Item2, CheckEnum.No);
+                        }
+                    }
+                }
+            }
+        }
+        private void CheckBoxClickShema(object sender, RoutedEventArgs e)
+        {
+            CheckBox checkBox = sender as CheckBox;
+            if (checkBox != null)
+            {
+                if (checkBox.Tag != null)
+                {
+                    var checkTuple = checkBox.Tag as Tuple<CheckEnum, int>;
+                    if (checkTuple != null)
+                    {
+                        if (checkTuple.Item1 == CheckEnum.Control)
+                        {
+                            //checkBox.IsChecked = false;
+                            IfhaveTwoCheckShema(checkTuple.Item2, CheckEnum.Control);
+                        }
+                        else if (checkTuple.Item1 == CheckEnum.Shema)
+                        {
+                            if (numbColorShema == 1)
+                            {
+                                checkBox.IsChecked = false;
+                            }
+                        }
+                        else if (checkTuple.Item1 == CheckEnum.Yes)
+                        {
+                            IfhaveTwoCheckShema(checkTuple.Item2, CheckEnum.Yes);
+                        }
+                        else if (checkTuple.Item1 == CheckEnum.No)
+                        {
+                            IfhaveTwoCheckShema(checkTuple.Item2, CheckEnum.No);
                         }
                     }
                 }
@@ -502,6 +690,105 @@ namespace DesARMA.CombinedResponseWindows
                     }
                     
                     
+                    chC.IsChecked = isAllCh;
+                }
+            }
+        }
+        void IfhaveTwoCheckShema(int num, CheckEnum checkEnum)
+        {
+            var st = treeViewShema.Items[0] as StackPanel;
+            if (st != null)
+            {
+                var chC = st.Children[0] as CheckBox;
+                var chS = st.Children[1] as CheckBox;
+                var tri = st.Children[2] as TreeViewItem;
+                if (tri != null && chC != null)
+                {
+                    var tiH = tri.Header as TextBlock;
+                    if (tiH != null)
+                    {
+                        if (numbColorShema == 3)
+                        {
+                            tiH.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush;
+                        }
+                        else if (numbColorShema == 2)
+                        {
+                            tiH.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush;  // new SolidColorBrush(Colors.White);
+                        }
+                        else if (numbColorShema == 1)
+                        {
+                            tiH.Foreground = this.Resources["RedEmpty"] as SolidColorBrush;     //new SolidColorBrush(Colors.Red);
+                        }
+                    }
+                    var isAllCh = true;
+                    foreach (var itemF in tri.Items)
+                    {
+                        var stF = itemF as StackPanel;
+                        if (stF != null)
+                        {
+                            var chYes = stF.Children[0] as CheckBox;
+                            var chNo = stF.Children[1] as CheckBox;
+                            if (chYes.IsChecked.Value && chNo.IsChecked.Value)
+                            {
+                                if (checkEnum == CheckEnum.Yes)
+                                {
+                                    chNo.IsChecked = false;
+                                }
+                                else if (checkEnum == CheckEnum.No)
+                                {
+                                    chYes.IsChecked = false;
+                                }
+                            }
+
+                            if (!chNo.IsChecked.Value && !chYes.IsChecked.Value)
+                            {
+                                foreach (var itemTB in stF.Children)
+                                {
+                                    var cutTB = itemTB as TextBlock;
+                                    if (cutTB != null)
+                                    {
+                                        if (numbColorShema == 3)
+                                        {
+                                            cutTB.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush;
+                                        }
+                                        else if (numbColorShema == 2)
+                                        {
+                                            cutTB.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush; //new SolidColorBrush(Colors.White);
+                                        }
+                                        else if (numbColorShema == 1)
+                                        {
+
+                                            cutTB.Foreground = this.Resources["RedEmpty"] as SolidColorBrush; //new SolidColorBrush(Colors.Red);
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (numbColorShema != 1)
+                                {
+                                    foreach (var itemTB in stF.Children)
+                                    {
+                                        var cutTB = itemTB as TextBlock;
+                                        if (cutTB != null)
+                                        {
+                                            cutTB.Foreground = this.Resources["1ColorStyle"] as SolidColorBrush;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    chNo.IsChecked = false;
+                                    chYes.IsChecked = false;
+                                }
+
+                            }
+
+                            isAllCh = isAllCh && (chYes.IsChecked.Value || chNo.IsChecked.Value);
+                        }
+                    }
+
+
                     chC.IsChecked = isAllCh;
                 }
             }
@@ -608,6 +895,7 @@ namespace DesARMA.CombinedResponseWindows
                 {
                     strReest += item + "\n";
                 }
+                
                 MessageBox.Show("Не відмічено контроль в таких реєстрах:\n" + strReest);
             }
         }
@@ -626,6 +914,18 @@ namespace DesARMA.CombinedResponseWindows
                         {
                             listNoContr.Add(i + ". " +Reest.abbreviatedName[i - 1]);
                         }
+                    }
+                }
+            }
+            if(numbColorShema != 1)
+            {
+                var st = treeViewShema.Items[0] as StackPanel;
+                if (st != null)
+                {
+                    var chC = st.Children[0] as CheckBox;
+                    if (!chC!.IsChecked!.Value)
+                    {
+                        listNoContr.Add(Reest.abbreviatedName.Count + 1 + ". Схеми");
                     }
                 }
             }
