@@ -67,7 +67,6 @@ namespace DesARMA
 
         public static string CreateMD5(string input)
         {
-            // Use input string to calculate MD5 hash
             using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
             {
                 byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
@@ -76,6 +75,7 @@ namespace DesARMA
                 return Convert.ToHexString(hashBytes); // .NET 5 +
             }
         }
+
         public MainWindow()
         {
             try
