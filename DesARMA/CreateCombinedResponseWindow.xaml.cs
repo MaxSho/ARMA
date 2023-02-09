@@ -145,13 +145,13 @@ namespace DesARMA
                             DocResponse docResponse = new DocResponse(GetMainConfigsList(),
                                 new List<int>() { (entryOfPersonsInvolvedInTheCombinedRegistersWindow.figurants.Count > 1 ? 0 : 1), win.idAcc.SelectedIndex, 0 }, 
                                 new List<string>() {
-                                    win.executor.Text,
+                                    win.executorInit.Text,
                                     win.addr.Text,
                                     GetStringFromDateTime(main.DtOutInit),
                                     GetStringFromDateTime(main.DtInput),
                                     main!.NumbOutInit!,
                                     main.NumbInput,
-                                    win.agecyDep.Text,
+                                    win.agencyDep.Text,
                                     win.work.Text
                                     },
                                 modelContext);

@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DesARMA.CombinedResponseWindows"
         mc:Ignorable="d"
-        Title="SelectionOfCombinedQueryFieldsWindow" Height="450" Width="800">
+        Title="Вибір полей для вставки в об'єднану відповідь" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <SolidColorBrush x:Key="1ColorStyle" Color="#2C3333" />
         <SolidColorBrush x:Key="2ColorStyle" Color="#395B64" />
@@ -19,6 +20,7 @@
             <Setter Property="Label.Foreground" Value="{StaticResource 3ColorStyle}" />
             <Setter Property="Label.FontFamily" Value="Arial"/>
             <Setter Property="Label.FontSize" Value="16"/>
+            <Setter Property="Padding" Value="15"/>
             <Setter Property="FlowDirection" Value="RightToLeft"/>
         </Style>
         <Style TargetType="TextBlock">
@@ -26,12 +28,14 @@
             <Setter Property="Label.Foreground" Value="{StaticResource 3ColorStyle}" />
             <Setter Property="Label.FontFamily" Value="Arial"/>
             <Setter Property="Label.FontSize" Value="16"/>
+            
         </Style>
         <Style TargetType="TextBox">
             <Setter Property="Label.Background" Value="{StaticResource 3ColorStyle}" />
             <Setter Property="Label.Foreground" Value="{StaticResource 1ColorStyle}" />
             <Setter Property="Label.FontFamily" Value="Arial"/>
             <Setter Property="Label.FontSize" Value="16"/>
+            <Setter Property="Padding" Value="5"/>
         </Style>
         <Style TargetType="CheckBox">
             <Setter Property="Label.Background" Value="{StaticResource 3ColorStyle}" />
@@ -70,11 +74,11 @@
         <Label Grid.Row="3" Grid.Column="0" Content="Посада суб'єкта звернення" />
         <Label Grid.Row="4" Grid.Column="0" Content="ПІБ суб'єкта звернення" />
 
-        <ComboBox Grid.Row="0" Grid.Column="1" Name="idAcc"/>
-        <TextBox Grid.Row="1" Grid.Column="1" Name="agecyDep"/>
+        <ComboBox Grid.Row="0" Grid.Column="1" Name="idAcc" FontSize="16"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Name="agencyDep"/>
         <TextBox Grid.Row="2" Grid.Column="1" Name="addr"/>
         <TextBox Grid.Row="3" Grid.Column="1" Name="work"/>
-        <TextBox Grid.Row="4" Grid.Column="1" Name="executor"/>
+        <TextBox Grid.Row="4" Grid.Column="1" Name="executorInit"/>
 
         <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Content="Занести поля в запити" Click="Button_Click"/>
     </Grid>
