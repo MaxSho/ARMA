@@ -77,7 +77,6 @@ namespace DesARMA
             }
         }
 
-
         public MainWindow()
         {
             try
