@@ -1043,6 +1043,7 @@ namespace DesARMA
 
                 var listNumering = Orders(listR);
 
+                //перестворити папку на диск
                 if (Directory.Exists(prevM.Folder + $"\\Об'єднана відповідь\\На диск"))
                 {
                     Directory.Delete(prevM.Folder + $"\\Об'єднана відповідь\\На диск", true);
@@ -1060,6 +1061,8 @@ namespace DesARMA
                             perebor_updates(listPrevM[j].Folder + $"\\{listInd[i] + 1}. " + Reest.abbreviatedName[listInd[i]], prevM.Folder + $"\\Об'єднана відповідь\\На диск\\Додаток {listNumering[i]}");
                     }
                 }
+
+                
 
                 for (int i = 1; i < listPrevM.Count; i++)
                 {

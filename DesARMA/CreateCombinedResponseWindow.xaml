@@ -53,8 +53,8 @@
             <RowDefinition Height="10*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" HorizontalAlignment="Center" TextWrapping="Wrap">
-            На основі запиту № 0000/00-00 знайдено наступні запити, що мають спільний з ним номер КП, за 2023 рік adsdas:
+        <TextBlock Grid.Row="0" HorizontalAlignment="Center" TextWrapping="Wrap" Name="headerTextBlock">
+            На основі запиту № 0000/00-00 знайдено наступні запити, що мають спільний з ним номер КП, за 2023 рік adidas:
         </TextBlock>
         
         <Button Content="Створити об'єднаний запит" Grid.Row="2" Click="Create_Button_Click"></Button>

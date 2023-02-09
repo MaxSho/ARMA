@@ -76,16 +76,33 @@ namespace DesARMA
             foreach (var mainItem in mains)
             {
                 CheckBox ch = new CheckBox();
+
+                if(mainItem.NumbInput == main.NumbInput)
+                {
+                    ch.IsChecked = true;
+                }
+
                 ch.Content = $"{mainItem.NumbInput}";
                 ch.Tag = mainItem.NumbInput;
                 ch.Click += (x,y) => {
                     inactivityTimer.Stop();
+                    var ch = x as CheckBox;
+                    if(ch != null)
+                    {
+                        if(ch.Content.ToString() == main.NumbInput)
+                        {
+                            ch.IsChecked = true;
+                        }
+                    }
                     inactivityTimer.Start();
                 };
                 ch.HorizontalAlignment = HorizontalAlignment.Center;
                 stackPanel1.Children.Add(ch);
             }
             inactivityTimer.Start();
+
+
+            headerTextBlock.Text = $"На основі запиту № {main.NumbInput} знайдено наступні запити, що мають спільний з ним номер КП, за 2023 рік:";
         }
         public static string GetStringWithZero(string str)
         {
@@ -143,7 +160,7 @@ namespace DesARMA
                         {
                             //CreateResp();
                             DocResponse docResponse = new DocResponse(GetMainConfigsList(),
-                                new List<int>() { (entryOfPersonsInvolvedInTheCombinedRegistersWindow.figurants.Count > 1 ? 0 : 1), win.idAcc.SelectedIndex, 0 }, 
+                                new List<int>() { (entryOfPersonsInvolvedInTheCombinedRegistersWindow.figurants.Count > 1 ? 0 : 1), win.idAcc.SelectedIndex == 2 ? 3 : win.idAcc.SelectedIndex, 0 }, 
                                 new List<string>() {
                                     win.executorInit.Text,
                                     win.addr.Text,
@@ -195,10 +212,7 @@ namespace DesARMA
         {
             inactivityTimer.Stop();
         }
-        private void CreateResp()
-        {
-
-        }
+        
         private List<MainConfig> GetMainConfigsList()
         {
             var l = (from f in modelContext.MainConfigs 
