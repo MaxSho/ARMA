@@ -32,7 +32,7 @@ namespace DesARMA.CombinedResponseWindows
     public partial class EntryOfPersonsInvolvedInTheCombinedRegistersWindow : System.Windows.Window
     {
         List<string> listNumIn;
-        List<int> numbColorInReestr;
+        public List<int> numbColorInReestr;
         ModelContext modelContext;
         Main main;
         public List<Figurant> figurants;
@@ -596,18 +596,40 @@ namespace DesARMA.CombinedResponseWindows
             }
             return null;
         }
-
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
-
-            //TODO
-            //Зробити відповідь
-
-
-
-
-            this.DialogResult = true;
+            var listNoCont = GetListNoControl();
+            if (listNoCont.Count==0)
+                this.DialogResult = true;
+            else
+            {
+                string strReest = "";
+                foreach (var item in listNoCont)
+                {
+                    strReest += item + "\n";
+                }
+                MessageBox.Show("Не відмічено контроль в таких реєстрах:\n" + strReest);
+            }
+        }
+        private List<string> GetListNoControl()
+        {
+            List<string> listNoContr = new List<string>();
+            for (int i = 1; i < treeView1.Items.Count; i++)
+            {
+                if (numbColorInReestr[i-1] != 1)
+                {
+                    var st = treeView1.Items[i] as StackPanel;
+                    if(st != null)
+                    {
+                        var chC = st.Children[0] as CheckBox;
+                        if (!chC!.IsChecked!.Value)
+                        {
+                            listNoContr.Add(i + ". " +Reest.abbreviatedName[i - 1]);
+                        }
+                    }
+                }
+            }
+            return listNoContr;
         }
     }
 }
