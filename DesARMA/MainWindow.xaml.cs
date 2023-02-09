@@ -17,7 +17,7 @@ using System.Windows.Shapes;
 using System.Windows.Xps.Packaging;
 using MyForm = System.Windows.Forms;
 using NPOI.OpenXml4Net.OPC;
-using NPOI.OpenXmlFormats.Wordprocessing;
+using NPOI.OpenXmlFormats.Wordprocessing; 
 using NPOI.Util;
 using NPOI.XWPF.Model;
 using NPOI.XWPF.UserModel;
@@ -64,6 +64,7 @@ namespace DesARMA
         Main CurrentMainDB = null!;
         ModelContext modelContext = new ModelContext();
         public User CurrentUser { get; set; } = null!;
+
         public static string CreateMD5(string input)
         {
             // Use input string to calculate MD5 hash
