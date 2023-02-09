@@ -76,6 +76,8 @@ namespace DesARMA
                 return Convert.ToHexString(hashBytes); // .NET 5 +
             }
         }
+
+
         public MainWindow()
         {
             try
