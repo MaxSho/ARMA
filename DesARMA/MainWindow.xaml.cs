@@ -388,7 +388,8 @@ namespace DesARMA
                 itemButton.Tag = m[i].Id;
                 itemButton.Content = $"Запит: {m[i].NumbInput}";
                 stackPanel1.Children.Insert(0, itemButton);
-                if(i == m.Count - 1)
+                // stackPanel1.Children.Add(itemButton);
+                if (i == m.Count - 1)
                 {
                     currentButton = itemButton;
                 }
@@ -1532,8 +1533,8 @@ namespace DesARMA
                             itemButton.Tag = m.Id;
 
                             itemButton.Content = $"Запит: {m.NumbInput}";
-                            stackPanel1.Children.Insert(0, itemButton);
-
+                            //stackPanel1.Children.Insert(0, itemButton);
+                            stackPanel1.Children.Add(itemButton);
                             i++;
                         }
                     }
@@ -2547,7 +2548,7 @@ namespace DesARMA
         private void Button_ClickCombinedRespon(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
-            System.Windows.MessageBox.Show("В процесі розробки");
+            //System.Windows.MessageBox.Show("В процесі розробки");
             CreateCombinedResponseWindow createCombinedResponseWindow = new CreateCombinedResponseWindow(modelContext, CurrentUser,
                 modelContext!.Mains!.Find(numberInTextBox.Text)!, inactivityTimer);
             createCombinedResponseWindow.ShowDialog();

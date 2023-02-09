@@ -176,6 +176,7 @@ namespace DesARMA
                             docResponse.ToDiskCombined(entryOfPersonsInvolvedInTheCombinedRegistersWindow.numbColorInReestr,
                                 entryOfPersonsInvolvedInTheCombinedRegistersWindow.numbColorShema
                                 );
+                            MessegeAboutCreate();
                             this.DialogResult = true;
                         }
                         else
@@ -257,6 +258,15 @@ namespace DesARMA
                     return strD.Substring(0, 10);
                 }
             }
+        }
+        private void MessegeAboutCreate()
+        {
+            string retStr = listNumbIn.FirstOrDefault();
+            for (int i = 1; i < listNumbIn.Count; i++)
+            {
+                retStr += ", " + listNumbIn[i];
+            }
+            MessageBox.Show("Створено папку \"Об'єднана відповідь\" разом з додатками (Об'єднана відповідь\\На диск) в папках таких запитів:\n" + retStr);
         }
     }
 }

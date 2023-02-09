@@ -56,6 +56,6 @@
         </Grid.RowDefinitions>
         <TreeView Grid.Row="0" Name="treeView1" Background="{StaticResource 2ColorStyle}"/>
         <TreeView Grid.Row="1" Name="treeViewShema" Background="{StaticResource 2ColorStyle}"/>
-        <Button Grid.Row="2" Content="Enter" Click="Button_Click"/>
+        <Button Grid.Row="2" Content="Створити об'єднану відповідь" Click="Button_Click"/>
     </Grid>
 </Window>

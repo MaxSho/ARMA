@@ -148,7 +148,7 @@ namespace DesARMA
             //Формування параграфів
 
 
-            MessageBox.Show($"{Reest.sub2[indexSub]}\n\n{doc1.Paragraphs[17].Text}\n\n{doc1.Paragraphs[20].Text}\n\n{doc1.Paragraphs[21].Text}\n\n{doc1.Paragraphs[19].Text}");
+            //MessageBox.Show($"{Reest.sub2[indexSub]}\n\n{doc1.Paragraphs[17].Text}\n\n{doc1.Paragraphs[20].Text}\n\n{doc1.Paragraphs[21].Text}\n\n{doc1.Paragraphs[19].Text}");
             var par = doc1.Paragraphs[17];
             par.ReplaceText("зазначеній", Reest.sub[indexSub]);
             par.ReplaceText("особі", Reest.sub2[indexSub]);
