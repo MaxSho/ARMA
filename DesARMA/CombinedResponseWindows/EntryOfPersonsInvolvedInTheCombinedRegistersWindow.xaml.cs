@@ -39,22 +39,31 @@ namespace DesARMA.CombinedResponseWindows
         public List<Figurant> figurants;
         public EntryOfPersonsInvolvedInTheCombinedRegistersWindow(ModelContext modelContext, Main main, List<string> listNumIn)
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
 
-            this.listNumIn = listNumIn;
-            this.modelContext = modelContext;
-            this.main = main;
-            numbColorShema = 3;
-            figurants = (from f in modelContext.Figurants where listNumIn.Contains(f.NumbInput) select f).ToList();
+                this.listNumIn = listNumIn;
+                this.modelContext = modelContext;
+                this.main = main;
+                numbColorShema = 3;
+                figurants = (from f in modelContext.Figurants where listNumIn.Contains(f.NumbInput) select f).ToList();
 
-            ToCheckFolders();
-            ToCheckFoldersShema();
+                ToCheckFolders();
+                ToCheckFoldersShema();
 
-            CreateTreeView1();
-            CreateTreeViewShema();
+                CreateTreeView1();
+                CreateTreeViewShema();
 
-            SetColor();
-            SetColorShema();
+                SetColor();
+                SetColorShema();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+
+            }
+            
 
         }
         private void SetColor()
@@ -579,163 +588,194 @@ namespace DesARMA.CombinedResponseWindows
         }
         private void ClickAllFigurant(object sender, RoutedEventArgs e)
         {
-            var tb = sender as TextBlock;
-            if(tb != null)
+            try
             {
-                int num = (int)tb.Tag;
-                if(treeView1.Items.Count >= num + 1)
+                var tb = sender as TextBlock;
+                if (tb != null)
                 {
-                    var stRe = treeView1.Items[num] as StackPanel;
-                    if(stRe != null)
+                    int num = (int)tb.Tag;
+                    if (treeView1.Items.Count >= num + 1)
+                    {
+                        var stRe = treeView1.Items[num] as StackPanel;
+                        if (stRe != null)
+                        {
+                            var treeItem = stRe.Children[2] as TreeViewItem;
+                            if (treeItem != null)
+                            {
+                                foreach (var itemF in treeItem.Items)
+                                {
+                                    var stF = itemF as StackPanel;
+                                    if (stF != null)
+                                    {
+                                        var chYes = stF.Children[0] as CheckBox;
+                                        var chNo = stF.Children[1] as CheckBox;
+
+                                        if (chYes != null && chNo != null)
+                                        {
+                                            if (tb.Text == "так")
+                                            {
+                                                chYes.IsChecked = true;
+                                                chNo.IsChecked = false;
+                                                IfhaveTwoCheck(num, CheckEnum.Yes);
+                                            }
+                                            else
+                                            {
+                                                chYes.IsChecked = false;
+                                                chNo.IsChecked = true;
+                                                IfhaveTwoCheck(num, CheckEnum.No);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+
+            }  
+        }
+        private void ClickAllFigurantShema(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var tb = sender as TextBlock;
+                if (tb != null)
+                {
+                    int num = (int)tb.Tag;
+                    var stRe = treeViewShema.Items[0] as StackPanel;
+                    if (stRe != null)
                     {
                         var treeItem = stRe.Children[2] as TreeViewItem;
-                        if(treeItem != null)
+                        if (treeItem != null)
                         {
                             foreach (var itemF in treeItem.Items)
                             {
                                 var stF = itemF as StackPanel;
-                                if(stF != null)
+                                if (stF != null)
                                 {
                                     var chYes = stF.Children[0] as CheckBox;
                                     var chNo = stF.Children[1] as CheckBox;
 
-                                    if(chYes!= null && chNo!= null)
+                                    if (chYes != null && chNo != null)
                                     {
-                                        if(tb.Text == "так")
+                                        if (tb.Text == "так")
                                         {
                                             chYes.IsChecked = true;
                                             chNo.IsChecked = false;
-                                            IfhaveTwoCheck(num, CheckEnum.Yes);
+                                            IfhaveTwoCheckShema(num, CheckEnum.Yes);
                                         }
                                         else
                                         {
                                             chYes.IsChecked = false;
                                             chNo.IsChecked = true;
-                                            IfhaveTwoCheck(num, CheckEnum.No);
+                                            IfhaveTwoCheckShema(num, CheckEnum.No);
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
-                else
-                {
 
                 }
             }
-            
-        }
-        private void ClickAllFigurantShema(object sender, RoutedEventArgs e)
-        {
-            var tb = sender as TextBlock;
-            if (tb != null)
+            catch (Exception ex)
             {
-                int num = (int)tb.Tag;
-                var stRe = treeViewShema.Items[0] as StackPanel;
-                if (stRe != null)
-                {
-                    var treeItem = stRe.Children[2] as TreeViewItem;
-                    if (treeItem != null)
-                    {
-                        foreach (var itemF in treeItem.Items)
-                        {
-                            var stF = itemF as StackPanel;
-                            if (stF != null)
-                            {
-                                var chYes = stF.Children[0] as CheckBox;
-                                var chNo = stF.Children[1] as CheckBox;
+                MessageBox.Show(ex.Message);
 
-                                if (chYes != null && chNo != null)
-                                {
-                                    if (tb.Text == "так")
-                                    {
-                                        chYes.IsChecked = true;
-                                        chNo.IsChecked = false;
-                                        IfhaveTwoCheckShema(num, CheckEnum.Yes);
-                                    }
-                                    else
-                                    {
-                                        chYes.IsChecked = false;
-                                        chNo.IsChecked = true;
-                                        IfhaveTwoCheckShema(num, CheckEnum.No);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                
             }
-
         }
         private void CheckBoxClick(object sender, RoutedEventArgs e)
         {
-            CheckBox checkBox = sender as CheckBox;
-            if(checkBox != null)
+            try
             {
-                if(checkBox.Tag != null)
+                CheckBox checkBox = sender as CheckBox;
+                if (checkBox != null)
                 {
-                    var checkTuple = checkBox.Tag as Tuple<CheckEnum, int>;
-                    if(checkTuple != null)
+                    if (checkBox.Tag != null)
                     {
-                        if (checkTuple.Item1 == CheckEnum.Control)
+                        var checkTuple = checkBox.Tag as Tuple<CheckEnum, int>;
+                        if (checkTuple != null)
                         {
-                            //checkBox.IsChecked = false;
-                            IfhaveTwoCheck(checkTuple.Item2, CheckEnum.Control);
-                        }
-                        else if (checkTuple.Item1 == CheckEnum.Shema)
-                        {
-                            if (numbColorInReestr[checkTuple.Item2 - 1] == 1)
+                            if (checkTuple.Item1 == CheckEnum.Control)
                             {
-                                checkBox.IsChecked = false;
+                                //checkBox.IsChecked = false;
+                                IfhaveTwoCheck(checkTuple.Item2, CheckEnum.Control);
                             }
-                        }
-                        else if (checkTuple.Item1 == CheckEnum.Yes)
-                        {
-                            IfhaveTwoCheck(checkTuple.Item2, CheckEnum.Yes);
-                        }
-                        else if (checkTuple.Item1 == CheckEnum.No)
-                        {
-                            IfhaveTwoCheck(checkTuple.Item2, CheckEnum.No);
+                            else if (checkTuple.Item1 == CheckEnum.Shema)
+                            {
+                                if (numbColorInReestr[checkTuple.Item2 - 1] == 1)
+                                {
+                                    checkBox.IsChecked = false;
+                                }
+                            }
+                            else if (checkTuple.Item1 == CheckEnum.Yes)
+                            {
+                                IfhaveTwoCheck(checkTuple.Item2, CheckEnum.Yes);
+                            }
+                            else if (checkTuple.Item1 == CheckEnum.No)
+                            {
+                                IfhaveTwoCheck(checkTuple.Item2, CheckEnum.No);
+                            }
                         }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+
+            }
+            
         }
         private void CheckBoxClickShema(object sender, RoutedEventArgs e)
         {
-            CheckBox checkBox = sender as CheckBox;
-            if (checkBox != null)
+            try
             {
-                if (checkBox.Tag != null)
+                CheckBox checkBox = sender as CheckBox;
+                if (checkBox != null)
                 {
-                    var checkTuple = checkBox.Tag as Tuple<CheckEnum, int>;
-                    if (checkTuple != null)
+                    if (checkBox.Tag != null)
                     {
-                        if (checkTuple.Item1 == CheckEnum.Control)
+                        var checkTuple = checkBox.Tag as Tuple<CheckEnum, int>;
+                        if (checkTuple != null)
                         {
-                            //checkBox.IsChecked = false;
-                            IfhaveTwoCheckShema(checkTuple.Item2, CheckEnum.Control);
-                        }
-                        else if (checkTuple.Item1 == CheckEnum.Shema)
-                        {
-                            if (numbColorShema == 1)
+                            if (checkTuple.Item1 == CheckEnum.Control)
                             {
-                                checkBox.IsChecked = false;
+                                //checkBox.IsChecked = false;
+                                IfhaveTwoCheckShema(checkTuple.Item2, CheckEnum.Control);
                             }
-                        }
-                        else if (checkTuple.Item1 == CheckEnum.Yes)
-                        {
-                            IfhaveTwoCheckShema(checkTuple.Item2, CheckEnum.Yes);
-                        }
-                        else if (checkTuple.Item1 == CheckEnum.No)
-                        {
-                            IfhaveTwoCheckShema(checkTuple.Item2, CheckEnum.No);
+                            else if (checkTuple.Item1 == CheckEnum.Shema)
+                            {
+                                if (numbColorShema == 1)
+                                {
+                                    checkBox.IsChecked = false;
+                                }
+                            }
+                            else if (checkTuple.Item1 == CheckEnum.Yes)
+                            {
+                                IfhaveTwoCheckShema(checkTuple.Item2, CheckEnum.Yes);
+                            }
+                            else if (checkTuple.Item1 == CheckEnum.No)
+                            {
+                                IfhaveTwoCheckShema(checkTuple.Item2, CheckEnum.No);
+                            }
                         }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+
+            } 
         }
         void IfhaveTwoCheck(int num, CheckEnum checkEnum)
         {
@@ -1035,18 +1075,26 @@ namespace DesARMA.CombinedResponseWindows
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var listNoCont = GetListNoControl();
-            if (listNoCont.Count==0)
-                this.DialogResult = true;
-            else
+            try
             {
-                string strReest = "";
-                foreach (var item in listNoCont)
+                var listNoCont = GetListNoControl();
+                if (listNoCont.Count == 0)
+                    this.DialogResult = true;
+                else
                 {
-                    strReest += item + "\n";
+                    string strReest = "";
+                    foreach (var item in listNoCont)
+                    {
+                        strReest += item + "\n";
+                    }
+
+                    MessageBox.Show("Не відмічено контроль в таких реєстрах:\n" + strReest);
                 }
-                
-                MessageBox.Show("Не відмічено контроль в таких реєстрах:\n" + strReest);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+
             }
         }
         private List<string> GetListNoControl()

@@ -28,15 +28,24 @@ namespace DesARMA.CombinedResponseWindows
         Main main;
         public SelectionOfCombinedQueryFieldsWindow(ModelContext modelContext, Main main, List<string> listNumIn)
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
 
-            this.listNumIn = listNumIn;
-            this.modelContext = modelContext;
-            this.main = main;
+                this.listNumIn = listNumIn;
+                this.modelContext = modelContext;
+                this.main = main;
 
 
-            DounloadReestr();
-            DateSet();
+                DounloadReestr();
+                DateSet();
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
+
+            }
+            
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
