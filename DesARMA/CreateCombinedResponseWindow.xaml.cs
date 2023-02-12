@@ -27,82 +27,92 @@ namespace DesARMA
         Main main;
         public CreateCombinedResponseWindow(ModelContext modelContext, User CurrentUser, Main main, System.Windows.Forms.Timer inactivityTimer)
         {
-            InitializeComponent();
-
-            this.modelContext = modelContext;
-            this.CurrentUser = CurrentUser;
-            this.main = main;
-            this.inactivityTimer = inactivityTimer;
-
-            var mains = (from b in modelContext.Mains
-                         where b.Executor == CurrentUser.IdUser
-                &&
-                    (from o in modelContext.MainConfigs
-                     where o.NumbInput == b.NumbInput
-                     select o).Count() == 1
-                         //orderby /*b.NumbInput.Substring(8, 2),*/
-                         //        b.NumbInput.Split(new char[] { '/' }, 1)[0]//CreateCombinedResponseWindow.GetStringWithZero(b.NumbInput)
-                &&
-                    b.CpNumber == main.CpNumber
-                         select b
-                    )
-                    .AsEnumerable()
-                    .Where(b => { return b.NumbInput.Split(new char[] { '-' }, 2)[1] == DateTime.Now.Year.ToString().Substring(2, 2); })
-                    .OrderByDescending(b => {
-                        int result;
-                        if (int.TryParse(b.NumbInput.Split(new char[] { '/' }, 2)[0], out result))
-                        {
-                            return result;
-                        }
-                        else
-                        {
-                            return 0;
-                        }
-                    })
-                    .OrderByDescending(b => {
-                        int result;
-                        if (int.TryParse(b.NumbInput.Split(new char[] { '-' }, 2)[1], out result))
-                        {
-                            return result;
-                        }
-                        else
-                        {
-                            return 0;
-                        }
-                    })
-                    .ToList();
-
-            stackPanel1.Children.Clear();
-            foreach (var mainItem in mains)
+            try
             {
-                CheckBox ch = new CheckBox();
+                InitializeComponent();
 
-                if(mainItem.NumbInput == main.NumbInput)
+                this.modelContext = modelContext;
+                this.CurrentUser = CurrentUser;
+                this.main = main;
+                this.inactivityTimer = inactivityTimer;
+
+                var mains = (from b in modelContext.Mains
+                             where b.Executor == CurrentUser.IdUser
+                    &&
+                        (from o in modelContext.MainConfigs
+                         where o.NumbInput == b.NumbInput
+                         select o).Count() == 1
+                    //orderby /*b.NumbInput.Substring(8, 2),*/
+                    //        b.NumbInput.Split(new char[] { '/' }, 1)[0]//CreateCombinedResponseWindow.GetStringWithZero(b.NumbInput)
+                    &&
+                        b.CpNumber == main.CpNumber
+                             select b
+                        )
+                        .AsEnumerable()
+                        .Where(b => { return b.NumbInput.Split(new char[] { '-' }, 2)[1] == DateTime.Now.Year.ToString().Substring(2, 2); })
+                        .OrderByDescending(b => {
+                            int result;
+                            if (int.TryParse(b.NumbInput.Split(new char[] { '/' }, 2)[0], out result))
+                            {
+                                return result;
+                            }
+                            else
+                            {
+                                return 0;
+                            }
+                        })
+                        .OrderByDescending(b => {
+                            int result;
+                            if (int.TryParse(b.NumbInput.Split(new char[] { '-' }, 2)[1], out result))
+                            {
+                                return result;
+                            }
+                            else
+                            {
+                                return 0;
+                            }
+                        })
+                        .ToList();
+
+                stackPanel1.Children.Clear();
+                foreach (var mainItem in mains)
                 {
-                    ch.IsChecked = true;
-                }
+                    CheckBox ch = new CheckBox();
 
-                ch.Content = $"{mainItem.NumbInput}";
-                ch.Tag = mainItem.NumbInput;
-                ch.Click += (x,y) => {
-                    inactivityTimer.Stop();
-                    var ch = x as CheckBox;
-                    if(ch != null)
+                    if (mainItem.NumbInput == main.NumbInput)
                     {
-                        if(ch.Content.ToString() == main.NumbInput)
-                        {
-                            ch.IsChecked = true;
-                        }
+                        ch.IsChecked = true;
                     }
-                    inactivityTimer.Start();
-                };
-                ch.HorizontalAlignment = HorizontalAlignment.Center;
-                stackPanel1.Children.Add(ch);
+
+                    ch.Content = $"{mainItem.NumbInput}";
+                    ch.Tag = mainItem.NumbInput;
+                    ch.Click += (x, y) => {
+                        inactivityTimer.Stop();
+                        var ch = x as CheckBox;
+                        if (ch != null)
+                        {
+                            if (ch.Content.ToString() == main.NumbInput)
+                            {
+                                ch.IsChecked = true;
+                            }
+                        }
+                        inactivityTimer.Start();
+                    };
+                    ch.HorizontalAlignment = HorizontalAlignment.Center;
+                    stackPanel1.Children.Add(ch);
+                }
+                inactivityTimer.Start();
+
+
+                headerTextBlock.Text = $"На основі запиту № {main.NumbInput} знайдено наступні запити, що мають спільний з ним номер КП, за 2023 рік:";
+
             }
-            inactivityTimer.Start();
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
 
+            }
 
-            headerTextBlock.Text = $"На основі запиту № {main.NumbInput} знайдено наступні запити, що мають спільний з ним номер КП, за 2023 рік:";
         }
         public static string GetStringWithZero(string str)
         {
@@ -146,7 +156,7 @@ namespace DesARMA
                     //MessageBox.Show("Перевірка ...");
                     
                     CombinedResponseWindows.SelectionOfCombinedQueryFieldsWindow win =
-                        new CombinedResponseWindows.SelectionOfCombinedQueryFieldsWindow(modelContext, main, listNumbIn);
+                        new CombinedResponseWindows.SelectionOfCombinedQueryFieldsWindow(modelContext, main, listNumbIn, inactivityTimer);
                     
                     //this.Hide();
                     //this.Visibility = Visibility.Hidden;
@@ -154,7 +164,7 @@ namespace DesARMA
                     {
                         CombinedResponseWindows.EntryOfPersonsInvolvedInTheCombinedRegistersWindow
                         entryOfPersonsInvolvedInTheCombinedRegistersWindow
-                        = new CombinedResponseWindows.EntryOfPersonsInvolvedInTheCombinedRegistersWindow(modelContext, main, listNumbIn);
+                        = new CombinedResponseWindows.EntryOfPersonsInvolvedInTheCombinedRegistersWindow(modelContext, main, listNumbIn, inactivityTimer);
                         
                         if (entryOfPersonsInvolvedInTheCombinedRegistersWindow.ShowDialog() == true)
                         {
