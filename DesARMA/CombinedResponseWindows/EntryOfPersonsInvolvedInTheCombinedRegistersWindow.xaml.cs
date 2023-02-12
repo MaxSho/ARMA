@@ -498,7 +498,7 @@ namespace DesARMA.CombinedResponseWindows
             treeViewItem.Margin = new Thickness(0, -2, 0, 0);
             treeViewItem.Header = CreateTextBlockReest(num);
 
-            treeViewItem.Items.Add(CreateTextBoxYesNo());
+            treeViewItem.Items.Add(CreateTextBoxYesNo(num));
             foreach (var itemF in figurants)
             {
                 treeViewItem.Items.Add(CreateStackPanelFigurants(itemF, num));
@@ -512,20 +512,162 @@ namespace DesARMA.CombinedResponseWindows
             treeViewItem.Margin = new Thickness(0, -2, 0, 0);
             treeViewItem.Header = CreateTextBlockShema(num);
 
-            treeViewItem.Items.Add(CreateTextBoxYesNo());
+            treeViewItem.Items.Add(CreateTextBoxYesNoShema(num));
             foreach (var itemF in figurants)
             {
                 treeViewItem.Items.Add(CreateStackPanelFigurantsShema(itemF, num));
             }
             return treeViewItem;
         }
-        private TextBlock CreateTextBoxYesNo()
+        private StackPanel CreateTextBoxYesNo(int num)
         {
-            TextBlock textBlockYesNo = new TextBlock();
-            textBlockYesNo.Text = "так   ні";
-            textBlockYesNo.FontSize = 11;
-            textBlockYesNo.Margin = new Thickness(5, 0, 0, 0);
-            return textBlockYesNo;
+            StackPanel stackPanel = new StackPanel();
+            stackPanel.Orientation = Orientation.Horizontal;
+
+            TextBlock textBlockYes = new TextBlock();
+            textBlockYes.Text = "так";
+            textBlockYes.Tag = num;
+            textBlockYes.PreviewMouseDown += ClickAllFigurant;
+            textBlockYes.MouseEnter += (w, r) => { textBlockYes.Opacity = 0.5; };
+            textBlockYes.MouseLeave += (w, r) => { textBlockYes.Opacity = 1; };
+            textBlockYes.FontSize = 11;
+            textBlockYes.Margin = new Thickness(5, 0, 0, 0);
+
+            TextBlock textBlockNo = new TextBlock();
+            textBlockNo.Text = "ні";
+            textBlockNo.Tag = num;
+            textBlockNo.PreviewMouseDown += ClickAllFigurant;
+            textBlockNo.MouseEnter += (w, r) => { textBlockNo.Opacity = 0.5; };
+            textBlockNo.MouseLeave += (w, r) => { textBlockNo.Opacity = 1; };
+            textBlockNo.FontSize = 11;
+            textBlockNo.Margin = new Thickness(8, 0, 0, 0);
+
+            stackPanel.Children.Add(textBlockYes);
+            stackPanel.Children.Add(textBlockNo);
+
+
+            return stackPanel;
+        }
+        private StackPanel CreateTextBoxYesNoShema(int num)
+        {
+            StackPanel stackPanel = new StackPanel();
+            stackPanel.Orientation = Orientation.Horizontal;
+
+            TextBlock textBlockYes = new TextBlock();
+            textBlockYes.Text = "так";
+            textBlockYes.Tag = num;
+            textBlockYes.PreviewMouseDown += ClickAllFigurantShema;
+            textBlockYes.MouseEnter += (w, r) => { textBlockYes.Opacity = 0.5; };
+            textBlockYes.MouseLeave += (w, r) => { textBlockYes.Opacity = 1; };
+            textBlockYes.FontSize = 11;
+            textBlockYes.Margin = new Thickness(5, 0, 0, 0);
+
+            TextBlock textBlockNo = new TextBlock();
+            textBlockNo.Text = "ні";
+            textBlockNo.Tag = num;
+            textBlockNo.PreviewMouseDown += ClickAllFigurantShema;
+            textBlockNo.MouseEnter += (w, r) => { textBlockNo.Opacity = 0.5; };
+            textBlockNo.MouseLeave += (w, r) => { textBlockNo.Opacity = 1; };
+            textBlockNo.FontSize = 11;
+            textBlockNo.Margin = new Thickness(8, 0, 0, 0);
+
+            stackPanel.Children.Add(textBlockYes);
+            stackPanel.Children.Add(textBlockNo);
+
+
+            return stackPanel;
+        }
+        private void ClickAllFigurant(object sender, RoutedEventArgs e)
+        {
+            var tb = sender as TextBlock;
+            if(tb != null)
+            {
+                int num = (int)tb.Tag;
+                if(treeView1.Items.Count >= num + 1)
+                {
+                    var stRe = treeView1.Items[num] as StackPanel;
+                    if(stRe != null)
+                    {
+                        var treeItem = stRe.Children[2] as TreeViewItem;
+                        if(treeItem != null)
+                        {
+                            foreach (var itemF in treeItem.Items)
+                            {
+                                var stF = itemF as StackPanel;
+                                if(stF != null)
+                                {
+                                    var chYes = stF.Children[0] as CheckBox;
+                                    var chNo = stF.Children[1] as CheckBox;
+
+                                    if(chYes!= null && chNo!= null)
+                                    {
+                                        if(tb.Text == "так")
+                                        {
+                                            chYes.IsChecked = true;
+                                            chNo.IsChecked = false;
+                                            IfhaveTwoCheck(num, CheckEnum.Yes);
+                                        }
+                                        else
+                                        {
+                                            chYes.IsChecked = false;
+                                            chNo.IsChecked = true;
+                                            IfhaveTwoCheck(num, CheckEnum.No);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+
+                }
+            }
+            
+        }
+        private void ClickAllFigurantShema(object sender, RoutedEventArgs e)
+        {
+            var tb = sender as TextBlock;
+            if (tb != null)
+            {
+                int num = (int)tb.Tag;
+                var stRe = treeViewShema.Items[0] as StackPanel;
+                if (stRe != null)
+                {
+                    var treeItem = stRe.Children[2] as TreeViewItem;
+                    if (treeItem != null)
+                    {
+                        foreach (var itemF in treeItem.Items)
+                        {
+                            var stF = itemF as StackPanel;
+                            if (stF != null)
+                            {
+                                var chYes = stF.Children[0] as CheckBox;
+                                var chNo = stF.Children[1] as CheckBox;
+
+                                if (chYes != null && chNo != null)
+                                {
+                                    if (tb.Text == "так")
+                                    {
+                                        chYes.IsChecked = true;
+                                        chNo.IsChecked = false;
+                                        IfhaveTwoCheckShema(num, CheckEnum.Yes);
+                                    }
+                                    else
+                                    {
+                                        chYes.IsChecked = false;
+                                        chNo.IsChecked = true;
+                                        IfhaveTwoCheckShema(num, CheckEnum.No);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+            }
+
         }
         private void CheckBoxClick(object sender, RoutedEventArgs e)
         {
@@ -629,63 +771,67 @@ namespace DesARMA.CombinedResponseWindows
                         {
                             var chYes = stF.Children[0] as CheckBox;
                             var chNo = stF.Children[1] as CheckBox;
-                            if(chYes.IsChecked.Value && chNo.IsChecked.Value)
+                            if(chYes != null && chNo != null)
                             {
-                                if (checkEnum == CheckEnum.Yes)
+                                if (chYes.IsChecked.Value && chNo.IsChecked.Value)
                                 {
-                                    chNo.IsChecked  = false;
-                                }
-                                else if (checkEnum == CheckEnum.No)
-                                {
-                                    chYes.IsChecked = false;
-                                }
-                            }
-
-                            if(!chNo.IsChecked.Value && !chYes.IsChecked.Value)
-                            {
-                                foreach (var itemTB in stF.Children)
-                                {
-                                    var cutTB = itemTB as TextBlock;
-                                    if (cutTB != null)
+                                    if (checkEnum == CheckEnum.Yes)
                                     {
-                                        if (numbColorInReestr[num - 1] == 3)
-                                        {
-                                            cutTB.Foreground = this.Resources["GreenEmpty"]  as SolidColorBrush;
-                                        }
-                                        else if (numbColorInReestr[num - 1] == 2)
-                                        {
-                                            cutTB.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush; //new SolidColorBrush(Colors.White);
-                                        }
-                                        else if (numbColorInReestr[num - 1] == 1)
-                                        {
-
-                                            cutTB.Foreground = this.Resources["RedEmpty"]    as SolidColorBrush; //new SolidColorBrush(Colors.Red);
-                                        }
+                                        chNo.IsChecked = false;
+                                    }
+                                    else if (checkEnum == CheckEnum.No)
+                                    {
+                                        chYes.IsChecked = false;
                                     }
                                 }
-                            }
-                            else
-                            {
-                                if(numbColorInReestr[num - 1] != 1)
+
+                                if (!chNo.IsChecked.Value && !chYes.IsChecked.Value)
                                 {
                                     foreach (var itemTB in stF.Children)
                                     {
                                         var cutTB = itemTB as TextBlock;
                                         if (cutTB != null)
                                         {
-                                            cutTB.Foreground = this.Resources["1ColorStyle"] as SolidColorBrush;
+                                            if (numbColorInReestr[num - 1] == 3)
+                                            {
+                                                cutTB.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush;
+                                            }
+                                            else if (numbColorInReestr[num - 1] == 2)
+                                            {
+                                                cutTB.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush; //new SolidColorBrush(Colors.White);
+                                            }
+                                            else if (numbColorInReestr[num - 1] == 1)
+                                            {
+
+                                                cutTB.Foreground = this.Resources["RedEmpty"] as SolidColorBrush; //new SolidColorBrush(Colors.Red);
+                                            }
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    chNo.IsChecked = false;
-                                    chYes.IsChecked = false;
+                                    if (numbColorInReestr[num - 1] != 1)
+                                    {
+                                        foreach (var itemTB in stF.Children)
+                                        {
+                                            var cutTB = itemTB as TextBlock;
+                                            if (cutTB != null)
+                                            {
+                                                cutTB.Foreground = this.Resources["1ColorStyle"] as SolidColorBrush;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        chNo.IsChecked = false;
+                                        chYes.IsChecked = false;
+                                    }
+
                                 }
-                                
+
+                                isAllCh = isAllCh && (chYes.IsChecked.Value || chNo.IsChecked.Value);
                             }
                             
-                            isAllCh = isAllCh && (chYes.IsChecked.Value || chNo.IsChecked.Value);
                         }
                     }
                     
@@ -728,63 +874,67 @@ namespace DesARMA.CombinedResponseWindows
                         {
                             var chYes = stF.Children[0] as CheckBox;
                             var chNo = stF.Children[1] as CheckBox;
-                            if (chYes.IsChecked.Value && chNo.IsChecked.Value)
+                            if(chYes != null && chNo != null)
                             {
-                                if (checkEnum == CheckEnum.Yes)
+                                if (chYes.IsChecked.Value && chNo.IsChecked.Value)
                                 {
-                                    chNo.IsChecked = false;
-                                }
-                                else if (checkEnum == CheckEnum.No)
-                                {
-                                    chYes.IsChecked = false;
-                                }
-                            }
-
-                            if (!chNo.IsChecked.Value && !chYes.IsChecked.Value)
-                            {
-                                foreach (var itemTB in stF.Children)
-                                {
-                                    var cutTB = itemTB as TextBlock;
-                                    if (cutTB != null)
+                                    if (checkEnum == CheckEnum.Yes)
                                     {
-                                        if (numbColorShema == 3)
-                                        {
-                                            cutTB.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush;
-                                        }
-                                        else if (numbColorShema == 2)
-                                        {
-                                            cutTB.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush; //new SolidColorBrush(Colors.White);
-                                        }
-                                        else if (numbColorShema == 1)
-                                        {
-
-                                            cutTB.Foreground = this.Resources["RedEmpty"] as SolidColorBrush; //new SolidColorBrush(Colors.Red);
-                                        }
+                                        chNo.IsChecked = false;
+                                    }
+                                    else if (checkEnum == CheckEnum.No)
+                                    {
+                                        chYes.IsChecked = false;
                                     }
                                 }
-                            }
-                            else
-                            {
-                                if (numbColorShema != 1)
+
+                                if (!chNo.IsChecked.Value && !chYes.IsChecked.Value)
                                 {
                                     foreach (var itemTB in stF.Children)
                                     {
                                         var cutTB = itemTB as TextBlock;
                                         if (cutTB != null)
                                         {
-                                            cutTB.Foreground = this.Resources["1ColorStyle"] as SolidColorBrush;
+                                            if (numbColorShema == 3)
+                                            {
+                                                cutTB.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush;
+                                            }
+                                            else if (numbColorShema == 2)
+                                            {
+                                                cutTB.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush; //new SolidColorBrush(Colors.White);
+                                            }
+                                            else if (numbColorShema == 1)
+                                            {
+
+                                                cutTB.Foreground = this.Resources["RedEmpty"] as SolidColorBrush; //new SolidColorBrush(Colors.Red);
+                                            }
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    chNo.IsChecked = false;
-                                    chYes.IsChecked = false;
+                                    if (numbColorShema != 1)
+                                    {
+                                        foreach (var itemTB in stF.Children)
+                                        {
+                                            var cutTB = itemTB as TextBlock;
+                                            if (cutTB != null)
+                                            {
+                                                cutTB.Foreground = this.Resources["1ColorStyle"] as SolidColorBrush;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        chNo.IsChecked = false;
+                                        chYes.IsChecked = false;
+                                    }
+
                                 }
 
+                                isAllCh = isAllCh && (chYes.IsChecked.Value || chNo.IsChecked.Value);
                             }
-
-                            isAllCh = isAllCh && (chYes.IsChecked.Value || chNo.IsChecked.Value);
+                            
                         }
                     }
 
