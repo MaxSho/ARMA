@@ -26,7 +26,9 @@ namespace DesARMA.CombinedResponseWindows
         public List<string> listNumIn;
         ModelContext modelContext;
         Main main;
-        public SelectionOfCombinedQueryFieldsWindow(ModelContext modelContext, Main main, List<string> listNumIn)
+        private System.Windows.Forms.Timer inactivityTimer = new System.Windows.Forms.Timer();
+        public SelectionOfCombinedQueryFieldsWindow(ModelContext modelContext, Main main, List<string> listNumIn,
+            System.Windows.Forms.Timer inactivityTimer)
         {
             try
             {
@@ -35,7 +37,9 @@ namespace DesARMA.CombinedResponseWindows
                 this.listNumIn = listNumIn;
                 this.modelContext = modelContext;
                 this.main = main;
+                this.inactivityTimer = inactivityTimer;
 
+                inactivityTimer.Start();
 
                 DounloadReestr();
                 DateSet();
@@ -50,6 +54,7 @@ namespace DesARMA.CombinedResponseWindows
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 this.DialogResult = true;
@@ -59,6 +64,7 @@ namespace DesARMA.CombinedResponseWindows
             {
                 System.Windows.MessageBox.Show(ex.Message);
             }
+            inactivityTimer.Start();
         }
         private void DounloadReestr()
         {
@@ -129,6 +135,23 @@ namespace DesARMA.CombinedResponseWindows
             {
                 this.executorInit.Text = main.ExecutorInit;
             }
+        }
+
+        private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+
+        private void Window_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            inactivityTimer.Stop();
         }
     }
 }

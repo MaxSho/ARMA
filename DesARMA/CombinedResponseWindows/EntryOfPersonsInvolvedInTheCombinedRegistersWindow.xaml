@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:DesARMA.CombinedResponseWindows"
         mc:Ignorable="d"
         Title="Контроль реєстрів для об'єднаної відповіді" Height="450" Width="800"
-        WindowStartupLocation="CenterScreen" >
+        WindowStartupLocation="CenterScreen" MouseMove="Window_MouseMove" PreviewMouseMove="Window_PreviewMouseMove"
+        Closing="Window_Closing">
     <Window.Resources>
         <SolidColorBrush x:Key="1ColorStyle" Color="#2C3333" />
         <SolidColorBrush x:Key="2ColorStyle" Color="#395B64" />

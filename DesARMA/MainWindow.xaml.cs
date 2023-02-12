@@ -78,10 +78,6 @@ namespace DesARMA
                 DownloadReest();
                 LoadDb();
 
-
-
-
-
                 //CreateButtonsGetData();
 
             }
@@ -144,15 +140,15 @@ namespace DesARMA
         public void CreateTimer()
         {
             inactivityTimer = new Timer();
-            //string shif = ConfigurationManager.AppSettings["hv"].ToString();
-            string shif = "60";
+            string shif = ConfigurationManager.AppSettings["hv"].ToString();
+            //string shif = "60";
             inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
             //inactivityTimer.Interval = 5_000;
 
             inactivityTimer.Tick += (sender, args) =>
             {
-                //Environment.Exit(0);
-                System.Windows.MessageBox.Show("Time over");
+                Environment.Exit(0);
+                //System.Windows.MessageBox.Show("Time over");
             };
             inactivityTimer.Start();
         }

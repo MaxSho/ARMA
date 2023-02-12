@@ -37,7 +37,9 @@ namespace DesARMA.CombinedResponseWindows
         ModelContext modelContext;
         Main main;
         public List<Figurant> figurants;
-        public EntryOfPersonsInvolvedInTheCombinedRegistersWindow(ModelContext modelContext, Main main, List<string> listNumIn)
+        private System.Windows.Forms.Timer inactivityTimer = new System.Windows.Forms.Timer();
+        public EntryOfPersonsInvolvedInTheCombinedRegistersWindow(ModelContext modelContext, Main main, List<string> listNumIn,
+            System.Windows.Forms.Timer inactivityTimer)
         {
             try
             {
@@ -46,6 +48,10 @@ namespace DesARMA.CombinedResponseWindows
                 this.listNumIn = listNumIn;
                 this.modelContext = modelContext;
                 this.main = main;
+                this.inactivityTimer = inactivityTimer;
+
+                inactivityTimer.Start();
+
                 numbColorShema = 3;
                 figurants = (from f in modelContext.Figurants where listNumIn.Contains(f.NumbInput) select f).ToList();
 
@@ -588,6 +594,7 @@ namespace DesARMA.CombinedResponseWindows
         }
         private void ClickAllFigurant(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 var tb = sender as TextBlock;
@@ -640,10 +647,12 @@ namespace DesARMA.CombinedResponseWindows
             {
                 MessageBox.Show(ex.Message);
 
-            }  
+            }
+            inactivityTimer.Start();
         }
         private void ClickAllFigurantShema(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 var tb = sender as TextBlock;
@@ -691,9 +700,11 @@ namespace DesARMA.CombinedResponseWindows
                 MessageBox.Show(ex.Message);
 
             }
+            inactivityTimer.Start();
         }
         private void CheckBoxClick(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 CheckBox checkBox = sender as CheckBox;
@@ -733,10 +744,11 @@ namespace DesARMA.CombinedResponseWindows
                 MessageBox.Show(ex.Message);
 
             }
-            
+            inactivityTimer.Start();
         }
         private void CheckBoxClickShema(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 CheckBox checkBox = sender as CheckBox;
@@ -775,7 +787,8 @@ namespace DesARMA.CombinedResponseWindows
             {
                 MessageBox.Show(ex.Message);
 
-            } 
+            }
+            inactivityTimer.Start();
         }
         void IfhaveTwoCheck(int num, CheckEnum checkEnum)
         {
@@ -1075,6 +1088,7 @@ namespace DesARMA.CombinedResponseWindows
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            inactivityTimer.Stop();
             try
             {
                 var listNoCont = GetListNoControl();
@@ -1096,6 +1110,7 @@ namespace DesARMA.CombinedResponseWindows
                 MessageBox.Show(ex.Message);
 
             }
+            inactivityTimer.Start();
         }
         private List<string> GetListNoControl()
         {
@@ -1128,6 +1143,21 @@ namespace DesARMA.CombinedResponseWindows
                 }
             }
             return listNoContr;
+        }
+
+        private void Window_MouseMove(object sender, MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+        private void Window_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            inactivityTimer.Stop();
+            inactivityTimer.Start();
+        }
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            inactivityTimer.Stop();
         }
     }
 }

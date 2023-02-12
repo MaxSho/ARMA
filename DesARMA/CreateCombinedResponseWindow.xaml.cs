@@ -156,7 +156,7 @@ namespace DesARMA
                     //MessageBox.Show("Перевірка ...");
                     
                     CombinedResponseWindows.SelectionOfCombinedQueryFieldsWindow win =
-                        new CombinedResponseWindows.SelectionOfCombinedQueryFieldsWindow(modelContext, main, listNumbIn);
+                        new CombinedResponseWindows.SelectionOfCombinedQueryFieldsWindow(modelContext, main, listNumbIn, inactivityTimer);
                     
                     //this.Hide();
                     //this.Visibility = Visibility.Hidden;
@@ -164,7 +164,7 @@ namespace DesARMA
                     {
                         CombinedResponseWindows.EntryOfPersonsInvolvedInTheCombinedRegistersWindow
                         entryOfPersonsInvolvedInTheCombinedRegistersWindow
-                        = new CombinedResponseWindows.EntryOfPersonsInvolvedInTheCombinedRegistersWindow(modelContext, main, listNumbIn);
+                        = new CombinedResponseWindows.EntryOfPersonsInvolvedInTheCombinedRegistersWindow(modelContext, main, listNumbIn, inactivityTimer);
                         
                         if (entryOfPersonsInvolvedInTheCombinedRegistersWindow.ShowDialog() == true)
                         {
