@@ -74,13 +74,15 @@
         <Label Grid.Row="2" Grid.Column="0" Content="Адреса органу" />
         <Label Grid.Row="3" Grid.Column="0" Content="Посада суб'єкта звернення" />
         <Label Grid.Row="4" Grid.Column="0" Content="ПІБ суб'єкта звернення" />
+        <Label Grid.Row="5" Grid.Column="0" Content="Стаття ККУ" />
 
         <ComboBox Grid.Row="0" Grid.Column="1" Name="idAcc" FontSize="16"/>
         <TextBox Grid.Row="1" Grid.Column="1" Name="agencyDep"/>
         <TextBox Grid.Row="2" Grid.Column="1" Name="addr"/>
         <TextBox Grid.Row="3" Grid.Column="1" Name="work"/>
         <TextBox Grid.Row="4" Grid.Column="1" Name="executorInit"/>
+        <TextBox Grid.Row="5" Grid.Column="1" Name="art"/>
 
-        <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Content="Занести поля в запити" Click="Button_Click"/>
+        <Button Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Content="Занести поля в запити" Click="Button_Click"/>
     </Grid>
 </Window>
