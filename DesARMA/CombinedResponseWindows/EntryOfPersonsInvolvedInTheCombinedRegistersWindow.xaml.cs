@@ -1093,7 +1093,10 @@ namespace DesARMA.CombinedResponseWindows
             {
                 var listNoCont = GetListNoControl();
                 if (listNoCont.Count == 0)
+                {
+                    SaveCheckBoxesFig();
                     this.DialogResult = true;
+                } 
                 else
                 {
                     string strReest = "";
@@ -1144,7 +1147,122 @@ namespace DesARMA.CombinedResponseWindows
             }
             return listNoContr;
         }
+        private StackPanel? GetStackPanelReestr(int num)
+        {
+            if(num < treeView1.Items.Count)
+            {
+                return treeView1.Items[num] as StackPanel;
+            }
+            if(num == treeView1.Items.Count) 
+            {
+                return treeViewShema.Items[0] as StackPanel;
+            }
+            return null;
+        }
+        private CheckBox? GetCheckControlReestr(int num)
+        {
+            var st = GetStackPanelReestr(num);
+            if (st != null)
+                if (st.Children.Count > 0)
+                {
+                    return st.Children[0] as CheckBox;
+                }
+            return null;
+        }
+        private CheckBox? GetCheckShemaReestr(int num)
+        {
+            var st = GetStackPanelReestr(num);
+            if (st != null)
+                if (st.Children.Count > 1)
+                {
+                    return st.Children[1] as CheckBox;
+                }
+            return null;
+        }
+        private TreeViewItem? GetTreeViewItemReestr(int num)
+        {
+            var st = GetStackPanelReestr(num);
+            if(st!=null)
+                if(st.Children.Count > 2)
+                {
+                    return st.Children[2] as TreeViewItem;
+                }
+            return null;
+        }
+        private StackPanel? GetFigStackPanelReestr(int num, int numFig)
+        {
+            var tvi = GetTreeViewItemReestr(num);
+            if (tvi != null)
+                if (tvi.Items.Count > numFig)
+                {
+                    return tvi.Items[numFig] as StackPanel;
+                }
+            return null;
+        }
+        private CheckBox? GetFigCheckYesReestr(int num, int numFig)
+        {
+            var STtvi = GetFigStackPanelReestr(num, numFig);
+            if (STtvi != null)
+                if (STtvi.Children.Count > 0)
+                {
+                    return STtvi.Children[0] as CheckBox;
+                }
+            return null;
+        }
+        private CheckBox? GetFigCheckNoReestr(int num, int numFig)
+        {
+            var STtvi = GetFigStackPanelReestr(num, numFig);
+            if (STtvi != null)
+                if (STtvi.Children.Count > 1)
+                {
+                    return STtvi.Children[1] as CheckBox;
+                }
+            return null;
+        }
+        private void SaveCheckBoxesFig()
+        {
+            for (int i = 0; i < figurants.Count; i++)
+            {
+                List<bool?> listYes = new List<bool?>();
+                List<bool?> listNo = new List<bool?>();
 
+                for (int j = 0; j < Reest.abbreviatedName.Count + 1; j++)
+                {
+                    listYes.Add(GetFigCheckYesReestr(j + 1, i + 1)!.IsChecked!.Value);
+                    listNo.Add(GetFigCheckNoReestr(j + 1, i + 1)!.IsChecked!.Value);
+                }
+                figurants[i].Control = GetStringFromCh(listYes);
+                figurants[i].Shema = GetStringFromCh(listNo);
+
+            }
+            modelContext.SaveChanges();
+        }
+        
+        private string GetStringFromCh(List<bool?> listb)
+        {
+            string retS = "";
+
+            foreach (var item in listb)
+            {
+                if (item != null)
+                {
+                    if((bool)item)
+                        retS += "1";
+                    else
+                        retS += "0";
+                }
+                else
+                {
+                    retS += "0";
+                }
+            }
+
+            while (retS.Length < Reest.abbreviatedName.Count + 1)
+            {
+                retS += "0";
+            }
+            return retS;
+        }
         private void Window_MouseMove(object sender, MouseEventArgs e)
         {
             inactivityTimer.Stop();
