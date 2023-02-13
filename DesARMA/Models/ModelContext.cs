@@ -12,13 +12,13 @@ namespace DesARMA.Models
         private string strCon = null!;
         public ModelContext()
         {
-            //this.strCon = GetStr();
+            this.strCon = GetStr();
         }
 
         public ModelContext(DbContextOptions<ModelContext> options)
             : base(options)
         {
-            //this.strCon = GetStr();
+            this.strCon = GetStr();
         }
         private string GetStr()
         {
@@ -43,7 +43,7 @@ namespace DesARMA.Models
             }
 
             string result2 = System.Text.Encoding.UTF8.GetString(arrByteReturnDecrypt.ToArray());
-            System.Windows.MessageBox.Show(result2);
+            //System.Windows.MessageBox.Show(result2);
             return result2;
         }
 
@@ -77,10 +77,10 @@ namespace DesARMA.Models
                 //optionsBuilder.UseOracle("Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = 10.10.110.20)(PORT = 1521))(CONNECT_DATA = (SERVER = DEDICATED)(SERVICE_NAME = arma)));Password=oracle;User ID=stat");
                 
                 // local sql string
-                optionsBuilder.UseOracle("Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = DESKTOP-ED8T7LS)(PORT = 1522))(CONNECT_DATA = (SERVER = DEDICATED)(SERVICE_NAME = xepdb1)));Password=oracle;User ID=stat");
+                //optionsBuilder.UseOracle("Data Source=(DESCRIPTION =(ADDRESS = (PROTOCOL = TCP)(HOST = DESKTOP-ED8T7LS)(PORT = 1522))(CONNECT_DATA = (SERVER = DEDICATED)(SERVICE_NAME = xepdb1)));Password=oracle;User ID=stat");
                 
                 // local in config
-                //optionsBuilder.UseOracle(this.strCon);
+                optionsBuilder.UseOracle(this.strCon);
                 optionsBuilder.EnableSensitiveDataLogging();
             }
         }

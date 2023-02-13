@@ -2547,7 +2547,17 @@ namespace DesARMA
             //System.Windows.MessageBox.Show("В процесі розробки");
             CreateCombinedResponseWindow createCombinedResponseWindow = new CreateCombinedResponseWindow(modelContext, CurrentUser,
                 modelContext!.Mains!.Find(numberInTextBox.Text)!, inactivityTimer);
-            createCombinedResponseWindow.ShowDialog();
+            //createCombinedResponseWindow.ShowDialog();
+            if(createCombinedResponseWindow.ShowDialog() == true)
+            {
+                //System.Windows.MessageBox.Show("true");
+                LoadDb();
+                createCombinedResponseWindow.MessegeAboutCreate();
+            }
+            else
+            {
+                //System.Windows.MessageBox.Show("false");
+            }
             inactivityTimer.Start();
         }
         private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
