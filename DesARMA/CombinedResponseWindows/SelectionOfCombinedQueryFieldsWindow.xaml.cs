@@ -78,11 +78,12 @@ namespace DesARMA.CombinedResponseWindows
                 agencyDep = m.AgencyDep,
                 addr = m.Addr, 
                 work = m.Work, 
-                executorInit = m.ExecutorInit
+                executorInit = m.ExecutorInit,
+                art = m.Art
             }
             ).ToList();
             List<bool> listBoolIsAllEqually = new List<bool>();
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 6; i++)
             {
                 listBoolIsAllEqually.Add(true);
             }
@@ -107,6 +108,10 @@ namespace DesARMA.CombinedResponseWindows
                 if (item.executorInit != main.ExecutorInit)
                 {
                     listBoolIsAllEqually[4] = false;
+                }
+                if (item.art != main.Art)
+                {
+                    listBoolIsAllEqually[5] = false;
                 }
             }
 
@@ -135,6 +140,10 @@ namespace DesARMA.CombinedResponseWindows
             {
                 this.executorInit.Text = main.ExecutorInit;
             }
+            if (listBoolIsAllEqually[5])
+            {
+                this.art.Text = main.Art;
+            }
         }
 
         public void SaveAllInReq()
@@ -147,11 +156,11 @@ namespace DesARMA.CombinedResponseWindows
                         m.Addr = this.addr.Text;
                         m.Work = this.work.Text;
                         m.ExecutorInit = this.executorInit.Text;
+                        m.Art = this.art.Text;
                     }
                 );
             modelContext.SaveChanges();
         }
-        
         
         private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
