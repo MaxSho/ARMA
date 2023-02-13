@@ -137,6 +137,22 @@ namespace DesARMA.CombinedResponseWindows
             }
         }
 
+        public void SaveAllInReq()
+        {
+            (from m in modelContext.Mains where listNumIn.Contains(m.NumbInput) select m).ToList()
+                .ForEach(m =>
+                    {
+                        m.IdAcc = (from dc in modelContext.DictCommons where dc.Code == this.idAcc.Text && dc.Domain == "ACCOST" select dc.Id).FirstOrDefault();
+                        m.AgencyDep = this.agencyDep.Text;
+                        m.Addr = this.addr.Text;
+                        m.Work = this.work.Text;
+                        m.ExecutorInit = this.executorInit.Text;
+                    }
+                );
+            modelContext.SaveChanges();
+        }
+        
+        
         private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
             inactivityTimer.Stop();
