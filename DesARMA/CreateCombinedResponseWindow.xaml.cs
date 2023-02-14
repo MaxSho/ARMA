@@ -49,7 +49,12 @@ namespace DesARMA
                              select b
                         )
                         .AsEnumerable()
-                        .Where(b => { return b.NumbInput.Split(new char[] { '-' }, 2)[1] == DateTime.Now.Year.ToString().Substring(2, 2); })
+                        //.Where(b => { return b.NumbInput.Split(new char[] { '-' }, 2)[1] == DateTime.Now.Year.ToString().Substring(2, 2); })
+                        .Where(b => { 
+                            if(b.DtInput != null)
+                                return b.DtInput.Value.Year == DateTime.Now.Year;
+                            return false;
+                        })
                         .OrderByDescending(b => {
                             int result;
                             if (int.TryParse(b.NumbInput.Split(new char[] { '/' }, 2)[0], out result))
