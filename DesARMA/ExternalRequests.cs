@@ -149,16 +149,16 @@ namespace DesARMA
 
                 
 
-                var par = doc1.Paragraphs[17];
+                var par = doc1.Paragraphs[19];
                 par.ReplaceText("42022010000000016", numKP);
 
-                par = doc1.Paragraphs[14];
+                par = doc1.Paragraphs[16];
                 par.ReplaceText("МФО 339500", $"МФО {mfo}");
 
-                par = doc1.Paragraphs[13];
+                par = doc1.Paragraphs[15];
                 par.ReplaceText("АТ «Таскомбанк»", $"{nameBank}");
 
-                par = doc1.Paragraphs[15];
+                par = doc1.Paragraphs[17];
                 par.ReplaceText(par.Text, $"{addr}");
 
                 // Console.WriteLine(doc1.Paragraphs[21].Text);
@@ -174,7 +174,7 @@ namespace DesARMA
                 }
 
                 // пересунуть 1 ліст
-                for (int i = doc1.Paragraphs.Count - (finishFigsInDoc - startFigsInDoc + 1) - 1; i >= 18; i--)
+                for (int i = doc1.Paragraphs.Count - (finishFigsInDoc - startFigsInDoc + 1) - 1; i >= 20; i--)
                 {
                     var tmpParagraph = doc1.Paragraphs[i];
                     doc1.SetParagraph(tmpParagraph, i + (finishFigsInDoc - startFigsInDoc + 1));
@@ -185,7 +185,7 @@ namespace DesARMA
                 for (int i = startFigsInDoc; i <= finishFigsInDoc; i++)
                 {
                     var tmpParagraph = doc1.CreateParagraph();
-                    doc1.SetParagraph(tmpParagraph, 19 + count);
+                    doc1.SetParagraph(tmpParagraph, 21 + count);
                     tmpParagraph.IndentationFirstLine = 570;//570, 855
                     tmpParagraph.Alignment = ParagraphAlignment.BOTH;
                     var tmpRun = tmpParagraph.CreateRun();
