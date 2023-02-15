@@ -82,6 +82,74 @@ namespace DesARMA
 
             return treeView1;
         }
+        private StackPanel CreateTextBlockesYesNo(int num)
+        {
+            StackPanel st = new StackPanel();
+            st.Orientation = Orientation.Horizontal;
+
+            TextBlock t1 = new TextBlock();
+            t1.Text = "так ";
+            t1.Tag = num;
+            t1.PreviewMouseDown += ClickAllFigurantYes;
+            t1.MouseEnter += (w, r) => { t1.Opacity = 0.5; };
+            t1.MouseLeave += (w, r) => { t1.Opacity = 1; };
+
+            TextBlock t2 = new TextBlock();
+            t2.Text = "ні";
+            t2.Tag = num;
+            t2.PreviewMouseDown += ClickAllFigurantNo;
+            t2.MouseEnter += (w, r) => { t2.Opacity = 0.5; };
+            t2.MouseLeave += (w, r) => { t2.Opacity = 1; };
+
+            st.Children.Add(t1);
+            st.Children.Add(t2);
+
+            return st;
+        }
+        private void ClickAllFigurantYes(object sender, RoutedEventArgs e)
+        {
+            var tb = sender as TextBlock;
+            if(tb != null)
+            {
+                int id = (int)tb.Tag;
+                var listFigChB = GetFigListTupleCheckBoxes(id);
+                if(listFigChB != null)
+                {
+                    foreach (var itemF in listFigChB)
+                    {
+                        var chN = itemF.Item1;
+                        var chY = itemF.Item2;
+                        if (chN != null && chY != null)
+                        {
+                            chN.IsChecked = true;
+                            chY.IsChecked = false;
+                        }
+                    }
+                }
+            }
+        }
+        private void ClickAllFigurantNo(object sender, RoutedEventArgs e)
+        {
+            var tb = sender as TextBlock;
+            if (tb != null)
+            {
+                int id = (int)tb.Tag;
+                var listFigChB = GetFigListTupleCheckBoxes(id);
+                if (listFigChB != null)
+                {
+                    foreach (var itemF in listFigChB)
+                    {
+                        var chN = itemF.Item1;
+                        var chY = itemF.Item2;
+                        if (chN != null && chY != null)
+                        {
+                            chN.IsChecked = false;
+                            chY.IsChecked = true;
+                        }
+                    }
+                }
+            }
+        }
         private StackPanel СreatePosition(int idNum, string name)
         {
             StackPanel stackPanel = new StackPanel();
@@ -136,9 +204,10 @@ namespace DesARMA
 
             if (figurants != null)
             {
-                TextBlock textB = new TextBlock();
-                textB.Text = "так ні";
-                tree.Items.Add(textB);
+                //TextBlock textB = new TextBlock();
+                //textB.Text = "так ні";
+                //tree.Items.Add(textB);
+                tree.Items.Add(CreateTextBlockesYesNo(idNum));
             }
 
             if (idNum < Reest.abbreviatedName.Count)
@@ -608,12 +677,17 @@ namespace DesARMA
                             var list = GetFigListTupleCheckBoxes(tag.Item2);
                             if (list != null)
                             {
-                                var tr = list[tag.Item1 - 1];
+                                var tr = list[tag.Item1];
                                 if (tr != null)
                                 {
-                                    if (tr.Item1!.IsChecked!.Value && tr.Item2!.IsChecked!.Value)
+                                    var ch = tr.Item1 as CheckBox;
+                                    var ch2 = tr.Item2 as CheckBox;
+                                    if(ch!=null && ch2 != null)
                                     {
-                                        tr.Item2!.IsChecked = false;
+                                        if (ch.IsChecked!.Value && ch2.IsChecked!.Value)
+                                        {
+                                            ch2.IsChecked = false;
+                                        }
                                     }
                                 }
                             }
@@ -632,12 +706,17 @@ namespace DesARMA
                             var list = GetFigListTupleCheckBoxes(tag.Item2);
                             if (list != null)
                             {
-                                var tr = list[tag.Item1 - 1];
+                                var tr = list[tag.Item1];
                                 if (tr != null)
                                 {
-                                    if (tr.Item1!.IsChecked!.Value && tr.Item2!.IsChecked!.Value)
+                                    var ch = tr.Item1 as CheckBox;
+                                    var ch2 = tr.Item2 as CheckBox;
+                                    if (ch != null && ch2 != null)
                                     {
-                                        tr.Item2!.IsChecked = false;
+                                        if (ch.IsChecked!.Value && ch2.IsChecked!.Value)
+                                        {
+                                            ch2.IsChecked = false;
+                                        }
                                     }
                                 }
                             }
@@ -647,7 +726,6 @@ namespace DesARMA
                 }
             }
             Update();
-
         }
         private void ClickCheckBoxFigurantNO(object sender, RoutedEventArgs e)
         {
@@ -671,13 +749,18 @@ namespace DesARMA
                             var list = GetFigListTupleCheckBoxes(tag.Item2);
                             if (list != null)
                             {
-                                var tr = list[tag.Item1 - 1];
+                                var tr = list[tag.Item1];
                                 if (tr != null)
                                 {
-                                    if (tr.Item1!.IsChecked!.Value && tr.Item2!.IsChecked!.Value)
+                                    var ch = tr.Item1 as CheckBox;
+                                    var ch2 = tr.Item2 as CheckBox;
+                                    if (ch != null && ch2 != null)
                                     {
-                                        tr.Item1!.IsChecked = false;
-                                    }
+                                        if (ch.IsChecked!.Value && ch2.IsChecked!.Value)
+                                        {
+                                            ch.IsChecked = false;
+                                        }
+                                    } 
                                 }
                             }
 
@@ -694,19 +777,23 @@ namespace DesARMA
                             var list = GetFigListTupleCheckBoxes(tag.Item2);
                             if (list != null)
                             {
-                                var tr = list[tag.Item1 - 1];
+                                var tr = list[tag.Item1];
                                 if (tr != null)
                                 {
-                                    if (tr.Item1!.IsChecked!.Value && tr.Item2!.IsChecked!.Value)
+                                    var ch = tr.Item1 as CheckBox;
+                                    var ch2 = tr.Item2 as CheckBox;
+                                    if (ch != null && ch2 != null)
                                     {
-                                        tr.Item1!.IsChecked = false;
+                                        if (ch.IsChecked!.Value && ch2.IsChecked!.Value)
+                                        {
+                                            ch.IsChecked = false;
+                                        }
                                     }
                                 }
                             }
 
                         }
-                    }
-                    
+                    }   
                 }
             }
             Update();
