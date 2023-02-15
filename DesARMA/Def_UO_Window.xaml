@@ -52,7 +52,7 @@
                  x:Name="codeTextBox" FontSize="16" TextChanged="nameTextBox_TextChanged"/>
 
 
-        <Label Grid.Column="0" Grid.Row="2"  Content="Не резидент" Margin="10 0 0 0"
+        <Label Grid.Column="0" Grid.Row="2"  Content="Нерезидент" Margin="10 0 0 0"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"   
                />
         <CheckBox Grid.Column="1" Grid.Row="2" Margin="7"
