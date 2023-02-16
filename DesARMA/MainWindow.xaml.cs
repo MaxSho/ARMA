@@ -1953,6 +1953,7 @@ namespace DesARMA
                 TEKATextBox.Text = m.Folder;
                 article_CCUTextBox.Text = m.Art;
                 noteTextBox.Text = m.Notes;
+                
                // typeorgansList.SelectedIndex = GetTypeOrgFromDB(m);
                 int typeA = -1;
                 int.TryParse(m.Status, out typeA);
