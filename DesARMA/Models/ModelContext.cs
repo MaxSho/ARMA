@@ -584,40 +584,40 @@ namespace DesARMA.Models
                 entity.ToTable("MAIN");
 
                 entity.Property(e => e.NumbInput)
-                    .HasMaxLength(13)
+                    //.HasMaxLength(13)
                     .IsUnicode(false)
                     .HasColumnName("NUMB_INPUT");
 
                 entity.Property(e => e.Addr)
-                    .HasMaxLength(3)
+                    //.HasMaxLength(3)
                     .IsUnicode(false)
                     .HasColumnName("ADDR");
 
                 entity.Property(e => e.Agency)
-                    .HasPrecision(2)
+                    //.HasPrecision(2)
                     .HasColumnName("AGENCY");
 
                 entity.Property(e => e.AgencyDep)
-                    .HasMaxLength(100)
+                    //.HasMaxLength(100)
                     .IsUnicode(false)
                     .HasColumnName("AGENCY_DEP");
 
                 entity.Property(e => e.Art)
-                    .HasMaxLength(75)
+                    //.HasMaxLength(75)
                     .IsUnicode(false)
                     .HasColumnName("ART");
 
                 entity.Property(e => e.Chief)
-                    .HasPrecision(13)
+                    //.HasPrecision(13)
                     .HasColumnName("CHIEF");
 
                 entity.Property(e => e.CoExecutor)
-                    .HasMaxLength(200)
+                    //.HasMaxLength(200)
                     .IsUnicode(false)
                     .HasColumnName("CO_EXECUTOR");
 
                 entity.Property(e => e.CpNumber)
-                    .HasMaxLength(500)
+                    //.HasMaxLength(500)
                     .IsUnicode(false)
                     .HasColumnName("CP_NUMBER");
 
@@ -651,12 +651,12 @@ namespace DesARMA.Models
                     .HasColumnName("EXECUTOR");
 
                 entity.Property(e => e.ExecutorInit)
-                    .HasMaxLength(30)
+                    //.HasMaxLength(30)
                     .IsUnicode(false)
                     .HasColumnName("EXECUTOR_INIT");
 
                 entity.Property(e => e.Folder)
-                    .HasMaxLength(10)
+                    //.HasMaxLength(10)
                     .IsUnicode(false)
                     .HasColumnName("FOLDER");
 
@@ -670,22 +670,22 @@ namespace DesARMA.Models
                     .HasColumnName("ID_ACC");
 
                 entity.Property(e => e.LoginName)
-                    .HasMaxLength(20)
+                    //.HasMaxLength(20)
                     .IsUnicode(false)
                     .HasColumnName("LOGIN_NAME");
 
                 entity.Property(e => e.Notes)
-                    .HasMaxLength(500)
+                    //.HasMaxLength(500)
                     .IsUnicode(false)
                     .HasColumnName("NOTES");
 
                 entity.Property(e => e.NumbOut)
-                    .HasMaxLength(30)
+                    //.HasMaxLength(30)
                     .IsUnicode(false)
                     .HasColumnName("NUMB_OUT");
 
                 entity.Property(e => e.NumbOutInit)
-                    .HasMaxLength(30)
+                    //.HasMaxLength(30)
                     .IsUnicode(false)
                     .HasColumnName("NUMB_OUT_INIT");
 
@@ -694,17 +694,17 @@ namespace DesARMA.Models
                     .HasColumnName("REG_ID");
 
                 entity.Property(e => e.Status)
-                    .HasMaxLength(2)
+                    //.HasMaxLength(2)
                     .IsUnicode(false)
                     .HasColumnName("STATUS");
 
                 entity.Property(e => e.Topic)
-                    .HasMaxLength(300)
+                    //.HasMaxLength(300)
                     .IsUnicode(false)
                     .HasColumnName("TOPIC");
 
                 entity.Property(e => e.Work)
-                    .HasMaxLength(50)
+                    //.HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("WORK");
 
