@@ -707,6 +707,9 @@ namespace DesARMA.Models
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("WORK");
+
+                entity.Property(e => e.Id_id)
+                   .HasColumnName("ID_ID");
             });
 
             modelBuilder.Entity<MainConfig>(entity =>

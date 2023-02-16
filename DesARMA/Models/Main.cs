@@ -37,7 +37,7 @@ namespace DesARMA.Models
         public string? Addr { get; set; }
         public string? Work { get; set; }
         public decimal? IdAcc { get; set; }
-
+        public decimal? Id_id { get; set; }
         public virtual ICollection<FizUr> FizUrs { get; set; }
     }
 }
