@@ -160,7 +160,7 @@
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
         <TextBox Grid.Column="3" Grid.Row="6" Padding="5" Text="" TextChanged="ContentChangedEventHandler"
-                 x:Name="numberRequestTextBox"/>
+                 x:Name="numberRequestTextBox" MaxLength="30"/>
 
         <Label Grid.Column="2" Grid.Row="7"  Content="Дата запиту"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft" 
@@ -175,19 +175,19 @@
         <Label Grid.Column="2" Grid.Row="8"  Content="Орган суб'єкта звернення"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft" 
                />
-        <TextBox Grid.Column="3" Grid.Row="8" Padding="5" x:Name="vidOrgTextBox" MaxLength="100"
+        <TextBox Grid.Column="3" Grid.Row="8" Padding="5" x:Name="vidOrgTextBox" MaxLength="500"
                  TextChanged="ContentChangedEventHandler"/>
 
         <Label Grid.Column="2" Grid.Row="9"  Content="Адреса органу"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
-        <TextBox Grid.Column="3" Grid.Row="9" Padding="5" Text="" MaxLength="100" TextChanged="ContentChangedEventHandler"
+        <TextBox Grid.Column="3" Grid.Row="9" Padding="5" Text="" MaxLength="300" TextChanged="ContentChangedEventHandler"
                  x:Name="addressOrgTextBox" />
 
         <Label Grid.Column="2" Grid.Row="10"  Content="Посада суб'єкта звернення"
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"  
                />
-        <TextBox Grid.Column="3" Grid.Row="10" Padding="5" Text="" MaxLength="300" TextChanged="ContentChangedEventHandler"
+        <TextBox Grid.Column="3" Grid.Row="10" Padding="5" Text="" MaxLength="500" TextChanged="ContentChangedEventHandler"
                  x:Name="positionSubTextBox"/>
 
         <Label Grid.Column="2" Grid.Row="11"  Content="ПІБ суб'єкта звернення" 
@@ -219,14 +219,14 @@
         <Label Grid.Column="2" Grid.Row="15"  Content="ТЕКА" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
-        <TextBox Grid.Column="3" Grid.Row="15"  Padding="5" Text="" x:Name="TEKATextBox" MaxLength="10"
+        <TextBox Grid.Column="3" Grid.Row="15"  Padding="5" Text="" x:Name="TEKATextBox" MaxLength="20"
                  TextChanged="ContentChangedEventHandler"/>
 
         <Label Grid.Column="2" Grid.Row="16"  Content="Стаття ККУ" 
                FontFamily="Arial" FontSize="16" FlowDirection="RightToLeft"
                />
         <TextBox Grid.Column="3" Grid.Row="16"  Padding="5" Text="" x:Name="article_CCUTextBox"
-                 MaxLength="150" TextChanged="ContentChangedEventHandler"
+                 MaxLength="500" TextChanged="ContentChangedEventHandler"
                  />
 
         <Label Grid.Column="2" Grid.Row="17"  Content="Примітка" 
