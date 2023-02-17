@@ -126,6 +126,7 @@ namespace DesARMA
                         }
                     }
                 }
+                GetControlCheckBox(id)!.IsChecked = true;
             }
         }
         private void ClickAllFigurantNo(object sender, RoutedEventArgs e)
@@ -148,6 +149,7 @@ namespace DesARMA
                         }
                     }
                 }
+                GetControlCheckBox(id)!.IsChecked = true;
             }
         }
         private StackPanel СreatePosition(int idNum, string name)
