@@ -102,16 +102,27 @@
                    Source="https://img.freepik.com/free-icon/database_318-359818.jpg" HorizontalAlignment="Left">
             </Image>
         </Button>
-        
+
         <StackPanel Grid.Column="0" Grid.Row="7" Grid.RowSpan="20"  
                     Background="{StaticResource 1ColorStyle}"  >
-            
         </StackPanel>
 
-        
-        <ScrollViewer  Grid.Column="1" Grid.RowSpan="23" Grid.Row="2"><!--23-->
-            <StackPanel x:Name="stackPanel1"  Grid.Column="1" Background="{StaticResource 1ColorStyle}" 
-                          Grid.Row="2">
+        <Grid Grid.Column="1" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Background="{StaticResource 4ColorStyle}" Height="50">
+                <Image Source="https://icon-library.com/images/sort-icon-png/sort-icon-png-18.jpg" Height="50"
+                       StretchDirection="Both"></Image>
+            </Button>
+            <Button Grid.Column="1" Background="{StaticResource 4ColorStyle}">
+                <Image Source="https://cdn2.iconfinder.com/data/icons/time-line-5/24/Artboard_23-512.png" Height="50"></Image>
+            </Button>
+        </Grid>
+
+        <ScrollViewer  Grid.Column="1" Grid.RowSpan="22" Grid.Row="3">
+            <StackPanel x:Name="stackPanel1"  Background="{StaticResource 1ColorStyle}">
                 <Button x:Name="AddButton" Background="{StaticResource 4ColorStyle}" Foreground="{StaticResource 1ColorStyle}" Content="Відкрити запит" Click="Button_Click_1" Tag="0"/>
             </StackPanel>
         </ScrollViewer>
