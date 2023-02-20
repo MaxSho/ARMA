@@ -112,12 +112,17 @@
                 <ColumnDefinition Width="1*"></ColumnDefinition>
                 <ColumnDefinition Width="1*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Background="{StaticResource 4ColorStyle}" Height="50">
-                <Image Source="https://icon-library.com/images/sort-icon-png/sort-icon-png-18.jpg" Height="50"
-                       StretchDirection="Both"></Image>
+            <Button Grid.Column="0" Background="{StaticResource 4ColorStyle}" Click="ButtonSearchABCClick">
+                <StackPanel Orientation="Horizontal" Height="30">
+                    <Image Source="https://icon-library.com/images/sort-icon-png/sort-icon-png-18.jpg"></Image>
+                    <TextBlock VerticalAlignment="Center">По номеру</TextBlock>
+                </StackPanel>
             </Button>
-            <Button Grid.Column="1" Background="{StaticResource 4ColorStyle}">
-                <Image Source="https://cdn2.iconfinder.com/data/icons/time-line-5/24/Artboard_23-512.png" Height="50"></Image>
+            <Button Grid.Column="1" Background="{StaticResource 4ColorStyle}" Click="ButtonSearchDAteClick">
+                <StackPanel Orientation="Horizontal" Height="30">
+                    <Image Source="https://cdn2.iconfinder.com/data/icons/time-line-5/24/Artboard_23-512.png" ></Image>
+                    <TextBlock VerticalAlignment="Center">По вхідній даті</TextBlock>
+                </StackPanel>
             </Button>
         </Grid>
 
@@ -353,7 +358,7 @@
             <!--</StackPanel>-->
         <!--</ScrollViewer>-->
         <!--Click="Button_ClickRespon"-->
-        <Button x:Name="Button1" Content="Відповідь"  Grid.ColumnSpan="1" MouseEnter="Button1_GotMouseCapture"
+        <Button x:Name="Button1" Content="Відповідь"  Grid.ColumnSpan="1" 
                 Grid.Column="3" Grid.Row="23" Background="{StaticResource 5ColorStyle}"
                 Foreground="{StaticResource 4ColorStyle}" Click="Button_ClickRespon"/>
         <Button x:Name="Button2" Content="Об'єднана відповідь + на диск"  Grid.ColumnSpan="1"
