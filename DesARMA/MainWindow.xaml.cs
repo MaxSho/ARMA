@@ -65,8 +65,6 @@ namespace DesARMA
         Main CurrentMainDB = null!;
         ModelContext modelContext = new ModelContext();
         public User CurrentUser { get; set; } = null!;
-
-
         public MainWindow()
         {
             try
@@ -76,6 +74,7 @@ namespace DesARMA
                 CreateTimer();
                 Auth();
                 currentButton = AddButton;
+                currentButton = OpenButton;
                 DownloadReest();
                 LoadDb();
 
@@ -365,11 +364,11 @@ namespace DesARMA
         private void CreateLeftPanelButtonsRequestes(List<Main> m)
         {
             stackPanel1.Children.Clear();
-            var AddButton = new System.Windows.Controls.Button();
-            AddButton.Tag = "0";
-            AddButton.Content = "Відкрити запит";
-            AddButton.Click += Button_Click_1;
-            stackPanel1.Children.Add(AddButton);
+            //var AddButton = new System.Windows.Controls.Button();
+            //AddButton.Tag = "0";
+            //AddButton.Content = "Відкрити запит";
+            //AddButton.Click += Button_Click_1;
+            //stackPanel1.Children.Add(AddButton);
 
             for (int i = 0; i < m.Count; i++)
             {
@@ -643,7 +642,7 @@ namespace DesARMA
                     ReadFromMainDBToCenter(m);
 
                     
-                    for (int i = 0; i < stackPanel1.Children.Count - 1; i++)
+                    for (int i = 0; i < stackPanel1.Children.Count ; i++)
                     {
                         var butI = stackPanel1.Children[i] as System.Windows.Controls.Button;
                         if (butI != null)
@@ -664,7 +663,7 @@ namespace DesARMA
                     if(mc!=null)
                         contShLabel.Content =/* $"Контроль/Схема  Розташування папки: {mc.Folder}"; */CreateContShLabel(mc.Folder);
 
-                    //TODO Save chackB
+                   
                     ReadFromStringDBToCheckBoxes(mc);
 
                     Button_ClickUpdate(new object(), new RoutedEventArgs());
@@ -761,9 +760,15 @@ namespace DesARMA
                         SaveAllDB();
 
                     }
+                    if (currentButton != OpenButton)
+                    {
+
+                        SaveAllDB();
+
+                    }
 
                     main.Executor = CurrentUser.IdUser;
-                    main.LoginName = CurrentUser.LoginName;// new
+                    main.LoginName = CurrentUser.LoginName; // new
 
                     numberInTextBox.Text = createRequestWindow.CodeRequest;
                     numberKPTextBox.Text = main.CpNumber;
@@ -785,7 +790,7 @@ namespace DesARMA
                     itemButton.Content = $"Запит: {createRequestWindow.CodeRequest}";
 
 
-                    for (int i = 0; i < ind; i++)
+                    for (int i = 0; i < stackPanel1.Children.Count; i++)
                     {
                         var but = stackPanel1.Children[i] as System.Windows.Controls.Button;
                         if (but != null)
@@ -795,7 +800,7 @@ namespace DesARMA
                         }
                         else
                         {
-                            System.Windows.MessageBox.Show($"Не вдалося встановити фон і колір тексту {i + 1}кнопки запиту. Кнопка не знайдена null");
+                            System.Windows.MessageBox.Show($"Не вдалося встановити фон і колір тексту {i + 1}-й кнопки запиту. Кнопка не знайдена null");
                         }
                     }
 
@@ -808,39 +813,49 @@ namespace DesARMA
                     foreach (var item in Reest.abbreviatedName)
                     {
                         Directory.CreateDirectory(FBD.SelectedPath + $"\\{codeRequest}\\{index}. {item}");
-                        var checkBox = new System.Windows.Controls.CheckBox();
-                        var checkBox2 = new System.Windows.Controls.CheckBox();
+                        //var checkBox = new System.Windows.Controls.CheckBox();
+                        //var checkBox2 = new System.Windows.Controls.CheckBox();
 
-                        var parentItem = new TreeViewItem();
-                        parentItem.Header = $"{index++}. " + item;
-                        parentItem.Foreground = this.Resources[$"4ColorStyle"] as SolidColorBrush;
-                        checkBox.Content = parentItem;
-                        checkBox.Margin = new Thickness(0, 1, 0, 0);
-                        checkBox2.Content = checkBox;
-                        treeView1.Items.Add(checkBox2);
+                        //var parentItem = new TreeViewItem();
+                        //parentItem.Header = $"{index++}. " + item;
+                        //parentItem.Foreground = this.Resources[$"4ColorStyle"] as SolidColorBrush;
+                        //checkBox.Content = parentItem;
+                        //checkBox.Margin = new Thickness(0, 1, 0, 0);
+                        //checkBox2.Content = checkBox;
+                        //treeView1.Items.Add(checkBox2);
                     }
-                    var checkBoxS = new System.Windows.Controls.CheckBox();
-                    var checkBoxS2 = new System.Windows.Controls.CheckBox();
+                    //var checkBoxS = new System.Windows.Controls.CheckBox();
+                    //var checkBoxS2 = new System.Windows.Controls.CheckBox();
 
-                    var treeS = new TreeViewItem();
-                    treeS.Foreground = this.Resources[$"4ColorStyle"] as SolidColorBrush;
-                    treeS.Header = $"{index}. Схеми";
+                    //var treeS = new TreeViewItem();
+                    //treeS.Foreground = this.Resources[$"4ColorStyle"] as SolidColorBrush;
+                    //treeS.Header = $"{index}. Схеми";
 
-                    checkBoxS.Content = treeS;
-                    checkBoxS.Margin = new Thickness(0, 1, 0, 0);
-                    checkBoxS2.Content = checkBoxS;
-                    treeView1.Items.Add(checkBoxS2);
+                    //checkBoxS.Content = treeS;
+                    //checkBoxS.Margin = new Thickness(0, 1, 0, 0);
+                    //checkBoxS2.Content = checkBoxS;
+                    //treeView1.Items.Add(checkBoxS2);
+
                     Directory.CreateDirectory(FBD.SelectedPath + $"\\{codeRequest}\\{index}. Схеми");
 
+                    
                     currentButton = itemButton;
                     CurrentMainDB = main;
                     //treeView1.Items.Count
                     modelContext.MainConfigs.Add(new MainConfig() { Control = new string('0', treeView1.Items.Count), Folder = FBD.SelectedPath+ $"\\{codeRequest}" , NumbInput = main.NumbInput, Shema = new string('0', treeView1.Items.Count) });
                     contShLabel.Content = /*$"Контроль/Схема  Розташування папки: {FBD.SelectedPath + $"\\{codeRequest}"}";*/ CreateContShLabel(FBD.SelectedPath + $"\\{codeRequest}");
+                    
                     modelContext.SaveChanges();
 
+                    AllDirectories allDirectories = new AllDirectories(main, (from b in modelContext.MainConfigs
+                                                                             where b.NumbInput.Equals(createRequestWindow.CodeRequest)
+                                                                             select b).First(),
+                        ClickOnCheckBox, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
+                        this.Resources["GreenEmpty"] as SolidColorBrush
+                        , treeView1, modelContext
+                       );
+                    allDirectories.CreateNewTree();
 
-                    
                 }
                 else
                 {
@@ -859,7 +874,8 @@ namespace DesARMA
             inactivityTimer.Stop();
             try
             {
-                if (currentButton == AddButton) return;
+                //if (currentButton == AddButton) return;
+                if (currentButton == OpenButton) return;
 
                 var prevMc = modelContext.MainConfigs.Find(numberInTextBox.Text);
                 
@@ -976,7 +992,8 @@ namespace DesARMA
         }
         private bool isCanReturnRespons(MainConfig? prevM)
         {
-            if (currentButton == AddButton) return false;
+            //if (currentButton == AddButton) return false;
+            if (currentButton == OpenButton) return false;
             int iPrap = 1;
             if (prevM == null) return false;
 
@@ -1047,71 +1064,8 @@ namespace DesARMA
             inactivityTimer.Stop();
             try
             {
-                //if (currentButton == AddButton) return;
-                //int iPrap = 1;
                 var prevM = modelContext.MainConfigs.Find(numberInTextBox.Text);
-                //if(prevM == null) return;
-
-                //var listNotCheckControl = new List<string>();
-                //foreach (var item in treeView1.Items)
-                //{
-                //    var sp = item as System.Windows.Controls.StackPanel;
-                //    if (sp != null)
-                //    {
-                //        var chB = sp.Children[0] as System.Windows.Controls.CheckBox;
-                //        if (chB != null)
-                //        {
-                //            var b = chB.IsChecked;
-                //            if (b != null)
-                //            {
-                //                if (!(bool)b)
-                //                {
-                //                    var nameReest = sp.Children[2] as System.Windows.Controls.TreeViewItem;
-
-                //                    if (nameReest != null)
-                //                    {
-                //                        if (Directory.Exists(prevM.Folder + "\\" + nameReest.Header))
-                //                        {
-
-                //                            listNotCheckControl.Add(nameReest.Header.ToString());
-                //                            //return;
-                //                        }
-                //                    }
-                //                    else
-                //                    {
-                //                        System.Windows.MessageBox.Show($"Не знайдено назву реэстру");
-                //                        return;
-                //                    }
-                //                }
-                //            }
-                //            else
-                //            {
-                //                System.Windows.MessageBox.Show($"Не відмічено контроль(null)");
-                //                return;
-                //            }
-                //        }
-                //        else
-                //        {
-                //            System.Windows.MessageBox.Show($"Прапорець номер {iPrap} контролю не визначений");
-                //            return;
-                //        }
-                //    }
-
-                //    iPrap++;
-                //}
-
-                //if(listNotCheckControl.Count > 0)
-                //{
-
-                //    string str = $"Не відмічено контроль:";
-
-                //    foreach (var item in listNotCheckControl)
-                //    {
-                //        str += "\n" + item;
-                //    }
-                //    System.Windows.MessageBox.Show(str);
-                //    return;
-                //}
+                
 
                 if (!isCanReturnRespons(prevM))
                 {
@@ -1129,46 +1083,6 @@ namespace DesARMA
                     return;
                 }
 
-
-                //string path3 = "";
-
-                ////Створення документу звіту
-                //XWPFDocument doc1;
-                //if (prevM != null && prevM.Folder != null)
-                //{
-                //    Directory.CreateDirectory(prevM.Folder + "\\Відповідь");
-
-                //    var exeFath = /*AppDomain.CurrentDomain.BaseDirectory*/  Environment.CurrentDirectory;
-                //    var path = System.IO.Path.Combine(exeFath, "Files\\1.docx");
-
-                //    FileInfo fileInfo = new FileInfo(path);
-
-                //    var path2 = System.IO.Path.Combine(exeFath, "FilesRet\\2.docx");
-                //    path3 = prevM.Folder + $"\\Відповідь\\Відповідь {prevM.Folder.Split('\\').Last()}.docx";
-
-                //    fileInfo.CopyTo(path3, true);
-
-                //    doc1 = new XWPFDocument(OPCPackage.Open(path3));
-                //}
-                //else
-                //{
-                //    System.Windows.MessageBox.Show($"Не вдалося відкрити контекст запиту. Не знайдено його");
-                //    return;
-                //}
-
-
-
-
-                //bool isExReq = false;
-                //if(Directory.Exists(prevM.Folder + "\\Запити"))
-                //if (!(Directory.GetDirectories(prevM.Folder + "\\Запити").Length == 0 &&
-                //                    Directory.GetFiles(prevM.Folder + "\\Запити").Length == 0)
-                //     )
-                //{
-                //    isExReq = true;
-                //}
-
-
                 //Створення зміних, що вставляються в звіт   
                 var indexSub = isCountFig > 1 ? 0 : 1;
                 int whatIndex = 0; //type organ
@@ -1182,68 +1096,6 @@ namespace DesARMA
                 int count_Shemat = 0;
                 string vidOrgan = vidOrgTextBox.Text;
                 string positionSub = positionSubTextBox.Text;
-
-
-
-
-                //Створення списків реєстрів родовий і давальний
-                //List<string> listSRod = new List<string>();
-                //List<string> listSDav = new List<string>();
-
-
-                ////Збереження даних наявностей реєстрів
-                //if (Directory.Exists(prevM.Folder))
-                //    {
-                //    int i = 1;
-                //    foreach (string itemAbbreviatedName in Reest.abbreviatedName)
-                //    {
-                //        string[] dirs = Directory.GetDirectories(prevM.Folder);
-                //        foreach (var itemDir in dirs)
-                //        {
-                //            if ((new DirectoryInfo(itemDir)).Name == $"{i}. " + itemAbbreviatedName)
-                //            {
-                //                if (Directory.GetDirectories(itemDir).Length > 0 ||
-                //                     Directory.GetFiles(itemDir).Length > 0
-                //                )
-                //                {
-                //                    listSRod.Add(Reest.sRodov[Reest.abbreviatedName.IndexOf(itemAbbreviatedName)]);
-                //                }
-                //                else
-                //                {
-
-                //                    listSDav.Add(Reest.sDav[Reest.abbreviatedName.IndexOf(itemAbbreviatedName)]);
-                //                }
-                //            }
-                //        }
-                //        i++;
-                //    }
-                //    var d = Directory.GetDirectories(prevM.Folder);
-                //    foreach (var item in d)
-                //    {
-                //        if ((new DirectoryInfo(item)).Name == $"{i}. Схеми")
-                //        {
-                //            var countD = Directory.GetDirectories(item).Length;
-                //            var countF = Directory.GetFiles(item).Length;
-                //            count_Shemat = countD + countF;
-                //            break;
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //        System.Windows.MessageBox.Show("Не знайдено папку запиту");
-                //        doc1.Close();
-                //        return;
-                //}
-
-                ////створення множини ідентичних груп додатків
-                //var listNumering = Orders(listSRod);
-                //HashSet<int> hset = new HashSet<int>();
-                //foreach (var item in listNumering)
-                //{
-                //    hset.Add(item);
-                //}
-
 
 
                 DocResponse docResponse = new DocResponse(new List<MainConfig>() { prevM }, 
@@ -1260,200 +1112,6 @@ namespace DesARMA
                 }, modelContext);
 
 
-
-
-                //Формування параграфів
-                //var par = doc1.Paragraphs[22];
-                //    par.ReplaceText(par.Text, positionSub);
-
-
-                //    par = doc1.Paragraphs[21];
-                //    par.ReplaceText(par.Text, vidOrgan);
-
-                //    par = doc1.Paragraphs[23];
-                //    par.ReplaceText(par.Text, name);
-
-                //    par = doc1.Paragraphs[25];
-                //    par.ReplaceText(par.Text, address1);
-
-                //    par = doc1.Paragraphs[26];
-                //    par.ReplaceText(par.Text, "");
-
-                //    par = doc1.Paragraphs[30];
-                //    //par.ReplaceText("14.12.2021 № 65/16/6133 (вх. № 6018/27-21 від 21.12.2022)", $"{date1} № {number1} (вх. № {number2} від {date2})");
-                //par.ReplaceText("14.12.2021", $"{date1}");
-                //par.ReplaceText("65/16/6133", $"{number1}");
-                //par.ReplaceText("6018/27-21", $"{number2}");
-                //par.ReplaceText("21.12.2022", $"{date2}");
-
-                //par.ReplaceText("зазначених", Reest.sub[indexSub]);
-                //    par.ReplaceText("осіб", Reest.sub2[indexSub]);
-
-
-                //    par = doc1.Paragraphs[31];
-
-                //    if (count_Shemat > 0)
-                //        par.ReplaceText("додаток 10-11", $"додаток {hset.Count + 1}");
-
-                //    par.ReplaceText("зазначених", Reest.sub[indexSub]);
-                //    par.ReplaceText("осіб", Reest.sub2[indexSub]);
-
-                //    par = doc1.Paragraphs[32];
-                //    par.ReplaceText("зазначених", Reest.sub[indexSub]);
-                //    par.ReplaceText("осіб", Reest.sub2[indexSub]);
-
-
-                //    par = doc1.Paragraphs[33];
-                //    par.ReplaceText("зазначених", Reest.sub[indexSub]);
-                //    par.ReplaceText("осіб", Reest.sub2[indexSub]);
-
-                //    //System.Windows.MessageBox.Show(par.Text);
-
-                //    par = doc1.Paragraphs[34];
-                //        if(whatIndex != -1)
-                //            par.ReplaceText(par.Text, Reest.organs[whatIndex]);
-                //        else
-                //            par.ReplaceText(par.Text, Reest.organs[0]);
-
-
-                //     for (int i = 0; i < listSRod.Count; i++)
-                //        {
-                //            var tmpParagraph = doc1.CreateParagraph();
-                //            tmpParagraph.Alignment = ParagraphAlignment.BOTH;
-                //            tmpParagraph.IndentationFirstLine = 570;
-                //            var tmpRun = tmpParagraph.CreateRun();
-                //            tmpRun.FontSize = 14;
-                //        }
-                //    // пересунуть 1 ліст
-                //    for (int i = doc1.Paragraphs.Count - listSRod.Count - 1; i >= 31; i--)
-                //    {
-                //        var tmpParagraph = doc1.Paragraphs[i];
-                //        doc1.SetParagraph(tmpParagraph, i + listSRod.Count);
-                //    }
-
-                //    // засунуть 1 ліст
-                //    int count_dodat = 0;
-                //    //var listNumering = Orders(listSRod);
-                    
-                //foreach (var item in listSRod)
-                //    {
-                //        var tmpParagraph = doc1.CreateParagraph();
-                //        doc1.SetParagraph(tmpParagraph, 31 + count_dodat);
-                //        tmpParagraph.IndentationFirstLine = 570;
-                //        tmpParagraph.Alignment = ParagraphAlignment.BOTH;
-                //        var tmpRun = tmpParagraph.CreateRun();
-                //        tmpRun.AppendText($"{count_dodat + 1}) ");
-                //        if (count_dodat == listSRod.Count - 1)
-                //            tmpRun.AppendText($"{item} (додаток {listNumering[count_dodat]}).");
-                //        else
-                //            tmpRun.AppendText($"{item} (додаток {listNumering[count_dodat]});");
-
-                    
-                //    tmpRun.FontSize = 14;
-                //        count_dodat++;
-                //    }
-                //    //remove
-                //    for (int i = 0; i < listSRod.Count; i++)
-                //    {
-                //        int pPos = doc1.GetPosOfParagraph(doc1.Paragraphs[doc1.Paragraphs.Count - 1]);
-                //        doc1.RemoveBodyElement(pPos);
-                //    }
-
-                //    // в кінець 2 ліст пустий
-                //    for (int i = 0; i < listSDav.Count; i++)
-                //    {
-                //        var tmpParagraph = doc1.CreateParagraph();
-                //        tmpParagraph.Alignment = ParagraphAlignment.BOTH;
-                //        tmpParagraph.IndentationFirstLine = 570;
-                //        var tmpRun = tmpParagraph.CreateRun();
-                //        tmpRun.FontSize = 14;
-                //    }
-
-                //    // пересунуть 2 ліст
-                //    for (int i = doc1.Paragraphs.Count - listSDav.Count - 1; i >= 33 + listSRod.Count; i--)
-                //    {
-                //        var tmpParagraph = doc1.Paragraphs[i];
-                //        doc1.SetParagraph(tmpParagraph, i + listSDav.Count);
-                //    }
-
-                    
-       
-                //    // встувить 2 ліст
-                //    for (int i = 0; i < listSDav.Count; i++)
-                //    {
-                //        var tmpParagraph = doc1.CreateParagraph();
-                //        doc1.SetParagraph(tmpParagraph, 33 + listSRod.Count + i);
-                //        tmpParagraph.IndentationFirstLine = 570;
-                //        tmpParagraph.Alignment = ParagraphAlignment.BOTH;
-                //        var tmpRun = tmpParagraph.CreateRun();
-
-                       
-
-                //        if (i == listSDav.Count - 1)
-                //            tmpRun.AppendText($"- {listSDav[i]}.");
-                //        else
-                //            tmpRun.AppendText($"- {listSDav[i]};");
-
-                        
-
-                //        tmpRun.FontSize = 14;
-                //    }
-                   
-
-                //    //remove
-                //    for (int i = 0; i < listSDav.Count; i++)
-                //    {
-                //        int pPos = doc1.GetPosOfParagraph(doc1.Paragraphs[doc1.Paragraphs.Count - 1]);
-                //        doc1.RemoveBodyElement(pPos);
-                //    }
-
-
-                //    par = doc1.Paragraphs[doc1.Paragraphs.Count - 7];
-                //    par.ReplaceText(par.Text, $"Примірник № 1 - {vidOrgTextBox.Text}");
-
-
-                    
-
-                //    int indexDel = 0;
-                //    if (count_Shemat == 0)
-                //    {
-                //        indexDel = 33 + listSRod.Count + listSDav.Count;
-                //    for (int i = 32 + listSRod.Count; i < doc1.Paragraphs.Count; i++)
-                //            {
-                //                var tmpParagraph = doc1.Paragraphs[i];
-                //                doc1.SetParagraph(tmpParagraph, i - 1);
-                //            }
-                //            doc1.SetParagraph(doc1.Paragraphs[0], doc1.Paragraphs.Count - 1);
-                //    }
-                //    else
-                //    {
-                //        indexDel = 34 + listSRod.Count + listSDav.Count;
-                //    }
-
-                
-                //if (!isExReq)
-                //{
-                //    for (int i = indexDel; i < doc1.Paragraphs.Count; i++)
-                //    {
-                //        var tmpParagraph = doc1.Paragraphs[i];
-                //        doc1.SetParagraph(tmpParagraph, i - 1);
-                //    }
-                //    doc1.SetParagraph(doc1.Paragraphs[0], doc1.Paragraphs.Count - 1);
-                //}
-
-
-                //var path4 = prevM.Folder + "\\Відповідь\\Відповідь.docx";
-
-                //    //Збереження звіта 
-                //    using (FileStream sw = File.Create(path4))
-                //    {
-                //        doc1.Write(sw);
-                //        // doc1.Close();
-                //    }
-
-                //    doc1.Close();
-                //    File.Delete(path4);
-
                 if (whatIndex == 2)
                 {
                     docResponse.CreateResponseMINIuST();
@@ -1465,8 +1123,6 @@ namespace DesARMA
                     //System.Windows.MessageBox.Show($"Відповідь збережено в папку:\n{path3}");
                 }   
 
-
-                
                
             }
             catch (Exception e2)
@@ -1617,14 +1273,15 @@ namespace DesARMA
                     //currentButton = itemButton2;
 
 
-                    var itemButtonAdd = new System.Windows.Controls.Button();
-                    itemButtonAdd.Click += Button_Click_1;
-                    itemButtonAdd.Name = "AddButton";
-                    itemButtonAdd.Tag = "0";
-                    itemButtonAdd.Content = "Відкрити запит";
-                    itemButtonAdd.Foreground = this.Resources[$"{1}ColorStyle"] as SolidColorBrush;
-                    itemButtonAdd.Background = this.Resources[$"{4}ColorStyle"] as SolidColorBrush;
-                    stackPanel1.Children.Add(itemButtonAdd);
+                    //var itemButtonAdd = new System.Windows.Controls.Button();
+                    //itemButtonAdd.Click += Button_Click_1;
+                    //itemButtonAdd.Name = "AddButton";
+                    ////itemButtonAdd.Name = "OpenButton";
+                    //itemButtonAdd.Tag = "0";
+                    //itemButtonAdd.Content = "Відкрити запит";
+                    //itemButtonAdd.Foreground = this.Resources[$"{1}ColorStyle"] as SolidColorBrush;
+                    //itemButtonAdd.Background = this.Resources[$"{4}ColorStyle"] as SolidColorBrush;
+                    //stackPanel1.Children.Add(itemButtonAdd);
 
 
                     // Button_Any_Click_Req(currentButton, new RoutedEventArgs());
@@ -2258,6 +1915,7 @@ namespace DesARMA
             try
             {
                 if (currentButton == AddButton) return;
+                if (currentButton == OpenButton) return;
 
                 var prevMc = modelContext.MainConfigs.Find(numberInTextBox.Text);
 
@@ -2388,6 +2046,7 @@ namespace DesARMA
             try
             {
                 if (currentButton == AddButton) return;
+                if (currentButton == OpenButton) return;
 
                 var prevMc = modelContext.MainConfigs.Find(numberInTextBox.Text);
 
@@ -2624,7 +2283,6 @@ namespace DesARMA
             inactivityTimer.Stop();
             inactivityTimer.Start();
         }
-
         private void ButtonSearchABCClick(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
@@ -2640,7 +2298,6 @@ namespace DesARMA
         }
         private void ButtonSearchDAteClick(object sender, RoutedEventArgs e)
         {
-            System.Windows.MessageBox.Show("Sdfsfd");
             inactivityTimer.Stop();
             try
             {
