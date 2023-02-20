@@ -126,7 +126,10 @@
             </Button>
         </Grid>
 
-        <ScrollViewer  Grid.Column="1" Grid.RowSpan="22" Grid.Row="3">
+        <Button Name="OpenButton" Click="Button_Click_1"
+            Grid.Column="1" Grid.Row="3" Content="Відкрити звернення" Background="{StaticResource 4ColorStyle}" Foreground="{StaticResource 1ColorStyle}">
+        </Button>
+        <ScrollViewer  Grid.Column="1" Grid.RowSpan="22" Grid.Row="4">
             <StackPanel x:Name="stackPanel1"  Background="{StaticResource 1ColorStyle}">
                 <Button x:Name="AddButton" Background="{StaticResource 4ColorStyle}" Foreground="{StaticResource 1ColorStyle}" Content="Відкрити запит" Click="Button_Click_1" Tag="0"/>
             </StackPanel>
