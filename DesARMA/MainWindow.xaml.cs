@@ -48,6 +48,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Windows.Media.Animation;
 
 namespace DesARMA
 {
@@ -523,6 +524,57 @@ namespace DesARMA
                 //        b.Foreground = this.Resources[$"1ColorStyle"] as SolidColorBrush;
                 //    }
                 //}
+
+                Button_ClickUpdate(new object(), new RoutedEventArgs());
+                // System.Windows.MessageBox.Show("" + treeView1.Items.Count);
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show(e.Message);
+            }
+
+        }
+        private void LoadDbDate()
+
+        {
+            try
+            {
+                var mains = (from b in modelContext.Mains
+                             where b.Executor == CurrentUser.IdUser
+                    &&
+                        (from o in modelContext.MainConfigs
+                         where o.NumbInput == b.NumbInput
+                         select o).Count() == 1
+                    orderby b.DtInput
+                             select b
+                    )
+                    .ToList();
+
+               
+
+                CreateLeftPanelButtonsRequestes(mains);
+
+                var mcIs = modelContext.MainConfigs.Find(mains.Last().NumbInput);
+
+                contShLabel.Content =  CreateContShLabel(mcIs!.Folder);
+
+                numberKPTextBox.Text = mains.Last().CpNumber;
+                numberInTextBox.Text = mains.Last().NumbInput;
+                dateInTextBox.Text = InStrDate(mains.Last().DtInput);
+                dateControlTextBox.Text = InStrDate(mains.Last().DtCheck);
+
+                ReadFromMainDBToCenter(mains.Last());
+
+                CurrentMainDB = mains.Last();
+
+                treeView1.Items.Clear();
+
+
+                AllDirectories allDirectories = new AllDirectories(mains.Last(), mcIs, ClickOnCheckBox, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
+                                        this.Resources["GreenEmpty"] as SolidColorBrush
+                                        , treeView1, modelContext
+                                       );
+                allDirectories.CreateNewTree();
 
                 Button_ClickUpdate(new object(), new RoutedEventArgs());
                 // System.Windows.MessageBox.Show("" + treeView1.Items.Count);
@@ -2573,11 +2625,32 @@ namespace DesARMA
             inactivityTimer.Start();
         }
 
-        private void Button1_GotMouseCapture(object sender, System.Windows.Input.MouseEventArgs e)
+        private void ButtonSearchABCClick(object sender, RoutedEventArgs e)
         {
-            //System.Windows.MessageBox.Show("DSFSFS");
+            inactivityTimer.Stop();
+            try
+            {
+                LoadDb();
+            }
+            catch(Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
+            }
+            inactivityTimer.Start();
         }
-
-        
+        private void ButtonSearchDAteClick(object sender, RoutedEventArgs e)
+        {
+            System.Windows.MessageBox.Show("Sdfsfd");
+            inactivityTimer.Stop();
+            try
+            {
+                LoadDbDate();
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
+            }
+            inactivityTimer.Start();
+        }
     }
 }
