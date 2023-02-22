@@ -29,6 +29,13 @@ namespace DesARMA.CombinedResponseWindows
         Yes,
         No
     }
+    enum StatusFolder
+    {
+        Undefined,
+        NotCreated,
+        Empty,
+        NotEmpty
+    }
     public partial class EntryOfPersonsInvolvedInTheCombinedRegistersWindow : System.Windows.Window
     {
         List<string> listNumIn;
@@ -228,8 +235,8 @@ namespace DesARMA.CombinedResponseWindows
                             if (Directory.Exists($"{folderCurrentNumbIn}\\{i + 1}. {Reest.abbreviatedName[i]}"))
                             {
                                 if (Directory.GetFiles($"{folderCurrentNumbIn}\\{i + 1}. {Reest.abbreviatedName[i]}").Length==0
-                                    && Directory.GetDirectories($"{folderCurrentNumbIn}\\{i + 1}. {Reest.abbreviatedName[i]}").Length 
-                                    == 0)
+                                    && 
+                                    Directory.GetDirectories($"{folderCurrentNumbIn}\\{i + 1}. {Reest.abbreviatedName[i]}").Length == 0)
                                 {
                                     numbColorInReestr[i] = Math.Max(numbColorInReestr[i], 2);
                                 }
@@ -1072,6 +1079,25 @@ namespace DesARMA.CombinedResponseWindows
                 return $"{d.Name}^ (ЄДРПОУ ^{d.Code}^)";
             }
         }
+        static public string? GetDefInStringWithout(Figurant d)
+        {
+            if (d.ResFiz != null)
+            {
+                string strDt = "";
+                var birth = d.DtBirth;
+                if (birth != null)
+                {
+                    return $"{d.Fio}, {birth.ToString().Substring(0, 10)} р.н., РНОКПП {d.Ipn}";
+                }
+                return $"{d.Fio}, РНОКПП {d.Ipn}";
+            }
+            else
+            {
+                if (d.Code == null || d.Code == "")
+                    return $"{d.Name}";
+                return $"{d.Name} (ЄДРПОУ {d.Code})";
+            }
+        }
         private bool? GetCheckBoxControl(int num)
         {
             var st = treeView1.Items[num - 1] as StackPanel;
@@ -1099,21 +1125,44 @@ namespace DesARMA.CombinedResponseWindows
             inactivityTimer.Stop();
             try
             {
-                var listNoCont = GetListNoControl();
-                if (listNoCont.Count == 0)
+                ToCheckFolders();
+                ToCheckFoldersShema();
+                //var listNoCont = GetListNoControl();
+
+                //if (listNoCont.Count == 0)
+                //{
+                //    SaveCheckBoxesFig();
+                //    this.DialogResult = true;
+                //}
+                //else
+                //{
+                //    string strReest = "";
+                //    foreach (var item in listNoCont)
+                //    {
+                //        strReest += item + "\n";
+                //    }
+
+                //    MessageBox.Show("Не відмічено контроль в таких реєстрах:\n" + strReest);
+
+                //}
+
+                var listNoLogic = GetListNoLogic();
+                if (IsListNoLogicEmpty(listNoLogic))
                 {
                     SaveCheckBoxesFig();
                     this.DialogResult = true;
-                } 
+                }
                 else
                 {
-                    string strReest = "";
-                    foreach (var item in listNoCont)
-                    {
-                        strReest += item + "\n";
-                    }
+                    string strReest = "Інформація не відповідає дійсності в реєстрах:\n";
 
-                    MessageBox.Show("Не відмічено контроль в таких реєстрах:\n" + strReest);
+                    for (int i = 0; i < listNoLogic.Count; i++)
+                    {
+                        if(listNoLogic[i] != "")
+                            strReest += $"\n{i+1}. {Reest.abbreviatedName[i]} по фігурантам:\n{listNoLogic[i]}";
+                    }
+                    MessageBox.Show(strReest);
+                    InitField();
                 }
             }
             catch (Exception ex)
@@ -1154,6 +1203,88 @@ namespace DesARMA.CombinedResponseWindows
                 }
             }
             return listNoContr;
+        }
+        
+        private List<string> GetListNoLogic()
+        {
+            List<string> list = new List<string>();
+            for (int i = 0; i < Reest.abbreviatedName.Count; i++)
+            {
+                list.Add("");
+            }
+
+            for (int i = 1; i <= figurants.Count; i++)
+            {
+                for (int j = 0; j < Reest.abbreviatedName.Count; j++)
+                {
+                    var yes = GetFigCheckYesReestr(j + 1, i);
+                    var no = GetFigCheckNoReestr(j + 1, i);
+                    if(yes!=null && no != null)
+                    {
+                        var statusReestrForFig = GetStatusFolder(i, j + 1);
+                        if (statusReestrForFig == StatusFolder.NotCreated)
+                        {
+                            if (yes.IsChecked!.Value || no.IsChecked!.Value)
+                            {
+                                list[j] += $"{GetDefInStringWithout(figurants[i - 1])};\n";
+                            }
+                        }
+                        else if (statusReestrForFig == StatusFolder.Empty)
+                        {
+                            if (!(!yes.IsChecked!.Value && no.IsChecked!.Value))
+                            {
+                                list[j] += $"{GetDefInStringWithout(figurants[i - 1])};\n";
+                            }
+                        }
+                        else if (statusReestrForFig == StatusFolder.NotEmpty)
+                        {
+                            if (!(yes.IsChecked!.Value && !no.IsChecked!.Value))
+                            {
+                                list[j] += $"{GetDefInStringWithout(figurants[i - 1])};\n";
+                            }
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+        private bool IsListNoLogicEmpty(List<string> list)
+        {
+            foreach (var item in list)
+            {
+                if (item != "")
+                    return false;
+            }
+            return true;
+        }
+        private StatusFolder GetStatusFolder(int numFig, int numReest)
+        {
+            var folderCurrentNumbIn = (from mc in modelContext.MainConfigs where mc.NumbInput == figurants[numFig - 1].NumbInput select mc.Folder).First();
+            if (folderCurrentNumbIn != null)
+            {
+                if (Directory.Exists(folderCurrentNumbIn))
+                {
+                    if(Directory.Exists($"{folderCurrentNumbIn}\\{numReest}. {Reest.abbreviatedName[numReest - 1]}"))
+                    {
+                        if (Directory.GetFiles($"{folderCurrentNumbIn}\\{numReest}. {Reest.abbreviatedName[numReest - 1]}").Length == 0
+                                   &&
+                                   Directory.GetDirectories($"{folderCurrentNumbIn}\\{numReest}. {Reest.abbreviatedName[numReest - 1]}").Length == 0)
+                        {
+                            return StatusFolder.Empty;
+                        }
+                        else
+                        {
+                            return StatusFolder.NotEmpty;
+                        }
+                    }
+                    else
+                    {
+                        return StatusFolder.NotCreated;
+                    }
+                }
+                return StatusFolder.Undefined;
+            }
+            return StatusFolder.Undefined;
         }
         private StackPanel? GetStackPanelReestr(int num)
         {
@@ -1245,7 +1376,6 @@ namespace DesARMA.CombinedResponseWindows
             }
             modelContext.SaveChanges();
         }
-        
         private string GetStringFromCh(List<bool?> listb)
         {
             string retS = "";
@@ -1271,8 +1401,6 @@ namespace DesARMA.CombinedResponseWindows
             }
             return retS;
         }
-
-
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
