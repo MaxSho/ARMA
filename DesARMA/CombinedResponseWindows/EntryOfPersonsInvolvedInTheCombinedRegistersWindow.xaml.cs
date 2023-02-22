@@ -55,22 +55,30 @@ namespace DesARMA.CombinedResponseWindows
                 numbColorShema = 3;
                 figurants = (from f in modelContext.Figurants where listNumIn.Contains(f.NumbInput) select f).ToList();
 
-                ToCheckFolders();
-                ToCheckFoldersShema();
+                InitField();
+
+                //ToCheckFolders();
+                //ToCheckFoldersShema();
 
                 CreateTreeView1();
                 CreateTreeViewShema();
 
-                SetColor();
-                SetColorShema();
+                //SetColor();
+                //SetColorShema();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-
             }
-            
+        }
+        private void InitField()
+        {
+            numbColorInReestr = new List<int>();
 
+            foreach (var item in Reest.abbreviatedName)
+            {
+                numbColorInReestr.Add(0);
+            }
         }
         private void SetColor()
         {
@@ -200,12 +208,12 @@ namespace DesARMA.CombinedResponseWindows
         }
         private void ToCheckFolders()
         {
-            List<int> numbColorInReestr = new List<int>();
+            //List<int> numbColorInReestr = new List<int>();
 
-            foreach (var item in Reest.abbreviatedName)
-            {
-                numbColorInReestr.Add(0);
-            }
+            //foreach (var item in Reest.abbreviatedName)
+            //{
+            //    numbColorInReestr.Add(0);
+            //}
 
 
             foreach (var itemNumbIn in listNumIn)
@@ -1086,7 +1094,7 @@ namespace DesARMA.CombinedResponseWindows
             }
             return null;
         }
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ButtonCreate_Click(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
             try
@@ -1262,6 +1270,34 @@ namespace DesARMA.CombinedResponseWindows
                 retS += "0";
             }
             return retS;
+        }
+
+
+        private void ButtonSave_Click(object sender, RoutedEventArgs e)
+        {
+            inactivityTimer.Stop();
+            try
+            {
+
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            inactivityTimer.Start();
+        }
+        private void ButtonReq_Click(object sender, RoutedEventArgs e)
+        {
+            inactivityTimer.Stop();
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            inactivityTimer.Start();
         }
         private void Window_MouseMove(object sender, MouseEventArgs e)
         {

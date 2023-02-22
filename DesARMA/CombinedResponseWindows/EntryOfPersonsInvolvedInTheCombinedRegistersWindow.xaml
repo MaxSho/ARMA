@@ -57,6 +57,15 @@
         </Grid.RowDefinitions>
         <TreeView Grid.Row="0" Name="treeView1" Background="{StaticResource 2ColorStyle}"/>
         <TreeView Grid.Row="1" Name="treeViewShema" Background="{StaticResource 2ColorStyle}"/>
-        <Button Grid.Row="2" Content="Створити об'єднану відповідь" Click="Button_Click"/>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="Перелік запитів" Click="ButtonReq_Click"/>
+            <Button Grid.Column="1" Content="Зберегти" Click="ButtonSave_Click"/>
+            <Button Grid.Column="2" Content="Створити об'єднану відповідь" Click="ButtonCreate_Click"/>
+        </Grid>
     </Grid>
 </Window>
