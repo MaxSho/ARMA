@@ -16,6 +16,7 @@
         <SolidColorBrush x:Key="5ColorStyle" Color="#009900" />
         <SolidColorBrush x:Key="RedEmpty" Color="#9F0000" />
         <SolidColorBrush x:Key="GreenEmpty" Color="#21C25C" />
+        <SolidColorBrush x:Key="BlueCheck" Color="#99CCFF" />
         <Style TargetType="Label">
             <Setter Property="Label.Background" Value="{StaticResource 2ColorStyle}" />
             <Setter Property="Label.Foreground" Value="{StaticResource 3ColorStyle}" />
