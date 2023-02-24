@@ -19,18 +19,33 @@ namespace DesARMA
     /// <summary>
     /// Interaction logic for RequestsWindow.xaml
     /// </summary>
+    /// 
+
+    public enum TypeOfAppeal
+    {
+        NotСombined,
+        Сombined
+    }
     public partial class RequestsWindow : Window
     {
-        string inputNumbet;
+        List<string> inputNumberList;
         ModelContext modelContext;
         private System.Windows.Forms.Timer inactivityTimer = new System.Windows.Forms.Timer();
-        public RequestsWindow(string inputNumbet, ModelContext modelContext, System.Windows.Forms.Timer inactivityTimer)
+        TypeOfAppeal typeOfAppeal;
+        public RequestsWindow(List<string> inputNumberList, ModelContext modelContext, TypeOfAppeal typeOfAppeal,
+            System.Windows.Forms.Timer inactivityTimer
+            )
         {
             InitializeComponent();
             this.modelContext = modelContext;
-            this.inputNumbet = inputNumbet;
+            this.inputNumberList = inputNumberList;
             this.inactivityTimer = inactivityTimer;
+            this.typeOfAppeal = typeOfAppeal;
 
+            if(typeOfAppeal == TypeOfAppeal.Сombined)
+            {
+                this.Title = "Запити Об'єднаної відповіді";
+            }
             //string shif = ConfigurationManager.AppSettings["hv"].ToString();
             //inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
             //inactivityTimer.Tick += (sender, args) =>
@@ -39,21 +54,19 @@ namespace DesARMA
             //};
             inactivityTimer.Start();
         }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ButtonClick(EnumExtReq enumExtReq, string title)
         {
-
+            SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumberList, modelContext, enumExtReq, title, typeOfAppeal, inactivityTimer);
+            this.Hide();
+            selectFigWindow.ShowDialog();
+            this.Show();
         }
-
         private void DMSButton_Click1(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
             try
             {
-                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToMytna, "Держмитслужба", inactivityTimer);
-                this.Hide();
-                selectFigWindow.ShowDialog();
-                this.Show();
+                ButtonClick(EnumExtReq.ExternalRequestsToMytna, "Держмитслужба");
             }
             catch (Exception ex)
             {
@@ -67,10 +80,7 @@ namespace DesARMA
             inactivityTimer.Stop();
             try
             {
-                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToIntelektualnyi, "Укрпатент", inactivityTimer);
-                this.Hide();
-                selectFigWindow.ShowDialog();
-                this.Show();
+                ButtonClick(EnumExtReq.ExternalRequestsToIntelektualnyi, "Укрпатент");
             }
             catch (Exception ex)
             {
@@ -84,10 +94,7 @@ namespace DesARMA
             inactivityTimer.Stop();
             try
             {
-                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToHeolohii, "Геонадра", inactivityTimer);
-                this.Hide();
-                selectFigWindow.ShowDialog();
-                this.Show();
+                ButtonClick(EnumExtReq.ExternalRequestsToHeolohii, "Геонадра");
             }
             catch (Exception ex)
             {
@@ -101,10 +108,7 @@ namespace DesARMA
             inactivityTimer.Stop();
             try
             {
-                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToDerzhpratsi, "Держпраці", inactivityTimer);
-                this.Hide();
-                selectFigWindow.ShowDialog();
-                this.Show();
+                ButtonClick(EnumExtReq.ExternalRequestsToDerzhpratsi, "Держпраці");
             }
             catch (Exception ex)
             {
@@ -118,10 +122,7 @@ namespace DesARMA
             inactivityTimer.Stop();
             try
             {
-                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToAntymonopolnyi, "АМК", inactivityTimer);
-                this.Hide();
-                selectFigWindow.ShowDialog();
-                this.Show();
+                ButtonClick(EnumExtReq.ExternalRequestsToAntymonopolnyi, "АМК");
             }
             catch (Exception ex)
             {
@@ -135,10 +136,7 @@ namespace DesARMA
             inactivityTimer.Stop();
             try
             {
-                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToFondovyi1, "НКЦПФР 1", inactivityTimer);
-                this.Hide();
-                selectFigWindow.ShowDialog();
-                this.Show();
+                ButtonClick(EnumExtReq.ExternalRequestsToFondovyi1, "НКЦПФР 1");
             }
             catch (Exception ex)
             {
@@ -152,10 +150,7 @@ namespace DesARMA
             inactivityTimer.Stop();
             try
             {
-                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToFondovyiOsnovnyi2, "НКЦПФР 2", inactivityTimer);
-                this.Hide();
-                selectFigWindow.ShowDialog();
-                this.Show();
+                ButtonClick(EnumExtReq.ExternalRequestsToFondovyiOsnovnyi2, "НКЦПФР 2");
             }
             catch (Exception ex)
             {
@@ -169,10 +164,7 @@ namespace DesARMA
             inactivityTimer.Stop();
             try
             {
-                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToNAPZK, "НАЗК", inactivityTimer);
-                this.Hide();
-                selectFigWindow.ShowDialog();
-                this.Show();
+                ButtonClick(EnumExtReq.ExternalRequestsToNAPZK, "НАЗК");
             }
             catch (Exception ex)
             {
@@ -186,10 +178,7 @@ namespace DesARMA
             inactivityTimer.Stop();
             try
             {
-                SelectFigWindow selectFigWindow = new SelectFigWindow(inputNumbet, modelContext, EnumExtReq.ExternalRequestsToBank, "Банки", inactivityTimer);
-                this.Hide();
-                selectFigWindow.ShowDialog();
-                this.Show();
+                ButtonClick(EnumExtReq.ExternalRequestsToBank, "Банки");
             }
             catch(Exception ex)
             {

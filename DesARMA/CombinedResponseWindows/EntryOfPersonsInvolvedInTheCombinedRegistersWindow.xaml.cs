@@ -29,6 +29,13 @@ namespace DesARMA.CombinedResponseWindows
         Yes,
         No
     }
+    enum StatusFolder
+    {
+        Undefined,
+        NotCreated,
+        Empty,
+        NotEmpty
+    }
     public partial class EntryOfPersonsInvolvedInTheCombinedRegistersWindow : System.Windows.Window
     {
         List<string> listNumIn;
@@ -52,25 +59,75 @@ namespace DesARMA.CombinedResponseWindows
 
                 inactivityTimer.Start();
 
-                numbColorShema = 3;
                 figurants = (from f in modelContext.Figurants where listNumIn.Contains(f.NumbInput) select f).ToList();
 
-                ToCheckFolders();
-                ToCheckFoldersShema();
+                InitField();
+
+                //ToCheckFolders();
+                //ToCheckFoldersShema();
 
                 CreateTreeView1();
                 CreateTreeViewShema();
 
-                SetColor();
-                SetColorShema();
+                //SetColor();
+                //SetColorShema();
+
+                LoadCheckBox();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-
             }
-            
+        }
+        private void LoadCheckBox()
+        {
+            for (int i = 1; i <= figurants.Count; i++)
+            {
+                var yesCh = figurants[i - 1].Control;
+                var noCh = figurants[i - 1].Shema;
 
+                var listYes = GetChFromString(yesCh);
+                var listNo = GetChFromString(noCh);
+
+
+                for (int j = 0; j < Reest.abbreviatedName.Count; j++)
+                {
+                    var yes = GetFigCheckYesReestr(j + 1, i);
+                    var no = GetFigCheckNoReestr(j + 1, i);
+
+                    if(yes!= null && no!= null && j < listYes.Count && j < listNo.Count)
+                    {
+                        yes.IsChecked = listYes[j];
+                        no.IsChecked = listNo[j];
+
+                        CheckBoxClick(yes, null);
+                        //IfhaveTwoCheck(j + 1, CheckEnum.Yes);
+                    }
+                }
+
+                var yesS = GetFigCheckYesReestr(Reest.abbreviatedName.Count + 1, i);
+                var noS = GetFigCheckNoReestr(Reest.abbreviatedName.Count + 1, i);
+
+                if (yesS != null && noS != null && Reest.abbreviatedName.Count < listYes.Count && Reest.abbreviatedName.Count < listNo.Count)
+                {
+                    yesS.IsChecked = listYes[Reest.abbreviatedName.Count];
+                    noS.IsChecked = listNo[Reest.abbreviatedName.Count];
+
+                    CheckBoxClickShema(yesS, null);
+                    //IfhaveTwoCheck(j + 1, CheckEnum.Yes);
+                }
+            }
+        }
+        private void InitField()
+        {
+            numbColorInReestr = new List<int>();
+
+            foreach (var item in Reest.abbreviatedName)
+            {
+                numbColorInReestr.Add(0);
+            }
+
+            numbColorShema = 0;
         }
         private void SetColor()
         {
@@ -200,12 +257,12 @@ namespace DesARMA.CombinedResponseWindows
         }
         private void ToCheckFolders()
         {
-            List<int> numbColorInReestr = new List<int>();
+            //List<int> numbColorInReestr = new List<int>();
 
-            foreach (var item in Reest.abbreviatedName)
-            {
-                numbColorInReestr.Add(0);
-            }
+            //foreach (var item in Reest.abbreviatedName)
+            //{
+            //    numbColorInReestr.Add(0);
+            //}
 
 
             foreach (var itemNumbIn in listNumIn)
@@ -220,8 +277,8 @@ namespace DesARMA.CombinedResponseWindows
                             if (Directory.Exists($"{folderCurrentNumbIn}\\{i + 1}. {Reest.abbreviatedName[i]}"))
                             {
                                 if (Directory.GetFiles($"{folderCurrentNumbIn}\\{i + 1}. {Reest.abbreviatedName[i]}").Length==0
-                                    && Directory.GetDirectories($"{folderCurrentNumbIn}\\{i + 1}. {Reest.abbreviatedName[i]}").Length 
-                                    == 0)
+                                    && 
+                                    Directory.GetDirectories($"{folderCurrentNumbIn}\\{i + 1}. {Reest.abbreviatedName[i]}").Length == 0)
                                 {
                                     numbColorInReestr[i] = Math.Max(numbColorInReestr[i], 2);
                                 }
@@ -803,17 +860,21 @@ namespace DesARMA.CombinedResponseWindows
                     var tiH = tri.Header as TextBlock;
                     if (tiH != null)
                     {
-                        if (numbColorInReestr[num - 1] == 3)
+                        if (numbColorInReestr[num - 1] == (int)StatusFolder.NotEmpty)
                         {
                             tiH.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush;
                         }
-                        else if (numbColorInReestr[num - 1] == 2)
+                        else if (numbColorInReestr[num - 1] == (int)StatusFolder.Empty)
                         {
                             tiH.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush;  // new SolidColorBrush(Colors.White);
                         }
-                        else if (numbColorInReestr[num - 1] == 1)
+                        else if (numbColorInReestr[num - 1] == (int)StatusFolder.NotCreated)
                         {
                             tiH.Foreground = this.Resources["RedEmpty"] as SolidColorBrush;     //new SolidColorBrush(Colors.Red);
+                        }
+                        else if(numbColorInReestr[num - 1] == (int)StatusFolder.Undefined)
+                        {
+                            tiH.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush;
                         }
                     }
                     var isAllCh = true;
@@ -845,18 +906,22 @@ namespace DesARMA.CombinedResponseWindows
                                         var cutTB = itemTB as TextBlock;
                                         if (cutTB != null)
                                         {
-                                            if (numbColorInReestr[num - 1] == 3)
+                                            if (numbColorInReestr[num - 1] == (int)StatusFolder.NotEmpty)
                                             {
                                                 cutTB.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush;
                                             }
-                                            else if (numbColorInReestr[num - 1] == 2)
+                                            else if (numbColorInReestr[num - 1] == (int)StatusFolder.Empty)
                                             {
                                                 cutTB.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush; //new SolidColorBrush(Colors.White);
                                             }
-                                            else if (numbColorInReestr[num - 1] == 1)
+                                            else if (numbColorInReestr[num - 1] == (int)StatusFolder.NotCreated)
                                             {
 
                                                 cutTB.Foreground = this.Resources["RedEmpty"] as SolidColorBrush; //new SolidColorBrush(Colors.Red);
+                                            }
+                                            else if (numbColorInReestr[num - 1] == (int)StatusFolder.Undefined)
+                                            {
+                                                cutTB.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush;
                                             }
                                         }
                                     }
@@ -870,7 +935,7 @@ namespace DesARMA.CombinedResponseWindows
                                             var cutTB = itemTB as TextBlock;
                                             if (cutTB != null)
                                             {
-                                                cutTB.Foreground = this.Resources["1ColorStyle"] as SolidColorBrush;
+                                                cutTB.Foreground = this.Resources["BlueCheck"] as SolidColorBrush;
                                             }
                                         }
                                     }
@@ -906,17 +971,21 @@ namespace DesARMA.CombinedResponseWindows
                     var tiH = tri.Header as TextBlock;
                     if (tiH != null)
                     {
-                        if (numbColorShema == 3)
+                        if (numbColorShema == (int)StatusFolder.NotEmpty)
                         {
                             tiH.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush;
                         }
-                        else if (numbColorShema == 2)
+                        else if (numbColorShema == (int)StatusFolder.Empty)
                         {
                             tiH.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush;  // new SolidColorBrush(Colors.White);
                         }
-                        else if (numbColorShema == 1)
+                        else if (numbColorShema == (int)StatusFolder.NotCreated)
                         {
                             tiH.Foreground = this.Resources["RedEmpty"] as SolidColorBrush;     //new SolidColorBrush(Colors.Red);
+                        }
+                        else if(numbColorShema == (int)StatusFolder.Undefined)
+                        {
+                            tiH.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush;
                         }
                     }
                     var isAllCh = true;
@@ -948,18 +1017,21 @@ namespace DesARMA.CombinedResponseWindows
                                         var cutTB = itemTB as TextBlock;
                                         if (cutTB != null)
                                         {
-                                            if (numbColorShema == 3)
+                                            if (numbColorShema == (int)StatusFolder.NotEmpty)
                                             {
                                                 cutTB.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush;
                                             }
-                                            else if (numbColorShema == 2)
+                                            else if (numbColorShema == (int)StatusFolder.Empty)
                                             {
                                                 cutTB.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush; //new SolidColorBrush(Colors.White);
                                             }
-                                            else if (numbColorShema == 1)
+                                            else if (numbColorShema == (int)StatusFolder.NotCreated)
                                             {
-
                                                 cutTB.Foreground = this.Resources["RedEmpty"] as SolidColorBrush; //new SolidColorBrush(Colors.Red);
+                                            }
+                                            else if(numbColorShema == (int)StatusFolder.Undefined)
+                                            {
+                                                cutTB.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush;
                                             }
                                         }
                                     }
@@ -973,7 +1045,7 @@ namespace DesARMA.CombinedResponseWindows
                                             var cutTB = itemTB as TextBlock;
                                             if (cutTB != null)
                                             {
-                                                cutTB.Foreground = this.Resources["1ColorStyle"] as SolidColorBrush;
+                                                cutTB.Foreground = this.Resources["BlueCheck"] as SolidColorBrush;
                                             }
                                         }
                                     }
@@ -1064,6 +1136,25 @@ namespace DesARMA.CombinedResponseWindows
                 return $"{d.Name}^ (ЄДРПОУ ^{d.Code}^)";
             }
         }
+        static public string? GetDefInStringWithout(Figurant d)
+        {
+            if (d.ResFiz != null)
+            {
+                string strDt = "";
+                var birth = d.DtBirth;
+                if (birth != null)
+                {
+                    return $"{d.Fio}, {birth.ToString().Substring(0, 10)} р.н., РНОКПП {d.Ipn}";
+                }
+                return $"{d.Fio}, РНОКПП {d.Ipn}";
+            }
+            else
+            {
+                if (d.Code == null || d.Code == "")
+                    return $"{d.Name}";
+                return $"{d.Name} (ЄДРПОУ {d.Code})";
+            }
+        }
         private bool? GetCheckBoxControl(int num)
         {
             var st = treeView1.Items[num - 1] as StackPanel;
@@ -1086,27 +1177,34 @@ namespace DesARMA.CombinedResponseWindows
             }
             return null;
         }
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ButtonCreate_Click(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
             try
             {
-                var listNoCont = GetListNoControl();
-                if (listNoCont.Count == 0)
+                ToCheckFolders();
+                ToCheckFoldersShema();
+                var listNoLogic = GetListNoLogic();
+                if (IsListNoLogicEmpty(listNoLogic))
                 {
                     SaveCheckBoxesFig();
                     this.DialogResult = true;
-                } 
+                }
                 else
                 {
-                    string strReest = "";
-                    foreach (var item in listNoCont)
-                    {
-                        strReest += item + "\n";
-                    }
+                    string strReest = "Інформація не відповідає дійсності в реєстрах:\n";
 
-                    MessageBox.Show("Не відмічено контроль в таких реєстрах:\n" + strReest);
+                    for (int i = 0; i < Reest.abbreviatedName.Count; i++)
+                    {
+                        if (listNoLogic[i] != "")
+                            strReest += $"\n{i + 1}. {Reest.abbreviatedName[i]} по фігурантам:\n{listNoLogic[i]}";
+                    }
+                    if (listNoLogic[Reest.abbreviatedName.Count] != "")
+                        strReest += $"\n{Reest.abbreviatedName.Count + 1}. Схеми по фігурантам:\n{listNoLogic[Reest.abbreviatedName.Count]}";
+                    MessageBox.Show(strReest);
+                    InitField();
                 }
+                
             }
             catch (Exception ex)
             {
@@ -1147,6 +1245,145 @@ namespace DesARMA.CombinedResponseWindows
             }
             return listNoContr;
         }
+        private List<string> GetListNoLogic()
+        {
+            List<string> list = new List<string>();
+            for (int i = 0; i < Reest.abbreviatedName.Count + 1; i++)
+            {
+                list.Add("");
+            }
+
+            for (int i = 1; i <= figurants.Count; i++)
+            {
+                for (int j = 0; j < Reest.abbreviatedName.Count; j++)
+                {
+                    var yes = GetFigCheckYesReestr(j + 1, i);
+                    var no = GetFigCheckNoReestr(j + 1, i);
+                    if(yes!=null && no != null)
+                    {
+                        var statusReestrForFig = GetStatusFolder(i, j + 1);
+                        if (statusReestrForFig == StatusFolder.NotCreated)
+                        {
+                            if (yes.IsChecked!.Value || no.IsChecked!.Value)
+                            {
+                                list[j] += $"{GetDefInStringWithout(figurants[i - 1])};\n";
+                            }
+                        }
+                        else if (statusReestrForFig == StatusFolder.Empty)
+                        {
+                            if (!(!yes.IsChecked!.Value && no.IsChecked!.Value))
+                            {
+                                list[j] += $"{GetDefInStringWithout(figurants[i - 1])};\n";
+                            }
+                        }
+                        else if (statusReestrForFig == StatusFolder.NotEmpty)
+                        {
+                            if (!(yes.IsChecked!.Value && !no.IsChecked!.Value))
+                            {
+                                list[j] += $"{GetDefInStringWithout(figurants[i - 1])};\n";
+                            }
+                        }
+                    }
+                }
+                var yesS = GetFigCheckYesShema(i);
+                var noS = GetFigCheckNoShema(i);
+                if (yesS != null && noS != null)
+                {
+                    var statusReestrForFig = GetStatusFolderShema(i);
+                    if (statusReestrForFig == StatusFolder.NotCreated)
+                    {
+                        if (yesS.IsChecked!.Value || noS.IsChecked!.Value)
+                        {
+                            list[Reest.abbreviatedName.Count] += $"{GetDefInStringWithout(figurants[i - 1])};\n";
+                        }
+                    }
+                    else if (statusReestrForFig == StatusFolder.Empty)
+                    {
+                        if (!(!yesS.IsChecked!.Value && noS.IsChecked!.Value))
+                        {
+                            list[Reest.abbreviatedName.Count] += $"{GetDefInStringWithout(figurants[i - 1])};\n";
+                        }
+                    }
+                    else if (statusReestrForFig == StatusFolder.NotEmpty)
+                    {
+                        if (!(yesS.IsChecked!.Value && !noS.IsChecked!.Value))
+                        {
+                            list[Reest.abbreviatedName.Count] += $"{GetDefInStringWithout(figurants[i - 1])};\n";
+                        }
+                    }
+                }
+
+            }
+
+            return list;
+        }
+        private bool IsListNoLogicEmpty(List<string> list)
+        {
+            foreach (var item in list)
+            {
+                if (item != "")
+                    return false;
+            }
+            return true;
+        }
+        private StatusFolder GetStatusFolder(int numFig, int numReest)
+        {
+            var folderCurrentNumbIn = (from mc in modelContext.MainConfigs where mc.NumbInput == figurants[numFig - 1].NumbInput select mc.Folder).First();
+            if (folderCurrentNumbIn != null)
+            {
+                if (Directory.Exists(folderCurrentNumbIn))
+                {
+                    if(Directory.Exists($"{folderCurrentNumbIn}\\{numReest}. {Reest.abbreviatedName[numReest - 1]}"))
+                    {
+                        if (Directory.GetFiles($"{folderCurrentNumbIn}\\{numReest}. {Reest.abbreviatedName[numReest - 1]}").Length == 0
+                                   &&
+                                   Directory.GetDirectories($"{folderCurrentNumbIn}\\{numReest}. {Reest.abbreviatedName[numReest - 1]}").Length == 0)
+                        {
+                            return StatusFolder.Empty;
+                        }
+                        else
+                        {
+                            return StatusFolder.NotEmpty;
+                        }
+                    }
+                    else
+                    {
+                        return StatusFolder.NotCreated;
+                    }
+                }
+                return StatusFolder.Undefined;
+            }
+            return StatusFolder.Undefined;
+        }
+        private StatusFolder GetStatusFolderShema(int numFig)
+        {
+            var folderCurrentNumbIn = (from mc in modelContext.MainConfigs where mc.NumbInput == figurants[numFig - 1].NumbInput select mc.Folder).First();
+            if (folderCurrentNumbIn != null)
+            {
+                if (Directory.Exists(folderCurrentNumbIn))
+                {
+                    if (Directory.Exists($"{folderCurrentNumbIn}\\{Reest.abbreviatedName.Count + 1}. Схеми"))
+                    {
+                        if (Directory.GetFiles($"{folderCurrentNumbIn}\\{Reest.abbreviatedName.Count + 1}. Схеми").Length == 0
+                                   &&
+                                   Directory.GetDirectories($"{folderCurrentNumbIn}\\{Reest.abbreviatedName.Count + 1}. Схеми").Length == 0)
+                        {
+                            return StatusFolder.Empty;
+                        }
+                        else
+                        {
+                            return StatusFolder.NotEmpty;
+                        }
+                    }
+                    else
+                    {
+                        return StatusFolder.NotCreated;
+                    }
+                }
+                return StatusFolder.Undefined;
+            }
+            return StatusFolder.Undefined;
+        }
         private StackPanel? GetStackPanelReestr(int num)
         {
             if(num < treeView1.Items.Count)
@@ -1157,6 +1394,12 @@ namespace DesARMA.CombinedResponseWindows
             {
                 return treeViewShema.Items[0] as StackPanel;
             }
+            return null;
+        }
+        private StackPanel? GetStackPanelShema()
+        {
+         if(treeViewShema != null)   
+                return treeViewShema.Items[0] as StackPanel;
             return null;
         }
         private CheckBox? GetCheckControlReestr(int num)
@@ -1189,9 +1432,29 @@ namespace DesARMA.CombinedResponseWindows
                 }
             return null;
         }
+        private TreeViewItem? GetTreeViewItemShema()
+        {
+            var st = GetStackPanelShema();
+            if (st != null)
+                if (st.Children.Count > 2)
+                {
+                    return st.Children[2] as TreeViewItem;
+                }
+            return null;
+        }
         private StackPanel? GetFigStackPanelReestr(int num, int numFig)
         {
             var tvi = GetTreeViewItemReestr(num);
+            if (tvi != null)
+                if (tvi.Items.Count > numFig)
+                {
+                    return tvi.Items[numFig] as StackPanel;
+                }
+            return null;
+        }
+        private StackPanel? GetFigStackPanelShema(int numFig)
+        {
+            var tvi = GetTreeViewItemShema();
             if (tvi != null)
                 if (tvi.Items.Count > numFig)
                 {
@@ -1209,9 +1472,29 @@ namespace DesARMA.CombinedResponseWindows
                 }
             return null;
         }
+        private CheckBox? GetFigCheckYesShema(int numFig)
+        {
+            var STtvi = GetFigStackPanelShema(numFig);
+            if (STtvi != null)
+                if (STtvi.Children.Count > 0)
+                {
+                    return STtvi.Children[0] as CheckBox;
+                }
+            return null;
+        }
         private CheckBox? GetFigCheckNoReestr(int num, int numFig)
         {
             var STtvi = GetFigStackPanelReestr(num, numFig);
+            if (STtvi != null)
+                if (STtvi.Children.Count > 1)
+                {
+                    return STtvi.Children[1] as CheckBox;
+                }
+            return null;
+        }
+        private CheckBox? GetFigCheckNoShema(int numFig)
+        {
+            var STtvi = GetFigStackPanelShema(numFig);
             if (STtvi != null)
                 if (STtvi.Children.Count > 1)
                 {
@@ -1237,7 +1520,6 @@ namespace DesARMA.CombinedResponseWindows
             }
             modelContext.SaveChanges();
         }
-        
         private string GetStringFromCh(List<bool?> listb)
         {
             string retS = "";
@@ -1262,6 +1544,87 @@ namespace DesARMA.CombinedResponseWindows
                 retS += "0";
             }
             return retS;
+        }
+        private List<bool?> GetChFromString(string? str)
+        {
+            List<bool?> ret = new List<bool?>();
+
+            for (int i = 0; i < Reest.abbreviatedName.Count + 1 ; i++)
+            {
+                if(str != null)
+                {
+                    if (i < str.Length)
+                    {
+                        ret.Add(str[i] == '1');
+                    }
+                    else
+                    {
+                        ret.Add(false);
+                    }
+                }
+                else
+                {
+                    ret.Add(false);
+                }
+            }
+            return ret;
+        }
+        private void ButtonSave_Click(object sender, RoutedEventArgs e)
+        {
+            inactivityTimer.Stop();
+            try
+            {
+                ToCheckFolders();
+                ToCheckFoldersShema();
+
+                var listNoLogic = GetListNoLogic();
+                if (IsListNoLogicEmpty(listNoLogic))
+                {
+                    SaveCheckBoxesFig();
+                    MessageBox.Show("Дані збережено!");
+                }
+                else
+                {
+                    string strReest = "Інформація не відповідає дійсності в реєстрах:\n";
+
+                    for (int i = 0; i < Reest.abbreviatedName.Count; i++)
+                    {
+                        if (listNoLogic[i] != "")
+                            strReest += $"\n{i + 1}. {Reest.abbreviatedName[i]} по фігурантам:\n{listNoLogic[i]}";
+                    }
+                    if (listNoLogic[Reest.abbreviatedName.Count] != "")
+                        strReest += $"\n{Reest.abbreviatedName.Count + 1}. Схеми по фігурантам:\n{listNoLogic[Reest.abbreviatedName.Count]}";
+                    MessageBox.Show(strReest);
+                }
+                InitField();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            inactivityTimer.Start();
+        }
+        private void ButtonReq_Click(object sender, RoutedEventArgs e)
+        {
+            inactivityTimer.Stop();
+            try
+            {
+                RequestsWindow requestsWindow = new RequestsWindow(listNumIn, modelContext, TypeOfAppeal.Сombined,
+                        inactivityTimer);
+                if (requestsWindow.ShowDialog() == true)
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            inactivityTimer.Start();
         }
         private void Window_MouseMove(object sender, MouseEventArgs e)
         {

@@ -102,16 +102,35 @@
                    Source="https://img.freepik.com/free-icon/database_318-359818.jpg" HorizontalAlignment="Left">
             </Image>
         </Button>
-        
+
         <StackPanel Grid.Column="0" Grid.Row="7" Grid.RowSpan="20"  
                     Background="{StaticResource 1ColorStyle}"  >
-            
         </StackPanel>
 
-        
-        <ScrollViewer  Grid.Column="1" Grid.RowSpan="23" Grid.Row="2"><!--23-->
-            <StackPanel x:Name="stackPanel1"  Grid.Column="1" Background="{StaticResource 1ColorStyle}" 
-                          Grid.Row="2">
+        <Grid Grid.Column="1" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Background="{StaticResource 4ColorStyle}" Click="ButtonSearchABCClick">
+                <StackPanel Orientation="Horizontal" Height="30">
+                    <Image Source="https://icon-library.com/images/sort-icon-png/sort-icon-png-18.jpg"></Image>
+                    <TextBlock VerticalAlignment="Center">По номеру</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button Grid.Column="1" Background="{StaticResource 4ColorStyle}" Click="ButtonSearchDAteClick">
+                <StackPanel Orientation="Horizontal" Height="30">
+                    <Image Source="https://cdn2.iconfinder.com/data/icons/time-line-5/24/Artboard_23-512.png" ></Image>
+                    <TextBlock VerticalAlignment="Center">По вхідній даті</TextBlock>
+                </StackPanel>
+            </Button>
+        </Grid>
+
+        <Button Name="OpenButton" Click="Button_Click_1"
+            Grid.Column="1" Grid.Row="3" Content="Відкрити звернення" Background="{StaticResource 4ColorStyle}" Foreground="{StaticResource 1ColorStyle}">
+        </Button>
+        <ScrollViewer  Grid.Column="1" Grid.RowSpan="22" Grid.Row="4">
+            <StackPanel x:Name="stackPanel1"  Background="{StaticResource 1ColorStyle}">
                 <Button x:Name="AddButton" Background="{StaticResource 4ColorStyle}" Foreground="{StaticResource 1ColorStyle}" Content="Відкрити запит" Click="Button_Click_1" Tag="0"/>
             </StackPanel>
         </ScrollViewer>
@@ -342,7 +361,7 @@
             <!--</StackPanel>-->
         <!--</ScrollViewer>-->
         <!--Click="Button_ClickRespon"-->
-        <Button x:Name="Button1" Content="Відповідь"  Grid.ColumnSpan="1" MouseEnter="Button1_GotMouseCapture"
+        <Button x:Name="Button1" Content="Відповідь"  Grid.ColumnSpan="1" 
                 Grid.Column="3" Grid.Row="23" Background="{StaticResource 5ColorStyle}"
                 Foreground="{StaticResource 4ColorStyle}" Click="Button_ClickRespon"/>
         <Button x:Name="Button2" Content="Об'єднана відповідь + на диск"  Grid.ColumnSpan="1"

@@ -36,23 +36,117 @@ namespace DesARMA
                 this.main = main;
                 this.inactivityTimer = inactivityTimer;
 
-                var mains = (from b in modelContext.Mains
-                             where b.Executor == CurrentUser.IdUser
-                    &&
-                        (from o in modelContext.MainConfigs
-                         where o.NumbInput == b.NumbInput
-                         select o).Count() == 1
-                    //orderby /*b.NumbInput.Substring(8, 2),*/
-                    //        b.NumbInput.Split(new char[] { '/' }, 1)[0]//CreateCombinedResponseWindow.GetStringWithZero(b.NumbInput)
-                    &&
-                        b.CpNumber == main.CpNumber
-                             select b
+
+                inactivityTimer.Start();
+
+
+                headerTextBlock.Text = $"На основі запиту № {main.NumbInput} знайдено наступні запити, що мають спільний з ним номер КП, за 2023 рік:";
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+
+            }
+
+        }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadMains();
+        }
+        private void LoadMains()
+        {
+            if(main.CpNumber == null)
+            {
+                this.Close();
+            }
+            if(main.Id_id != null)
+            {
+                if(main.Id_id != main.Id)
+                {
+                    main = (from m in modelContext.Mains where m.Id == main.Id_id select m).First();
+                }
+                LoadOldMains();
+                Create_Button_Click(null!, null!);
+            }
+            else
+            {
+                LoadNewMains();
+            }
+        }
+        private void LoadOldMains()
+        {
+            var mains = (from b in modelContext.Mains
+                         where b.Executor == CurrentUser.IdUser
+                &&
+                    (from o in modelContext.MainConfigs
+                     where o.NumbInput == b.NumbInput
+                     select o).Count() == 1
+                &&
+                    b.CpNumber == main.CpNumber
+                &&
+                    b.Id_id == main.Id
+                select b
+                        )
+                        .AsEnumerable()
+                        .Where(b => {
+                            if (b.DtInput != null && main.DtInput != null)
+                                return b.DtInput.Value.Year == main.DtInput.Value.Year;
+                            return false;
+                        })
+                        .OrderByDescending(b => {
+                            int result;
+                            if (int.TryParse(b.NumbInput.Split(new char[] { '/' }, 2)[0], out result))
+                            {
+                                return result;
+                            }
+                            else
+                            {
+                                return 0;
+                            }
+                        })
+                        .OrderByDescending(b => {
+                            int result;
+                            if (int.TryParse(b.NumbInput.Split(new char[] { '-' }, 2)[1], out result))
+                            {
+                                return result;
+                            }
+                            else
+                            {
+                                return 0;
+                            }
+                        })
+                        .ToList();
+            stackPanel1.Children.Clear();
+            foreach (var mainItem in mains)
+            {
+                CheckBox ch = new CheckBox();
+                ch.Content = $"{mainItem.NumbInput}";
+                ch.IsChecked = true;
+                ch.Tag = mainItem.NumbInput;
+                ch.HorizontalAlignment = HorizontalAlignment.Center;
+                stackPanel1.Children.Add(ch);
+            }
+        }
+        private void LoadNewMains()
+        {
+            var mains = (from b in modelContext.Mains
+                         where b.Executor == CurrentUser.IdUser
+                &&
+                    (from o in modelContext.MainConfigs
+                     where o.NumbInput == b.NumbInput
+                     select o).Count() == 1
+                //orderby /*b.NumbInput.Substring(8, 2),*/
+                //        b.NumbInput.Split(new char[] { '/' }, 1)[0]//CreateCombinedResponseWindow.GetStringWithZero(b.NumbInput)
+                &&
+                    b.CpNumber == main.CpNumber
+                         select b
                         )
                         .AsEnumerable()
                         //.Where(b => { return b.NumbInput.Split(new char[] { '-' }, 2)[1] == DateTime.Now.Year.ToString().Substring(2, 2); })
-                        .Where(b => { 
-                            if(b.DtInput != null)
-                                return b.DtInput.Value.Year == DateTime.Now.Year;
+                        .Where(b => {
+                            if (b.DtInput != null && main.DtInput != null)
+                                return b.DtInput.Value.Year == main.DtInput.Value.Year;
                             return false;
                         })
                         .OrderByDescending(b => {
@@ -79,45 +173,33 @@ namespace DesARMA
                         })
                         .ToList();
 
-                stackPanel1.Children.Clear();
-                foreach (var mainItem in mains)
-                {
-                    CheckBox ch = new CheckBox();
-
-                    if (mainItem.NumbInput == main.NumbInput)
-                    {
-                        ch.IsChecked = true;
-                    }
-
-                    ch.Content = $"{mainItem.NumbInput}";
-                    ch.Tag = mainItem.NumbInput;
-                    ch.Click += (x, y) => {
-                        inactivityTimer.Stop();
-                        var ch = x as CheckBox;
-                        if (ch != null)
-                        {
-                            if (ch.Content.ToString() == main.NumbInput)
-                            {
-                                ch.IsChecked = true;
-                            }
-                        }
-                        inactivityTimer.Start();
-                    };
-                    ch.HorizontalAlignment = HorizontalAlignment.Center;
-                    stackPanel1.Children.Add(ch);
-                }
-                inactivityTimer.Start();
-
-
-                headerTextBlock.Text = $"На основі запиту № {main.NumbInput} знайдено наступні запити, що мають спільний з ним номер КП, за 2023 рік:";
-
-            }
-            catch (Exception ex)
+            stackPanel1.Children.Clear();
+            foreach (var mainItem in mains)
             {
-                MessageBox.Show(ex.Message);
+                CheckBox ch = new CheckBox();
 
+                if (mainItem.NumbInput == main.NumbInput)
+                {
+                    ch.IsChecked = true;
+                }
+
+                ch.Content = $"{mainItem.NumbInput}";
+                ch.Tag = mainItem.NumbInput;
+                ch.Click += (x, y) => {
+                    inactivityTimer.Stop();
+                    var ch = x as CheckBox;
+                    if (ch != null)
+                    {
+                        if (ch.Content.ToString() == main.NumbInput)
+                        {
+                            ch.IsChecked = true;
+                        }
+                    }
+                    inactivityTimer.Start();
+                };
+                ch.HorizontalAlignment = HorizontalAlignment.Center;
+                stackPanel1.Children.Add(ch);
             }
-
         }
         public static string GetStringWithZero(string str)
         {
@@ -193,8 +275,8 @@ namespace DesARMA
                             docResponse.ToDiskCombined(entryOfPersonsInvolvedInTheCombinedRegistersWindow.numbColorInReestr,
                                 entryOfPersonsInvolvedInTheCombinedRegistersWindow.numbColorShema
                                 );
-                            //MessegeAboutCreate();
                             win.SaveAllInReq();
+                            SaveId_Id();
                             this.DialogResult = true;
                         }
                         else
@@ -215,6 +297,15 @@ namespace DesARMA
                 MessageBox.Show(ex.Message);
             }
             inactivityTimer.Stop();
+        }
+        private void SaveId_Id()
+        {
+            (from m in modelContext.Mains
+             where listNumbIn.Contains(m.NumbInput)
+             select m).ToList()
+             .ForEach(m => m.Id_id = main.Id);
+
+            modelContext.SaveChanges();
         }
 
         private void Window_MouseMove(object sender, MouseEventArgs e)
@@ -286,5 +377,7 @@ namespace DesARMA
             }
             MessageBox.Show("Створено папку \"Об'єднана відповідь\" разом з додатками (Об'єднана відповідь\\На диск) в папках таких запитів:\n" + retStr);
         }
+
+        
     }
 }
