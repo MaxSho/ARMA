@@ -118,7 +118,7 @@ namespace DesARMA.CombinedResponseWindows
             if (listBoolIsAllEqually[0])
             {
                 //this.idAcc.Te = 
-                var t = (from d in modelContext.DictCommons where d.Id == main.IdAcc select d.Code).First();
+                var t = (from d in modelContext.DictCommons where d.Id == main.IdAcc select d.Code).FirstOrDefault();
                 if (t != "МІНЮСТ")
                 {
                     this.idAcc.SelectedValue = t;
