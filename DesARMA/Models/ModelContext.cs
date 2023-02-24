@@ -723,7 +723,7 @@ namespace DesARMA.Models
                     .HasColumnName("CONTROL");
 
                 entity.Property(e => e.Folder)
-                    .HasMaxLength(100)
+                    .HasMaxLength(200)
                     .IsUnicode(false)
                     .HasColumnName("FOLDER");
 
