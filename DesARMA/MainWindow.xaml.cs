@@ -1603,9 +1603,8 @@ namespace DesARMA
                 }
                 else
                 {
-                    RequestsWindow requestsWindow = new RequestsWindow(numberInTextBox.Text.ToString(), modelContext, inactivityTimer);
-                   // ProgresWindow progresWindow = new ProgresWindow();
-                   // progresWindow.ShowDialog();
+                    RequestsWindow requestsWindow = new RequestsWindow(new List<string>() { numberInTextBox.Text.ToString() }, modelContext, TypeOfAppeal.NotСombined,
+                        inactivityTimer);
                     if (requestsWindow.ShowDialog() == true)
                     {
 
