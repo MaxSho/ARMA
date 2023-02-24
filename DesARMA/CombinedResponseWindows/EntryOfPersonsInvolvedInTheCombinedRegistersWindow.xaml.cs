@@ -1202,8 +1202,9 @@ namespace DesARMA.CombinedResponseWindows
                     if (listNoLogic[Reest.abbreviatedName.Count] != "")
                         strReest += $"\n{Reest.abbreviatedName.Count + 1}. Схеми по фігурантам:\n{listNoLogic[Reest.abbreviatedName.Count]}";
                     MessageBox.Show(strReest);
+                    InitField();
                 }
-                InitField();
+                
             }
             catch (Exception ex)
             {
