@@ -1609,7 +1609,16 @@ namespace DesARMA.CombinedResponseWindows
             inactivityTimer.Stop();
             try
             {
+                RequestsWindow requestsWindow = new RequestsWindow(listNumIn, modelContext, TypeOfAppeal.Сombined,
+                        inactivityTimer);
+                if (requestsWindow.ShowDialog() == true)
+                {
 
+                }
+                else
+                {
+
+                }
             }
             catch (Exception ex)
             {
