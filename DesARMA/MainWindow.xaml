@@ -323,7 +323,7 @@
             </MenuItem>
             <MenuItem Header="Edit" ></MenuItem>
             <MenuItem Header="View" ></MenuItem>
-            <Label>Version 1.3</Label>
+            <Label>Version 1.4</Label>
         </Menu>
 
         
