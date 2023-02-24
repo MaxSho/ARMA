@@ -37,8 +37,6 @@ namespace DesARMA
                 this.inactivityTimer = inactivityTimer;
 
 
-                //LoadMains();
-
                 inactivityTimer.Start();
 
 
@@ -58,6 +56,10 @@ namespace DesARMA
         }
         private void LoadMains()
         {
+            if(main.CpNumber == null)
+            {
+                this.Close();
+            }
             if(main.Id_id != null)
             {
                 if(main.Id_id != main.Id)
@@ -88,8 +90,8 @@ namespace DesARMA
                         )
                         .AsEnumerable()
                         .Where(b => {
-                            if (b.DtInput != null)
-                                return b.DtInput.Value.Year == DateTime.Now.Year;
+                            if (b.DtInput != null && main.DtInput != null)
+                                return b.DtInput.Value.Year == main.DtInput.Value.Year;
                             return false;
                         })
                         .OrderByDescending(b => {
@@ -143,8 +145,8 @@ namespace DesARMA
                         .AsEnumerable()
                         //.Where(b => { return b.NumbInput.Split(new char[] { '-' }, 2)[1] == DateTime.Now.Year.ToString().Substring(2, 2); })
                         .Where(b => {
-                            if (b.DtInput != null)
-                                return b.DtInput.Value.Year == DateTime.Now.Year;
+                            if (b.DtInput != null && main.DtInput != null)
+                                return b.DtInput.Value.Year == main.DtInput.Value.Year;
                             return false;
                         })
                         .OrderByDescending(b => {

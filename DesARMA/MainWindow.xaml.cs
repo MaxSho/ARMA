@@ -2255,19 +2255,30 @@ namespace DesARMA
         private void Button_ClickCombinedRespon(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
-            //System.Windows.MessageBox.Show("В процесі розробки");
-            CreateCombinedResponseWindow createCombinedResponseWindow = new CreateCombinedResponseWindow(modelContext, CurrentUser,
-                modelContext!.Mains!.Find(numberInTextBox.Text)!, inactivityTimer);
-            //createCombinedResponseWindow.ShowDialog();
-            if(createCombinedResponseWindow.ShowDialog() == true)
+
+            var main = (from m in modelContext.Mains where m.NumbInput == numberInTextBox.Text select m).First();
+            if(main != null)
             {
-                //System.Windows.MessageBox.Show("true");
-                LoadDb();
-                createCombinedResponseWindow.MessegeAboutCreate();
-            }
-            else
-            {
-                //System.Windows.MessageBox.Show("false");
+                if(main.CpNumber == null)
+                {
+                    System.Windows.MessageBox.Show("Не можливо створити об'єднаний запит з порожнім КП");
+                }
+                else
+                {
+                    CreateCombinedResponseWindow createCombinedResponseWindow = new CreateCombinedResponseWindow(modelContext, CurrentUser,
+                    modelContext!.Mains!.Find(numberInTextBox.Text)!, inactivityTimer);
+
+                    if (createCombinedResponseWindow.ShowDialog() == true)
+                    {
+                        //System.Windows.MessageBox.Show("true");
+                        LoadDb();
+                        createCombinedResponseWindow.MessegeAboutCreate();
+                    }
+                    else
+                    {
+                        //System.Windows.MessageBox.Show("false");
+                    }
+                }
             }
             inactivityTimer.Start();
         }
