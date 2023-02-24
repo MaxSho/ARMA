@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:DesARMA"
         mc:Ignorable="d"
         Title="Створення об'єднаного запиту" Height="450" Width="800" WindowStartupLocation="CenterScreen" 
-        MouseMove="Window_MouseMove" PreviewMouseMove="Window_PreviewMouseMove" Closing="Window_Closing">
+        MouseMove="Window_MouseMove" PreviewMouseMove="Window_PreviewMouseMove" Closing="Window_Closing"
+        Loaded="Window_Loaded">
     <Window.Resources>
         <SolidColorBrush x:Key="1ColorStyle" Color="#2C3333" />
         <SolidColorBrush x:Key="2ColorStyle" Color="#395B64" />
