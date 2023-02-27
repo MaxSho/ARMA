@@ -71,6 +71,7 @@ namespace DesARMA
             {
                 InitializeComponent();
 
+
                 CreateTimer();
                 Auth();
                 currentButton = AddButton;
@@ -812,7 +813,7 @@ namespace DesARMA
                     treeView1.Items.Clear();
                     foreach (var item in Reest.abbreviatedName)
                     {
-                        Directory.CreateDirectory(FBD.SelectedPath + $"\\{codeRequest}\\{index}. {item}");
+                        Directory.CreateDirectory(FBD.SelectedPath + $"\\{codeRequest}\\{index++}. {item}");
                         //var checkBox = new System.Windows.Controls.CheckBox();
                         //var checkBox2 = new System.Windows.Controls.CheckBox();
 
@@ -836,7 +837,7 @@ namespace DesARMA
                     //checkBoxS2.Content = checkBoxS;
                     //treeView1.Items.Add(checkBoxS2);
 
-                    Directory.CreateDirectory(FBD.SelectedPath + $"\\{codeRequest}\\{index}. Схеми");
+                    Directory.CreateDirectory(FBD.SelectedPath + $"\\{codeRequest}\\{index++}. Схеми");
 
                     
                     currentButton = itemButton;

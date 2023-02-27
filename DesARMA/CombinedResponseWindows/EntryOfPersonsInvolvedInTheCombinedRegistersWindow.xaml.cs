@@ -1138,6 +1138,10 @@ namespace DesARMA.CombinedResponseWindows
         }
         static public string? GetDefInStringWithout(Figurant d)
         {
+            return GetDefInStringWithoutCircumflex(d) + $" по № {d.NumbInput}";
+        }
+        static public string? GetDefInStringWithoutCircumflex(Figurant d)
+        {
             if (d.ResFiz != null)
             {
                 string strDt = "";
@@ -1201,7 +1205,7 @@ namespace DesARMA.CombinedResponseWindows
                     }
                     if (listNoLogic[Reest.abbreviatedName.Count] != "")
                         strReest += $"\n{Reest.abbreviatedName.Count + 1}. Схеми по фігурантам:\n{listNoLogic[Reest.abbreviatedName.Count]}";
-                    MessageBox.Show(strReest);
+                    MessageBox.Show(strReest, "Помилка");
                     InitField();
                 }
                 
@@ -1594,7 +1598,7 @@ namespace DesARMA.CombinedResponseWindows
                     }
                     if (listNoLogic[Reest.abbreviatedName.Count] != "")
                         strReest += $"\n{Reest.abbreviatedName.Count + 1}. Схеми по фігурантам:\n{listNoLogic[Reest.abbreviatedName.Count]}";
-                    MessageBox.Show(strReest);
+                    MessageBox.Show(strReest, "Помилка");
                 }
                 InitField();
             }

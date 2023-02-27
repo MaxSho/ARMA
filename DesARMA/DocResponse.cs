@@ -694,9 +694,9 @@ namespace DesARMA
             }
 
             bool isExReq = false;
-            if (Directory.Exists(prevM.Folder + "\\Запити"))
-                if (!(Directory.GetDirectories(prevM.Folder + "\\Запити").Length == 0 &&
-                                    Directory.GetFiles(prevM.Folder + "\\Запити").Length == 0)
+            if (Directory.Exists(prevM.Folder + "\\Об'єднана відповідь\\Запити"))
+                if (!(Directory.GetDirectories(prevM.Folder + "\\Об'єднана відповідь\\Запити").Length == 0 &&
+                                    Directory.GetFiles(prevM.Folder + "\\Об'єднана відповідь\\Запити").Length == 0)
                      )
                 {
                     isExReq = true;
