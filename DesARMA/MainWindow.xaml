@@ -312,7 +312,7 @@
         <Menu Margin="0 0 0 0" Height="30" VerticalAlignment="Top" Grid.Column="0" 
                   Grid.ColumnSpan="6" Grid.Row="0" Background="#395B64" Foreground="#A5C9CA"
                   FontSize="14">
-            <MenuItem Header="File" Background="#395B64" Foreground="#A5C9CA">
+            <!--<MenuItem Header="File" Background="#395B64" Foreground="#A5C9CA">
                 <MenuItem Margin="0 0 0 0" Header="New Project" Foreground="#395B64" Padding="0 0 0 0"></MenuItem>
                 <MenuItem Header="Open Project" Foreground="#395B64">
                     <MenuItem Header="WinForms" Foreground="#395B64"></MenuItem>
@@ -322,8 +322,8 @@
                 <MenuItem Header="Exit" Foreground="#395B64"></MenuItem>
             </MenuItem>
             <MenuItem Header="Edit" ></MenuItem>
-            <MenuItem Header="View" ></MenuItem>
-            <Label>Version 1.4</Label>
+            <MenuItem Header="View" ></MenuItem>-->
+            <Label>Version 1.5</Label>
         </Menu>
 
         
