@@ -160,26 +160,29 @@ namespace DesARMA
 
             TreeViewItem tree = new TreeViewItem();
 
-                var checkBoxIn = new System.Windows.Controls.CheckBox();
-                //checkBoxIn.Checked += routedEventHandler;
+            var checkBoxIn = new System.Windows.Controls.CheckBox();
+            {
                 if (listSh != null)
-                if (listSh.Count >= idNum)
-                    checkBoxIn.IsChecked = listSh[idNum - 1];
-                //checkBoxIn.Content = tree;
-                //checkBoxIn.Margin = new Thickness(0, 1, 0, 0);
-
-                var checkBox = new System.Windows.Controls.CheckBox();
-                //checkBox.Checked += routedEventHandler;
+                    if (listSh.Count >= idNum)
+                        checkBoxIn.IsChecked = listSh[idNum - 1];
+            }
+            
+            var checkBox = new System.Windows.Controls.CheckBox();
+            {
                 checkBox.Tag = false;
                 checkBox.IsHitTestVisible = false;
-                if(listContr!=null)
-                if(listContr.Count >= idNum)
-                checkBox.IsChecked = listContr[idNum - 1];
-                //checkBox.Content = checkBoxIn;
-
-                // на самому початку задано червоний колір
-                
-                tree.Header = $"{idNum}. " + name;
+                if (listContr != null)
+                    if (listContr.Count >= idNum)
+                        checkBox.IsChecked = listContr[idNum - 1];
+            }
+            var button = new System.Windows.Controls.Button();
+            {
+                button.Click += (s, e) => { System.Windows.MessageBox.Show($"{idNum}"); };
+            }
+            
+            // на самому початку задано червоний колір
+            
+            tree.Header = $"{idNum}. " + name;
 
             if (IsAvailableDirectory(idNum, name))
             {
@@ -195,20 +198,9 @@ namespace DesARMA
                 tree.Foreground = RedSolidColorBrush;
             }
 
-            //var contextmenu = new ContextMenu();
-            //checkBox.ContextMenu = contextmenu;
-
-            //var mi = new MenuItem();
-            //mi.Header = "Видалити";
-            //mi.Tag = $"{idNum}. {name}";
-            //mi.Click += DeleteDir;
-            //contextmenu.Items.Add(mi);
 
             if (figurants != null)
             {
-                //TextBlock textB = new TextBlock();
-                //textB.Text = "так ні";
-                //tree.Items.Add(textB);
                 tree.Items.Add(CreateTextBlockesYesNo(idNum));
             }
 
@@ -227,7 +219,6 @@ namespace DesARMA
 
             for (int i = 0; i < figurants!.Count; i++)
             {
-                    // var sdhjgf = СreatePositionFigurantCheckBoxYes(idNum, i + 1, tree.Foreground as SolidColorBrush);
                     var sdhjgf = CreatePozFig(idNum, i + 1, tree.Foreground as SolidColorBrush);
                     if (sdhjgf != null)
                     {
@@ -236,6 +227,7 @@ namespace DesARMA
             }
             stackPanel.Children.Add(checkBox);
             stackPanel.Children.Add(checkBoxIn);
+            stackPanel.Children.Add(button);
             stackPanel.Children.Add(tree);
             return stackPanel;
         }
@@ -260,7 +252,6 @@ namespace DesARMA
             stackPanel.Orientation = Orientation.Horizontal;
 
             var checkBox = new CheckBox();
-
             if (figurants != null)
             {
                 var w1 = figurants[idNumFig - 1];
@@ -289,8 +280,8 @@ namespace DesARMA
                     }
                 }
             }
-            var checkBox2 = new CheckBox();
 
+            var checkBox2 = new CheckBox();
             if (figurants != null)
             {
                 var w1 = figurants[idNumFig - 1];
@@ -320,16 +311,14 @@ namespace DesARMA
                 }
             }
 
-            //TextBlock textBlock = new TextBlock();
-            //textBlock.Text = СreatePositionFigurantText(idNumFig);
-            //textBlock.FontSize = 14;
-            //textBlock.Margin = new Thickness(+20, 0, 0, 0);
+            
             stackPanel.Children.Add(checkBox);
             stackPanel.Children.Add(checkBox2);
 
-            //stackPanel.Children.Add(textBlock);
+
 
             var listTB = CreateControls(СreatePositionFigurantText(idNumFig));
+
             foreach (var item in listTB)
             {
                 stackPanel.Children.Add(item);
@@ -338,6 +327,12 @@ namespace DesARMA
 
             return stackPanel;
         }
+
+        private void ButtonAutomation_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         private Image GetNewImageCopy()
         {
             Image image = new Image();
@@ -868,7 +863,7 @@ namespace DesARMA
 
                         if (stackPanel1 != null)
                         {
-                            var treeViewItem = stackPanel1.Children[2] as TreeViewItem;
+                            var treeViewItem = stackPanel1.Children[3] as TreeViewItem;
                             bool isControlNice = true;
                             for (int iTVI = 0; iTVI < treeViewItem!.Items.Count; iTVI++)
                             {
