@@ -18,6 +18,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using SixLabors.ImageSharp.Drawing;
 using System.Windows.Media.Imaging;
 using System.Threading;
+using System.Windows.Automation;
 
 namespace DesARMA
 {
@@ -177,7 +178,13 @@ namespace DesARMA
             }
             var button = new System.Windows.Controls.Button();
             {
-                button.Click += (s, e) => { System.Windows.MessageBox.Show($"{idNum}"); };
+                button.Opacity = 0.5;
+                button.FontSize = 12;
+                button.Content = '\u2b07';
+                button.Tag = idNum;
+                button.Padding = new Thickness(15, 0, 15, 0);
+                button.Margin = new Thickness(10, 0, 10, 5);
+                button.Click += AutomationHendler;
             }
             
             // на самому початку задано червоний колір
@@ -230,6 +237,17 @@ namespace DesARMA
             stackPanel.Children.Add(button);
             stackPanel.Children.Add(tree);
             return stackPanel;
+        }
+        private void AutomationHendler(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
+            }
         }
         private string? СreatePositionFigurantText(int idNumFig)
         {

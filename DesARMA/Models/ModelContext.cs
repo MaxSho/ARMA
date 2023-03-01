@@ -43,7 +43,6 @@ namespace DesARMA.Models
             }
 
             string result2 = System.Text.Encoding.UTF8.GetString(arrByteReturnDecrypt.ToArray());
-            //System.Windows.MessageBox.Show(result2);
             return result2;
         }
 

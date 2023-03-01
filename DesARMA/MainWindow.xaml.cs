@@ -49,6 +49,8 @@ using System.Collections;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Media.Animation;
+using DesARMA.Automation;
+using WebARMA.Models;
 
 namespace DesARMA
 {
@@ -70,7 +72,10 @@ namespace DesARMA
             try
             {
                 InitializeComponent();
+                var dsd = new SearchEDR("2863005535", null, null, 500, SearchType.Chief);
+                dsd.GetResp();
 
+                //System.Windows.MessageBox.Show(GetRequest.RunEDR("2863005535", "", ""));
 
                 CreateTimer();
                 Auth();
