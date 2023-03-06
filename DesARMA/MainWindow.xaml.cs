@@ -50,7 +50,6 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Media.Animation;
 using DesARMA.Automation;
-using WebARMA.Models;
 
 namespace DesARMA
 {
@@ -72,9 +71,10 @@ namespace DesARMA
             try
             {
                 InitializeComponent();
-                var dsd = new SearchEDR("2863005535", null, null, 500, SearchType.Chief);
-                dsd.GetResp();
 
+                var dsd = new SearchEDR("42088784", null, null, 500, SearchType.Base);
+                //var t = dsd.Getsdf();
+                dsd.CreateExel();
                 //System.Windows.MessageBox.Show(GetRequest.RunEDR("2863005535", "", ""));
 
                 CreateTimer();
@@ -188,22 +188,22 @@ namespace DesARMA
         private void Button_Click_GetData(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
-            try
-            {
-                System.Windows.MessageBox.Show("in");
-                RegisterEDR registerEDR = new RegisterEDR();
-                if (CurrentMainDB != null)
-                {
-                    registerEDR.requestProgram = new RequestProgram(CurrentMainDB, modelContext);
-                    registerEDR.GetData();
-                }
-                if(CurrentMainDB != null)
-                    System.Windows.MessageBox.Show($"{CurrentMainDB.NumbInput}");
-            }
-            catch (Exception e2)
-            {
-                System.Windows.MessageBox.Show(e2.Message);
-            }
+            //try
+            //{
+            //    System.Windows.MessageBox.Show("in");
+            //    RegisterEDR registerEDR = new RegisterEDR();
+            //    if (CurrentMainDB != null)
+            //    {
+            //        registerEDR.requestProgram = new RequestProgram(CurrentMainDB, modelContext);
+            //        registerEDR.GetData();
+            //    }
+            //    if(CurrentMainDB != null)
+            //        System.Windows.MessageBox.Show($"{CurrentMainDB.NumbInput}");
+            //}
+            //catch (Exception e2)
+            //{
+            //    System.Windows.MessageBox.Show(e2.Message);
+            //}
             inactivityTimer.Start();
         }
         private void DownloadReest()
