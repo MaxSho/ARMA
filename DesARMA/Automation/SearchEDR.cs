@@ -45,7 +45,10 @@ namespace DesARMA.Automation
 
         private List<EDRClass>? subjects;
         private List<Subject>? subjectsMore;
-        public SearchEDR(string? code, string? name, string? passport, int limit, SearchType? searchType)
+
+        private string path;
+        public SearchEDR(string? code, string? name, string? passport, int limit, SearchType? searchType,
+                        string path)
         {
             if (searchType == null)
                 this.searchType = SearchType.Base;
@@ -56,13 +59,33 @@ namespace DesARMA.Automation
             this.name = name;
             this.passport = passport;
             this.limit = limit;
-            
+
+            if (!Directory.Exists(path))
+                throw new Exception("Програма не може знайти шлях: " + path);
+
+            this.path = path;
+
+
             SetParamsInReqstr();
             SetReqstrId();
 
             GetInfoSubjects();
             GetInfoSubjectsMore();
 
+        }
+        private string? GetWhithout(string? str)
+        {
+            return str?.Replace('\'', '-')?.
+                Replace('\"', '-')?
+                .Replace('\\', '-')?
+                .Replace('/', '-')?
+                .Replace('*', '-')?
+                .Replace(':', '-')?
+                .Replace('?', '-')?
+                .Replace('«', '-')?
+                .Replace('<', '-')?
+                .Replace('>', '-')?
+                .Replace('|', '-');
         }
         private string? GetStr()
         {
@@ -226,12 +249,22 @@ namespace DesARMA.Automation
                 throw new Exception($"Request failed: {response.StatusCode}");
             }
         }
-        public void CreateExel(/*Subject subject*/)
+        public void CreateExel()
         {
-            var list = Getsdf();
+            if(subjectsMore != null)
+            {
+                foreach (var item in subjectsMore)
+                {
+                    CreateExelSub(item);
+                }
+            }
+        }
+        public void CreateExelSub(Subject subject)
+        {
+            var list = GetListAboutSub(subject);
             if (subjectsMore != null)
             {
-                Subject subject = subjectsMore.First();
+                //Subject subject = subjectsMore.First();
 
                 HSSFWorkbook workbook = new HSSFWorkbook();
                 HSSFFont myFont = CreateFont(workbook);
@@ -270,10 +303,10 @@ namespace DesARMA.Automation
                     numRow++;
                 }
 
+                if(!Directory.Exists(path + $"\\{code},{GetWhithout(name)},{passport}"))
+                    Directory.CreateDirectory(path + $"\\{code},{GetWhithout(name)},{passport}");
 
-
-
-                using (var fileData = new FileStream("C:\\app\\ReportName.xls", FileMode.Create))
+                using (var fileData = new FileStream(path + $"\\{code},{GetWhithout(name)},{passport}\\id{subject.id}.xls", FileMode.Create))
                 {
                     workbook.Write(fileData);
                 }
@@ -301,9 +334,9 @@ namespace DesARMA.Automation
             Cell.SetCellValue(Value);
             Cell.CellStyle = Style;
         }
-        public List<List<string?>?> Getsdf(/*Subject subject*/)
+        public List<List<string?>?> GetListAboutSub(Subject subject)
         {
-            var subject = subjectsMore?.First() ?? new Subject();
+            //var subject = subjectsMore?.First() ?? new Subject();
             List<List<string?>?> strings = new List<List<string?>?>();
             //1
             strings.Add(new List<string?>() { subject.names?.display });
@@ -495,6 +528,66 @@ namespace DesARMA.Automation
                     strings[strings.Count - 1]?.Add(item?.url);
                 }
             }
+            //60-67
+            for (int i = 0; i < 8; i++)
+            {
+                strings.Add(new List<string?>());
+            }
+            if(subject.beneficiaries != null)
+            {
+                foreach (var item in subject.beneficiaries)
+                {
+                    if(item?.role == 19)
+                    {
+                        strings[strings.Count - 8]?.Add(item?.name);
+                        strings[strings.Count - 7]?.Add(item?.code);
+                        strings[strings.Count - 6]?.Add(item?.country);
+                        strings[strings.Count - 5]?.Add(item?.address?.address);
+                        strings[strings.Count - 4]?.Add(item?.last_name + " " + item?.first_middle_name ?? "");
+                        strings[strings.Count - 3]?.Add(item?.beneficiaries_type == 5 ? "Прямий вирішальний вплив" :
+                            item?.beneficiaries_type == 6 ? "Непрямий вирішальний вплив" :
+                            item?.beneficiaries_type == 7 ? "Прямий та непрямий вирішальний вплив" : "");
+                        strings[strings.Count - 2]?.Add(item?.role_text);
+                        strings[strings.Count - 1]?.Add(item?.interest + "");
+                    }
+                }
+            }
+            //68-69
+            strings.Add(new List<string?>());
+            strings.Add(new List<string?>());
+            if (subject.heads != null)
+            {
+                foreach (var head in subject.heads)
+                {
+                    if(head != null)
+                    {
+                        if(head.role == 2 ||
+                            head.role == 3 ||
+                            head.role == 6 ||
+                            head.role == 7 ||
+                            head.role == 8 ||
+                            head.role == 11 ||
+                            head.role == 13 ||
+                            head.role == 14 ||
+                            head.role == 15 ||
+                            head.role == 18 ||
+                            head.role == 12 ||
+                            head.role == 17)
+                        {
+                            strings[strings.Count - 2]?.Add(head.last_name + " " + head.first_middle_name);
+                            strings[strings.Count - 1]?.Add(head.role_text);
+                        }
+                    }
+                }
+            }
+            //70
+            strings.Add(new List<string?>() { subject.authorised_capital?.value + "" });
+            //71
+
+
+
+
+
             return strings;
         }
         public static Head? GetTheNewestHead(List<Head?>? heads)
@@ -502,21 +595,26 @@ namespace DesARMA.Automation
             Head? head = null;
             int index = 0;
             if (heads != null)
+            {
                 if (heads.Count > 0)
                 {
                     for (int i = 0; i < heads.Count; i++)
                     {
-                        if (Convert.ToDateTime(heads[i].appointment_date) > Convert.ToDateTime(heads[index].appointment_date))
+                        if (heads[i] != null && heads[index] != null)
                         {
-                            head = heads[i];
-                            index = i;
+                            if (Convert.ToDateTime(heads[i]?.appointment_date) > Convert.ToDateTime(heads[index]?.appointment_date))
+                            {
+                                head = heads[i];
+                                index = i;
+                            }
                         }
                     }
                 }
+            }
+
             return head;
         }
     }
-    
     public static class StringExtension
     {
         public static string? SetCode(this string? str, string? strIns)

@@ -102,8 +102,13 @@
                    Source="https://img.freepik.com/free-icon/database_318-359818.jpg" HorizontalAlignment="Left">
             </Image>
         </Button>
-
-        <StackPanel Grid.Column="0" Grid.Row="7" Grid.RowSpan="20"  
+        <Button Background="{StaticResource 4ColorStyle}" 
+                    Click="Button_ClickInsertDataIntoMultipleRequest" Width="50" Grid.Column="0" Grid.Row="7" ToolTip="Вставити дані в декілька запитів">
+            <Image Margin="1" Name="nameIm"
+                    HorizontalAlignment="Left">
+            </Image>
+        </Button>
+        <StackPanel Grid.Column="0" Grid.Row="8" Grid.RowSpan="20"  
                     Background="{StaticResource 1ColorStyle}"  >
         </StackPanel>
 

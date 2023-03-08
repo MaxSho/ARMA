@@ -19,6 +19,7 @@ using SixLabors.ImageSharp.Drawing;
 using System.Windows.Media.Imaging;
 using System.Threading;
 using System.Windows.Automation;
+using DesARMA.Automation;
 
 namespace DesARMA
 {
@@ -242,13 +243,37 @@ namespace DesARMA
         {
             try
             {
+                if((int)(sender as System.Windows.Controls.Button)?.Tag == 19 ||
+                    (int)(sender as System.Windows.Controls.Button)?.Tag == 20)
+                {
+                    if (figurants != null)
+                    {
+                        foreach (var item in figurants)
+                        {
+                            string path = (from mc in modelContext.MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
+                            if (item.Ipn != null || item.Fio != null)
+                            {
+                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, SearchType.Base, path + "\\auto");
+                                dsd.CreateExel();
+                            }
+                            else
+                            {
+                                var dsd = new SearchEDR(item.Code, item.Name, null, 500, SearchType.Base, path + "\\auto");
+                                dsd.CreateExel();
+                            }
+
+                        }
+                    }
+                }
                 
+                MessageBox.Show("sasd");   
             }
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show(ex.Message);
             }
         }
+        
         private string? СreatePositionFigurantText(int idNumFig)
         {
             var treeIn = new TreeViewItem();

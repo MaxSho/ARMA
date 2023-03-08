@@ -58,7 +58,7 @@ namespace DesARMA.Registers.EDR
         public decimal? beneficiaries_type { get; set; }
         public decimal? role { get; set; }
         public string?  role_text { get; set; }
-        public float? decimalerest { get; set; }
+        public decimal? interest { get; set; }
 
     }
     public class RelatedSubject
