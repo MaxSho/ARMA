@@ -59,6 +59,7 @@
 
   <ItemGroup>
     <PackageReference Include="IronXL.Excel" Version="2022.12.10926" />
+    <PackageReference Include="iTextSharp" Version="5.5.13.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.11" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
@@ -89,6 +90,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="FilesRet\Мінюст ДСК2.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="FilesSh\EDRSh.docx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="FilesSh\АМК запит.docx">

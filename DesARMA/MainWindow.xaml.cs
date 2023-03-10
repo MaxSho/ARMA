@@ -51,6 +51,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Media.Animation;
 using DesARMA.Automation;
 using System.Drawing;
+using DesARMA.Registers;
 
 namespace DesARMA
 {
@@ -75,6 +76,9 @@ namespace DesARMA
 
                 //var dsd = new SearchEDR(null, "Хомин Андрій Петрович", null, 500, SearchType.Base, "C:\\app");
                 //dsd.CreateExel();
+
+                //PDF.lksdfjhs();
+
 
                 CreateTimer();
                 Auth();
@@ -105,9 +109,7 @@ namespace DesARMA
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            string path = "C:\\app\\5eeea355389655.59822ff824b72 (1).gif";
-            BitmapImage bitmap = new BitmapImage(new Uri(path));
-            nameIm.Source = bitmap;
+            
         }
         private StackPanel CreateContShLabel(string path)
         {
@@ -2310,6 +2312,26 @@ namespace DesARMA
                 System.Windows.MessageBox.Show(ex.Message);
             }
             inactivityTimer.Start();
+        }
+        private void Button_Progress(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                //ProgresWindow progresWindow = new ProgresWindow();
+                
+                //if (progresWindow.ShowDialog() == true)
+                //{
+
+                //}
+                //else
+                //{
+
+                //}
+            }
+            catch(Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
+            }
         }
     }
 }

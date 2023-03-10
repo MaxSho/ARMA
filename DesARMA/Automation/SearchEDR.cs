@@ -18,6 +18,7 @@ using System.IO;
 using IronXL;
 using System.Windows.Media;
 using System.Xml.Linq;
+using DesARMA.Registers;
 
 namespace DesARMA.Automation
 {
@@ -45,6 +46,7 @@ namespace DesARMA.Automation
 
         private List<EDRClass>? subjects;
         private List<Subject>? subjectsMore;
+        //ProgresWindow progresWindow = new ProgresWindow();
 
         private string path;
         public SearchEDR(string? code, string? name, string? passport, int limit, SearchType? searchType,
@@ -65,14 +67,16 @@ namespace DesARMA.Automation
 
             this.path = path;
 
-
             SetParamsInReqstr();
             SetReqstrId();
 
             GetInfoSubjects();
             GetInfoSubjectsMore();
 
+            
+
         }
+        
         private string? GetWhithout(string? str)
         {
             return str?.Replace('\'', '-')?.
@@ -174,10 +178,11 @@ namespace DesARMA.Automation
             string response = "";
             var task = Task.Run(async () => { // Викликаємо метод GetResp() в асинхронному таску
                 response = await GetResp();
+                subjects = JsonConvert.DeserializeObject<List<EDRClass>>(response);
             });
             task.Wait(); // Очікуємо завершення таску
 
-            subjects = JsonConvert.DeserializeObject<List<EDRClass>>(response);
+            
             
         }
         public void GetInfoSubjectsMore()
@@ -192,10 +197,11 @@ namespace DesARMA.Automation
                         string response = "";
                         var task = Task.Run(async () => { // Викликаємо метод GetResp() в асинхронному таску
                             response = await GetRespId((uint)id);
+                            subjectsMore.Add(JsonConvert.DeserializeObject<Subject>(response));
                         });
                         task.Wait(); // Очікуємо завершення таску
 
-                        subjectsMore.Add(JsonConvert.DeserializeObject<Subject>(response));
+                        
                     }
                 }
         }
@@ -259,6 +265,22 @@ namespace DesARMA.Automation
                 }
             }
         }
+        public void CreatePDF()
+        {
+            var list = GetListAboutSub(subjectsMore.First());
+            PDF pDF = new PDF();
+
+            pDF.Create(list);
+
+            //PDF.CreatePDFEDR(new FileStream("C:\\app\\ReportName.pdf", FileMode.Create), GetListAboutSub(subjectsMore.FirstOrDefault()));
+            //if (subjectsMore != null)
+            //{
+            //    foreach (var item in subjectsMore)
+            //    {
+            //        CreateExelSub(item);
+            //    }
+            //}
+        }
         public void CreateExelSub(Subject subject)
         {
             var list = GetListAboutSub(subject);
@@ -277,12 +299,7 @@ namespace DesARMA.Automation
                 {
                     
                     CreateCell(HeaderRow, i, Reest.namesField[i], borderedCellStyle);
-                    //var listCell = list[i];
-                    //for (int j = 0; j < listCell?.Count; j++)
-                    //{
-                    //    IRow HeaderRow2 = Sheet.CreateRow(j + 1);
-                    //    CreateCell(HeaderRow2, i, listCell[j] ?? "", borderedCellStyle);
-                    //}
+                    
                     
                 }
 

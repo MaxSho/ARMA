@@ -20,6 +20,7 @@ using System.Windows.Media.Imaging;
 using System.Threading;
 using System.Windows.Automation;
 using DesARMA.Automation;
+using DesARMA.Registers;
 
 namespace DesARMA
 {
@@ -243,29 +244,46 @@ namespace DesARMA
         {
             try
             {
-                if((int)(sender as System.Windows.Controls.Button)?.Tag == 19 ||
-                    (int)(sender as System.Windows.Controls.Button)?.Tag == 20)
-                {
-                    if (figurants != null)
-                    {
-                        foreach (var item in figurants)
-                        {
-                            string path = (from mc in modelContext.MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
-                            if (item.Ipn != null || item.Fio != null)
-                            {
-                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, SearchType.Base, path + "\\auto");
-                                dsd.CreateExel();
-                            }
-                            else
-                            {
-                                var dsd = new SearchEDR(item.Code, item.Name, null, 500, SearchType.Base, path + "\\auto");
-                                dsd.CreateExel();
-                            }
-
-                        }
-                    }
-                }
                 
+
+               
+
+                // progresWindow.ShowDialog();
+
+                //PDF.lksdfjhs();
+                var item = figurants?.FirstOrDefault();
+                string path = (from mc in modelContext.MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
+                ProgresWindow progresWindow = new ProgresWindow(item, path);
+
+                progresWindow.Show();
+               // progresWindow.CreateEDR(item, path);
+                
+
+                //if ((int)(sender as System.Windows.Controls.Button)?.Tag == 19 ||
+                //    (int)(sender as System.Windows.Controls.Button)?.Tag == 20)
+                //{
+                //    if (figurants != null)
+                //    {
+                //        foreach (var item in figurants)
+                //        {
+                //            string path = (from mc in modelContext.MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
+                //            if (item.Ipn != null || item.Fio != null)
+                //            {
+                //                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, SearchType.Base, path + "\\auto");
+                //                //dsd.CreateExel();
+                //                dsd.CreatePDF();
+                //            }
+                //            else
+                //            {
+                //                var dsd = new SearchEDR(item.Code, item.Name, null, 500, SearchType.Base, path + "\\auto");
+                //                //dsd.CreateExel();
+                //                dsd.CreatePDF();
+                //            }
+
+                //        }
+                //    }
+                //}
+
                 MessageBox.Show("sasd");   
             }
             catch (Exception ex)

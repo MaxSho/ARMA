@@ -6,12 +6,14 @@
         xmlns:local="clr-namespace:DesARMA"
         mc:Ignorable="d"
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
-        Title="ProgresWindow" Height="450" Width="800">
-    <Grid>
-        <Image x:Name="searchImage" Grid.Column="0" Grid.Row="1" Margin="1" 
-                   Source="https://media.tenor.com/guhB4PpjrmUAAAAM/loading-loading-gif.gif" 
-               
-     
-                   ></Image>
+        Title="ProgresWindow" Height="180" Width="320" WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Opacity="1"
+        Background="Transparent" ShowInTaskbar="False" Loaded="ProgresWindow_Loaded" >
+    <Grid >
+        <Image   Margin="1" 
+                   gif:ImageBehavior.AnimatedSource="https://static.wikia.nocookie.net/nyancat/images/b/b9/OriginalNyan.gif/revision/latest?cb=20221126212440" />
+
     </Grid>
 </Window>

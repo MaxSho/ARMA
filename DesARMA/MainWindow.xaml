@@ -6,7 +6,9 @@
         xmlns:local="clr-namespace:DesARMA"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
+        
         Title="DeskAPMA" MinHeight="400" MinWidth="400" FontSize="16" WindowState="Maximized"
         ResizeMode="CanResizeWithGrip" Closing="App_Closing" PreviewMouseMove="Window_PreviewMouseMove"  MouseMove="Window_MouseMove" 
         Loaded="Window_Loaded">
@@ -103,8 +105,9 @@
             </Image>
         </Button>
         <Button Background="{StaticResource 4ColorStyle}" 
-                    Click="Button_ClickInsertDataIntoMultipleRequest" Width="50" Grid.Column="0" Grid.Row="7" ToolTip="Вставити дані в декілька запитів">
+                    Click="Button_Progress" Width="50" Grid.Column="0" Grid.Row="7" ToolTip="Вставити дані в декілька запитів">
             <Image Margin="1" Name="nameIm"
+                   gif:ImageBehavior.AnimatedSource="C:\app\5eeea355389655.59822ff824b72 (1).gif"
                     HorizontalAlignment="Left">
             </Image>
         </Button>
