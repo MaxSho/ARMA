@@ -11,6 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Drawings\cat.gif" />
+    <None Remove="Drawings\download\download1.gif" />
+    <None Remove="Drawings\download\download2.gif" />
+    <None Remove="Drawings\download\download3.gif" />
+    <None Remove="Drawings\download\download4.gif" />
+    <None Remove="Drawings\download\download5.gif" />
+    <None Remove="Drawings\download\download6.gif" />
     <None Remove="Files\2.ico" />
     <None Remove="Files\iconSave.jpg" />
   </ItemGroup>
@@ -71,6 +78,27 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Drawings\cat.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\download\download1.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\download\download2.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\download\download3.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\download\download4.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\download\download5.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\download\download6.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Files\2.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -82,6 +110,12 @@
   <ItemGroup>
     <None Update="App.config">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="FilesReestSh\edr.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="FilesReestSh\EDRSh.docx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="FilesRet\2.docx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -141,7 +175,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Files\icon0.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Files\iconDirectory.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -21,6 +21,7 @@ using System.Threading;
 using System.Windows.Automation;
 using DesARMA.Automation;
 using DesARMA.Registers;
+using System.Windows.Threading;
 
 namespace DesARMA
 {
@@ -31,50 +32,49 @@ namespace DesARMA
     }
     public class AllDirectories
     {
-        public MainConfig mainConfig { get; private set; } = null!;
-        public Main main { get; private set; } = null!;
-        public List<Figurant>? figurants { get; private set; } = null!; 
-        ModelContext modelContext = null!;  
-        RoutedEventHandler routedEventHandler = null!;
-        System.Windows.Controls.TreeView treeView1 = null!;
+        public MainConfig @MainConfig { get; private set; } = null!;
+        public List<Figurant>? Figurants { get; private set; } = null!;
+        readonly ModelContext modelContext = null!;
+        readonly UpdateDel updatePanel = null!;
+        readonly System.Windows.Controls.TreeView treeView1 = null!;
 
         List<bool> listContr;
         List<bool> listSh;
         List<List<bool>?> listFigurantCheckListSHEMA;
         List<List<bool>?> listFigurantCheckListCONTROL;
 
-        SolidColorBrush RedSolidColorBrush = null!;
-        SolidColorBrush WhiteSolidColorBrush = null!;
-        SolidColorBrush GreenSolidColorBrush = null!;
+        readonly SolidColorBrush RedSolidColorBrush = null!;
+        readonly SolidColorBrush WhiteSolidColorBrush = null!;
+        readonly SolidColorBrush GreenSolidColorBrush = null!;
+        readonly List<System.Windows.Controls.Button> buttonList = new();
 
-        public AllDirectories(Main main, MainConfig mainConfig, RoutedEventHandler routedEventHandler,
+        public AllDirectories(Main main, @MainConfig @MainConfig, UpdateDel updatePanel,
             SolidColorBrush RedSolidColorBrush, SolidColorBrush WhiteSolidColorBrush, SolidColorBrush GreenSolidColorBrush,
             System.Windows.Controls.TreeView treeView1, ModelContext modelContext
             )
         {
-            this.mainConfig = mainConfig;
-            this.main = main;
+            this.@MainConfig = @MainConfig;
             this.RedSolidColorBrush = RedSolidColorBrush;
             this.WhiteSolidColorBrush = WhiteSolidColorBrush;
             this.GreenSolidColorBrush = GreenSolidColorBrush;
             this.treeView1 = treeView1;
             this.modelContext = modelContext;
-            figurants = (from f in modelContext.Figurants where f.NumbInput == main.NumbInput && f.Status == 1 select f).ToList();
+            Figurants = (from f in modelContext.Figurants where f.NumbInput == main.NumbInput && f.Status == 1 select f).ToList();
 
 
-            listContr = GetBoolsFromString(mainConfig.Control);
-            listSh = GetBoolsFromString(mainConfig.Shema);
+            listContr = GetBoolsFromString(@MainConfig.Control);
+            listSh = GetBoolsFromString(@MainConfig.Shema);
 
             listFigurantCheckListSHEMA = GetFigurantCheckListNO();
             listFigurantCheckListCONTROL = GetFigurantCheckListYES();
-            this.routedEventHandler = routedEventHandler;
+            this.updatePanel = updatePanel;
         }
         public System.Windows.Controls.TreeView CreateNewTree()
         {
             treeView1!.Items!.Clear();
 
-            listContr = GetBoolsFromString(mainConfig.Control);
-            listSh = GetBoolsFromString(mainConfig.Shema);
+            listContr = GetBoolsFromString(@MainConfig.Control);
+            listSh = GetBoolsFromString(@MainConfig.Shema);
 
             for (int i = 0; i < Reest.abbreviatedName.Count; i++)
             {
@@ -87,19 +87,25 @@ namespace DesARMA
         }
         private StackPanel CreateTextBlockesYesNo(int num)
         {
-            StackPanel st = new StackPanel();
-            st.Orientation = Orientation.Horizontal;
+            StackPanel st = new ()
+            {
+                Orientation = System.Windows.Controls.Orientation.Horizontal
+            };
 
-            TextBlock t1 = new TextBlock();
-            t1.Text = "так ";
-            t1.Tag = num;
+            TextBlock t1 = new()
+            {
+                Text = "так ",
+                Tag = num
+            };
             t1.PreviewMouseDown += ClickAllFigurantYes;
             t1.MouseEnter += (w, r) => { t1.Opacity = 0.5; };
             t1.MouseLeave += (w, r) => { t1.Opacity = 1; };
 
-            TextBlock t2 = new TextBlock();
-            t2.Text = "ні";
-            t2.Tag = num;
+            TextBlock t2 = new() 
+            {
+                Text = "ні ",
+                Tag = num
+            };
             t2.PreviewMouseDown += ClickAllFigurantNo;
             t2.MouseEnter += (w, r) => { t2.Opacity = 0.5; };
             t2.MouseLeave += (w, r) => { t2.Opacity = 1; };
@@ -111,8 +117,7 @@ namespace DesARMA
         }
         private void ClickAllFigurantYes(object sender, RoutedEventArgs e)
         {
-            var tb = sender as TextBlock;
-            if(tb != null)
+            if(sender is TextBlock tb)
             {
                 int id = (int)tb.Tag;
                 var listFigChB = GetFigListTupleCheckBoxes(id);
@@ -134,8 +139,7 @@ namespace DesARMA
         }
         private void ClickAllFigurantNo(object sender, RoutedEventArgs e)
         {
-            var tb = sender as TextBlock;
-            if (tb != null)
+            if (sender is TextBlock tb)
             {
                 int id = (int)tb.Tag;
                 var listFigChB = GetFigListTupleCheckBoxes(id);
@@ -157,11 +161,13 @@ namespace DesARMA
         }
         private StackPanel СreatePosition(int idNum, string name)
         {
-            StackPanel stackPanel = new StackPanel();
-            stackPanel.Orientation = Orientation.Horizontal;
+            StackPanel stackPanel = new () 
+            {
+                Orientation = Orientation.Horizontal
+            };
 
 
-            TreeViewItem tree = new TreeViewItem();
+            TreeViewItem tree = new ();
 
             var checkBoxIn = new System.Windows.Controls.CheckBox();
             {
@@ -187,6 +193,7 @@ namespace DesARMA
                 button.Padding = new Thickness(15, 0, 15, 0);
                 button.Margin = new Thickness(10, 0, 10, 5);
                 button.Click += AutomationHendler;
+                buttonList.Add(button);
             }
             
             // на самому початку задано червоний колір
@@ -208,7 +215,7 @@ namespace DesARMA
             }
 
 
-            if (figurants != null)
+            if (Figurants != null)
             {
                 tree.Items.Add(CreateTextBlockesYesNo(idNum));
             }
@@ -218,17 +225,20 @@ namespace DesARMA
                 var contextmenu = new ContextMenu();
                 tree.ContextMenu = contextmenu;
 
-                var mi = new MenuItem();
-                mi.Header = "Видалити";
-                mi.Tag = $"{idNum}. {Reest.abbreviatedName[idNum - 1]}";
+                var mi = new MenuItem()
+                {
+                    Header = "Видалити",
+                    Tag = $"{idNum}. {Reest.abbreviatedName[idNum - 1]}"
+                };
+               
                 mi.Click += DeleteDir;
                 contextmenu.Items.Add(mi);
             }
 
 
-            for (int i = 0; i < figurants!.Count; i++)
+            for (int i = 0; i < Figurants!.Count; i++)
             {
-                    var sdhjgf = CreatePozFig(idNum, i + 1, tree.Foreground as SolidColorBrush);
+                    var sdhjgf = CreatePozFig(idNum, i + 1);
                     if (sdhjgf != null)
                     {
                         tree.Items.Add(sdhjgf);
@@ -240,51 +250,214 @@ namespace DesARMA
             stackPanel.Children.Add(tree);
             return stackPanel;
         }
-        private void AutomationHendler(object sender, RoutedEventArgs e)
+        private void ListButtonReestrChangeEnabled()
+        {
+            foreach (var item in buttonList)
+            {
+                item.IsEnabled = !item.IsEnabled;
+            }
+        }
+        private async void AutomationHendler(object sender, RoutedEventArgs e)
         {
             try
             {
-                
+                ListButtonReestrChangeEnabled();
 
-               
+                //var item = figurants?.FirstOrDefault();
+                //string path = (from mc in modelContext.@MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
 
-                // progresWindow.ShowDialog();
+                //ProgresWindow progresWindow = new ProgresWindow(item, path);
 
-                //PDF.lksdfjhs();
-                var item = figurants?.FirstOrDefault();
-                string path = (from mc in modelContext.MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
-                ProgresWindow progresWindow = new ProgresWindow(item, path);
 
-                progresWindow.Show();
-               // progresWindow.CreateEDR(item, path);
-                
-
-                //if ((int)(sender as System.Windows.Controls.Button)?.Tag == 19 ||
-                //    (int)(sender as System.Windows.Controls.Button)?.Tag == 20)
+                //Application.Current.Dispatcher.Invoke(() =>
                 //{
-                //    if (figurants != null)
-                //    {
-                //        foreach (var item in figurants)
-                //        {
-                //            string path = (from mc in modelContext.MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
-                //            if (item.Ipn != null || item.Fio != null)
-                //            {
-                //                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, SearchType.Base, path + "\\auto");
-                //                //dsd.CreateExel();
-                //                dsd.CreatePDF();
-                //            }
-                //            else
-                //            {
-                //                var dsd = new SearchEDR(item.Code, item.Name, null, 500, SearchType.Base, path + "\\auto");
-                //                //dsd.CreateExel();
-                //                dsd.CreatePDF();
-                //            }
+                //    progresWindow.Show();
+                //});
 
-                //        }
-                //    }
-                //}
+                //var searchEDRTask = Task.Run(() =>
+                //{
+                //    var dsd = new SearchEDR(item.Code, item.Name, null, 500, SearchType.Base, path + "\\auto");
+                //    dsd.CreatePDF();
+                //});
 
-                MessageBox.Show("sasd");   
+                //await searchEDRTask;
+
+                //Application.Current.Dispatcher.Invoke(() =>
+                //{
+                //    progresWindow.Close();
+                //});
+
+
+
+                if (sender is System.Windows.Controls.Button b)
+                {
+                    int numberR = (int)b.Tag;
+                    if( numberR < Reest.abbreviatedName.Count)
+                    {
+                        if (IsAvailableDirectory(numberR, Reest.abbreviatedName[numberR - 1]))
+                        {
+                            ProgresWindow progresWindow = new ();
+                            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                            {
+                                progresWindow.Show();
+                            });
+
+                            //{
+                            //    Base, // - дані ЮО, ФО;
+                            //    Branch, // - дані ВП;
+                            //    Beneficiar, // - дані бенефіціарів (в тому числі в неструктурованому вигляді);
+                            //    Founder, // - дані засновників,
+                            //    Chief, // - дані керівника,
+                            //    Assignee // - дані представників
+                            //}
+                            if (numberR == 15)
+                            {
+                                if (Figurants != null)
+                                {
+                                    foreach (var item in Figurants)
+                                    {
+                                        string path = (from mc in modelContext.@MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
+                                        if (item.Ipn != null || item.Fio != null)
+                                        {
+                                            var searchEDRTask = Task.Run(() =>
+                                            {
+                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, SearchType.Beneficiar, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                dsd.CreateExel();
+                                                dsd.CreatePDF();
+
+                                            });
+                                            await searchEDRTask;
+                                        }
+                                    }
+                                }
+                            }
+                            else if (numberR == 16)
+                            {
+                                if (Figurants != null)
+                                {
+                                    foreach (var item in Figurants)
+                                    {
+                                        string path = (from mc in modelContext.@MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
+
+                                        if (item.Ipn != null || item.Fio != null)
+                                        {
+                                            var searchEDRTask = Task.Run(() =>
+                                            {
+                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, SearchType.Founder, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                dsd.CreateExel();
+                                                dsd.CreatePDF();
+
+                                            });
+                                            await searchEDRTask;
+                                        }
+                                        if (item.Code != null || item.Name != null)
+                                        {
+                                            var searchEDRTask = Task.Run(() =>
+                                            {
+                                                var dsd = new SearchEDR(item.Code, item.Name, null, 500, SearchType.Founder, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                dsd.CreateExel();
+                                                dsd.CreatePDF();
+                                            });
+                                            await searchEDRTask;
+                                        }
+                                    }
+                                }
+                            }
+                            else if (numberR == 17)
+                            {
+                                if (Figurants != null)
+                                {
+                                    foreach (var item in Figurants)
+                                    {
+                                        string path = (from mc in modelContext.@MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
+                                        if (item.Ipn != null || item.Fio != null)
+                                        {
+                                            var searchEDRTask = Task.Run(() =>
+                                            {
+                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, SearchType.Chief, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                dsd.CreateExel();
+                                                dsd.CreatePDF();
+
+                                            });
+                                            await searchEDRTask;
+                                        }
+                                    }
+                                }
+                            }
+                            else if (numberR == 18)
+                            {
+                                if (Figurants != null)
+                                {
+                                    foreach (var item in Figurants)
+                                    {
+                                        string path = (from mc in modelContext.@MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
+                                        if (item.Ipn != null || item.Fio != null)
+                                        {
+                                            var searchEDRTask = Task.Run(() =>
+                                            {
+                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, SearchType.Assignee, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                dsd.CreateExel();
+                                                dsd.CreatePDF();
+
+                                            });
+                                            await searchEDRTask;
+                                        }
+                                    }
+                                }
+                            }
+                            else if (numberR == 19)
+                            {
+                                if (Figurants != null)
+                                {
+                                    foreach (var item in Figurants)
+                                    {
+                                        string path = (from mc in modelContext.@MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
+                                        if (item.Code != null || item.Name != null)
+                                        {
+                                            var searchEDRTask = Task.Run(() =>
+                                            {
+                                                var dsd = new SearchEDR(item.Code, item.Name, null, 500, SearchType.Base, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                dsd.CreateExel();
+                                                dsd.CreatePDF();
+                                            });
+                                            await searchEDRTask;
+                                        }
+
+                                    }
+                                }
+                            }
+                            else if (numberR == 20)
+                            {
+                                if (Figurants != null)
+                                {
+                                    foreach (var item in Figurants)
+                                    {
+                                        string path = (from mc in modelContext.@MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
+                                        if (item.Ipn != null || item.Fio != null)
+                                        {
+                                            var searchEDRTask = Task.Run(() =>
+                                            {
+                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, SearchType.Base, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                dsd.CreateExel();
+                                                dsd.CreatePDF();
+
+                                            });
+                                            await searchEDRTask;
+                                        }
+                                    }
+                                }
+                            }
+                            updatePanel(new object(), new RoutedEventArgs());
+                            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                            {
+                                progresWindow.Close();
+                            });
+                            
+                        }
+                    }
+                    
+                }
+                ListButtonReestrChangeEnabled();
             }
             catch (Exception ex)
             {
@@ -294,11 +467,9 @@ namespace DesARMA
         
         private string? СreatePositionFigurantText(int idNumFig)
         {
-            var treeIn = new TreeViewItem();
-
-            if (figurants != null)
+            if (Figurants != null)
             {
-                var w1 = figurants[idNumFig - 1];
+                var w1 = Figurants[idNumFig - 1];
 
                 if (w1 != null)
                 {
@@ -307,15 +478,17 @@ namespace DesARMA
             }
             return null;
         }
-        public StackPanel CreatePozFig(int idNumReestr, int idNumFig, SolidColorBrush color)
+        public StackPanel CreatePozFig(int idNumReestr, int idNumFig)
         {
-            StackPanel stackPanel = new StackPanel();
-            stackPanel.Orientation = Orientation.Horizontal;
+            StackPanel stackPanel = new() 
+            {
+                Orientation = Orientation.Horizontal
+            };
 
             var checkBox = new CheckBox();
-            if (figurants != null)
+            if (Figurants != null)
             {
-                var w1 = figurants[idNumFig - 1];
+                var w1 = Figurants[idNumFig - 1];
 
                 if (w1 != null)
                 {
@@ -343,9 +516,9 @@ namespace DesARMA
             }
 
             var checkBox2 = new CheckBox();
-            if (figurants != null)
+            if (Figurants != null)
             {
-                var w1 = figurants[idNumFig - 1];
+                var w1 = Figurants[idNumFig - 1];
 
                 if (w1 != null)
                 {
@@ -394,108 +567,112 @@ namespace DesARMA
             throw new NotImplementedException();
         }
 
-        private Image GetNewImageCopy()
+        private static List<UIElement> CreateControls(string? str)
         {
-            Image image = new Image();
-            BitmapImage bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.UriSource = new Uri("https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Edit-copy_green.svg/2048px-Edit-copy_green.svg.png");
-            bitmap.DecodePixelWidth = 25;
-            bitmap.EndInit();
-            image.Source = bitmap;
-            return image;
-        }
-        private List<UIElement> CreateControls(string? str)
-        {
-            List<UIElement> listRet = new List<UIElement>();
+            List<UIElement> listRet = new();
             if(str != null)
             {
                 var list = str!.Split('^');
-                if(list.Length == 6)
+                if (list.Length == 6)
                 {
-                    TextBlock textBlock = new TextBlock();
-                    textBlock.Text = list[0];
-                    textBlock.FontSize = 14;
+                    TextBlock textBlock = new ()
+                    {
+                        Text = list[0],
+                        FontSize = 14,
+                        Padding = new Thickness(20, 0, 0, 0),
+                        ToolTip = "Натисніть, щоб скопіювати"
+                    };
                     textBlock.PreviewMouseDown += (w, r) => {try{System.Windows.Clipboard.SetText(textBlock.Text);}catch (Exception ex) { }};
                     textBlock.MouseEnter += (w, r) => {  textBlock.Opacity = 0.5; };
                     textBlock.MouseLeave += (w, r) => {  textBlock.Opacity = 1; };
-                    textBlock.Padding = new Thickness(20, 0, 0, 0);
-                    textBlock.ToolTip = "Натисніть, щоб скопіювати";
                     listRet.Add(textBlock);
 
 
-                    TextBlock textBlockTemp = new TextBlock();
-                    textBlockTemp.Text = list[1];
-                    textBlockTemp.FontSize = 14; 
+                    TextBlock textBlockTemp = new()
+                    {
+                        Text = list[1],
+                        FontSize = 14
+                    };
                     listRet.Add(textBlockTemp);
 
 
 
-                    TextBlock textBlock1 = new TextBlock();
-                    textBlock1.Text = list[2];
-                    textBlock1.FontSize = 14;
+                    TextBlock textBlock1 = new () 
+                    {
+                        Text = list[2],
+                        FontSize = 14,
+                        ToolTip = "Натисніть, щоб скопіювати"
+                    };
                     textBlock1.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock1.Text); } catch (Exception ex) { } };
                     textBlock1.MouseEnter += (w, r) => { textBlock1.Opacity = 0.5; };
                     textBlock1.MouseLeave += (w, r) => { textBlock1.Opacity = 1; };
-                    textBlock1.ToolTip = "Натисніть, щоб скопіювати";
                     listRet.Add(textBlock1);
 
-                    TextBlock textBlockTemp2 = new TextBlock();
-                    textBlockTemp2.Text = list[3];
-                    textBlockTemp2.FontSize = 14;
+                    TextBlock textBlockTemp2 = new () { Text = list[3], FontSize = 14 };
                     listRet.Add(textBlockTemp2);
 
-                    TextBlock textBlockTemp3 = new TextBlock();
-                    textBlockTemp3.Text = list[4];
-                    textBlockTemp3.FontSize = 14;
+                    TextBlock textBlockTemp3 = new () { Text = list[4], FontSize = 14 };
                     listRet.Add(textBlockTemp3);
 
-                    TextBlock textBlock2 = new TextBlock();
-                    textBlock2.Text = list[5];
-                    textBlock2.FontSize = 14;
+                    TextBlock textBlock2 = new () { Text = list[5], FontSize = 14, ToolTip = "Натисніть, щоб скопіювати" }; 
                     textBlock2.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock2.Text); } catch (Exception ex) { } };
                     textBlock2.MouseEnter += (w, r) => { textBlock2.Opacity = 0.5; };
                     textBlock2.MouseLeave += (w, r) => { textBlock2.Opacity = 1;};
-                    textBlock2.ToolTip = "Натисніть, щоб скопіювати";
                     listRet.Add(textBlock2);
                 }
                 else if(list.Length == 4)
                 {
-                    TextBlock textBlock = new TextBlock();
-                    textBlock.Text = list[0];
-                    textBlock.FontSize = 14;
+                    TextBlock textBlock = new ()
+                    {
+                        Text = list[0],
+                        FontSize = 14,
+                        Padding = new Thickness(20, 0, 0, 0),
+                        ToolTip = "Натисніть, щоб скопіювати"
+                    };
                     textBlock.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock.Text); } catch (Exception ex) { } };
                     textBlock.MouseEnter += (w, r) => { textBlock.Opacity = 0.5; };
                     textBlock.MouseLeave += (w, r) => { textBlock.Opacity = 1; };
-                    textBlock.Padding = new Thickness(20, 0, 0, 0);
-                    textBlock.ToolTip = "Натисніть, щоб скопіювати";
                     listRet.Add(textBlock);
 
 
-                    TextBlock textBlockTemp = new TextBlock();
+                    TextBlock textBlockTemp = new ()
+                    {
+                        Text = list[1],
+                        FontSize = 14
+                    };
                     textBlockTemp.Text = list[1];
                     textBlockTemp.FontSize = 14;
                     listRet.Add(textBlockTemp);
 
 
 
-                    TextBlock textBlock1 = new TextBlock();
-                    textBlock1.Text = list[2];
-                    textBlock1.FontSize = 14;
+                    TextBlock textBlock1 = new ()
+                    {
+                        Text = list[2],
+                        FontSize = 14,
+                        ToolTip = "Натисніть, щоб скопіювати"
+                    };
                     textBlock1.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock1.Text); } catch (Exception ex) { } };
                     textBlock1.MouseEnter += (w, r) => { textBlock1.Opacity = 0.5; };
                     textBlock1.MouseLeave += (w, r) => { textBlock1.Opacity = 1; };
-                    textBlock1.ToolTip = "Натисніть, щоб скопіювати";
                     listRet.Add(textBlock1);
 
-                    TextBlock textBlockTemp2 = new TextBlock();
-                    textBlockTemp2.Text = list[3];
-                    textBlockTemp2.FontSize = 14;
+                    TextBlock textBlockTemp2 = new ()
+                    {
+                        Text = list[3],
+                        FontSize = 14,
+                    };
                     listRet.Add(textBlockTemp2);
                 }
                 else if(list.Length == 3)
                 {
-                    TextBlock textBlock = new TextBlock();
+                    TextBlock textBlock = new ()
+                    {
+                        Text = list[0],
+                        FontSize = 14,
+                        Padding = new Thickness(20, 0, 0, 0),
+                        ToolTip = "Натисніть, щоб скопіювати"
+                    };
                     textBlock.Text = list[0];
                     textBlock.FontSize = 14;
                     textBlock.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock.Text); } catch (Exception ex) { } };
@@ -506,32 +683,40 @@ namespace DesARMA
                     listRet.Add(textBlock);
 
 
-                    TextBlock textBlockTemp = new TextBlock();
+                    TextBlock textBlockTemp = new ()
+                    {
+                        Text = list[1],
+                        FontSize = 14
+                    };
                     textBlockTemp.Text = list[1];
                     textBlockTemp.FontSize = 14;
                     listRet.Add(textBlockTemp);
 
 
 
-                    TextBlock textBlock1 = new TextBlock();
-                    textBlock1.Text = list[2];
-                    textBlock1.FontSize = 14;
+                    TextBlock textBlock1 = new ()
+                    {
+                        Text = list[2],
+                        FontSize = 14,
+                        Padding = new Thickness(20, 0, 0, 0),
+                    };
                     textBlock1.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock1.Text); } catch (Exception ex) { } };
                     textBlock1.MouseEnter += (w, r) => { textBlock1.Opacity = 0.5; };
                     textBlock1.MouseLeave += (w, r) => { textBlock1.Opacity = 1; };
-                    textBlock1.ToolTip = "Натисніть, щоб скопіювати";
                     listRet.Add(textBlock1);
                 }
                 else if(list.Length == 1)
                 {
-                    TextBlock textBlock = new TextBlock();
-                    textBlock.Text = list[0];
-                    textBlock.FontSize = 14;
+                    TextBlock textBlock = new ()
+                    {
+                        Text = list[0],
+                        FontSize = 14,
+                        Padding = new Thickness(20, 0, 0, 0),
+                        ToolTip = "Натисніть, щоб скопіювати"
+                    };
                     textBlock.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock.Text); } catch (Exception ex) { } };
                     textBlock.MouseEnter += (w, r) => { textBlock.Opacity = 0.5; };
                     textBlock.MouseLeave += (w, r) => { textBlock.Opacity = 1; };
-                    textBlock.Padding = new Thickness(20, 0, 0, 0);
-                    textBlock.ToolTip = "Натисніть, щоб скопіювати";
                     listRet.Add(textBlock);
                 }
                 
@@ -542,32 +727,27 @@ namespace DesARMA
         {
             try
             {
-                var mi = sender as MenuItem;
-                if (mi != null)
+                if (sender is MenuItem mi)
                 {
                     object tag = mi.Tag;
                     if (tag != null)
                     {
-                        var nameD = tag as string;
-                        if (nameD != null)
+                        if (tag is string nameD)
                         {
-                            if (Directory.Exists(mainConfig.Folder + $"\\{nameD}"))
+                            if (Directory.Exists(@MainConfig.Folder + $"\\{nameD}"))
                             {
-                                Directory.Delete(mainConfig.Folder + $"\\{nameD}", true);
+                                Directory.Delete(@MainConfig.Folder + $"\\{nameD}", true);
 
                                 int index = Convert.ToInt32(nameD.Split('.').First()) - 1;
 
 
-                                var itemCh = treeView1.Items[index] as StackPanel;
-                                if (itemCh != null)
+                                if (treeView1.Items[index] is StackPanel itemCh)
                                 {
-                                    var che = itemCh.Children[0] as CheckBox;
-                                    if (che != null)
+                                    if (itemCh.Children[0] is CheckBox che)
                                     {
                                         che.IsChecked = false;
                                     }
-                                    var che2 = itemCh.Children[1] as CheckBox;
-                                    if (che2 != null)
+                                    if (itemCh.Children[1] is CheckBox che2)
                                     {
                                         che2.IsChecked = false;
                                     }
@@ -585,11 +765,11 @@ namespace DesARMA
                 MessageBox.Show(ex.Message);
             }
         }
-        private List<bool> GetBoolsFromString(string? str)
+        private static List<bool> GetBoolsFromString(string? str)
         {
             if (str == null) return null!;
 
-            List<bool> ret = new List<bool>();
+            List<bool> ret = new ();
             foreach (var item in str)
             {
                 if (item == '1')
@@ -607,7 +787,7 @@ namespace DesARMA
             }
             return ret;
         }
-        private string? GetStringFromBools(List<bool> list)
+        private static string? GetStringFromBools(List<bool> list)
         {
             if(list == null) return null!;
             var st = "";
@@ -646,12 +826,12 @@ namespace DesARMA
         }
         public List<List<bool>?> GetFigurantCheckListNO()
         {
-            List<List<bool>?> ret = new List<List<bool>?>();
+            List<List<bool>?> ret = new ();
 
             List<string>? listStringsFig = null;
 
-            if(figurants!=null)
-            listStringsFig = (from f in figurants select f.Shema).ToList();
+            if(Figurants != null)
+            listStringsFig = (from f in Figurants select f.Shema).ToList();
 
             if (listStringsFig != null)
             {
@@ -666,12 +846,12 @@ namespace DesARMA
         }
         public List<List<bool>?> GetFigurantCheckListYES()
         {
-            List<List<bool>?> ret = new List<List<bool>?>();
+            List<List<bool>?> ret = new ();
 
             List<string>? listStringsFig = null;
 
-            if (figurants != null)
-                listStringsFig = (from f in figurants select f.Control).ToList();
+            if (Figurants != null)
+                listStringsFig = (from f in Figurants select f.Control).ToList();
 
             if (listStringsFig != null)
             {
@@ -685,22 +865,21 @@ namespace DesARMA
         }
         public bool IsAvailableDirectory(int id, string abbreviatedName)
         {
-            return Directory.Exists($"{mainConfig.Folder}\\{id}. {abbreviatedName}");
+            return Directory.Exists($"{@MainConfig.Folder}\\{id}. {abbreviatedName}");
         }
         public bool IsEmptyDirectory(int id, string abbreviatedName)
         {
-            return Directory.GetDirectories($"{mainConfig.Folder}\\{id}. {abbreviatedName}").Length == 0 &&
-                Directory.GetFiles($"{mainConfig.Folder}\\{id}. {abbreviatedName}").Length == 0;
+            return Directory.GetDirectories($"{@MainConfig.Folder}\\{id}. {abbreviatedName}").Length == 0 &&
+                Directory.GetFiles($"{@MainConfig.Folder}\\{id}. {abbreviatedName}").Length == 0;
         }
         static public string? GetDefInString(Figurant d)
         {
             if (d.ResFiz != null)
             {
-                string strDt = "";
                 var birth = d.DtBirth;
                 if (birth != null)
                 {
-                    return $"{d.Fio}^, ^{birth.ToString().Substring(0, 10)}^ р.н.^, РНОКПП ^{d.Ipn}";
+                    return $"{d.Fio}^, ^{birth.ToString()?[0..10] ?? ""}^ р.н.^, РНОКПП ^{d.Ipn}";
                 }
                 return $"{d.Fio}^, РНОКПП ^{d.Ipn}";
             }
@@ -715,8 +894,7 @@ namespace DesARMA
         {
             //MessageBox.Show("ClickCheckBoxFigurantYes");
 
-            var checkBox = sender as CheckBox;
-            if (checkBox != null)
+            if (sender is CheckBox checkBox)
             {
                 var idNumReestr = checkBox.Tag;
                 if (idNumReestr != null)
@@ -725,7 +903,7 @@ namespace DesARMA
 
                     if(tag.Item2 - 1 < Reest.abbreviatedName.Count)
                     {
-                        if (!Directory.Exists(mainConfig.Folder + $"\\{tag.Item2}. {Reest.abbreviatedName[tag.Item2 - 1]}"))
+                        if (!Directory.Exists(@MainConfig.Folder + $"\\{tag.Item2}. {Reest.abbreviatedName[tag.Item2 - 1]}"))
                         {
                             //MessageBox.Show("Yeeees");
                             checkBox.IsChecked = false;
@@ -738,9 +916,7 @@ namespace DesARMA
                                 var tr = list[tag.Item1];
                                 if (tr != null)
                                 {
-                                    var ch = tr.Item1 as CheckBox;
-                                    var ch2 = tr.Item2 as CheckBox;
-                                    if(ch!=null && ch2 != null)
+                                    if(tr.Item1 is CheckBox ch && tr.Item2 is CheckBox ch2)
                                     {
                                         if (ch.IsChecked!.Value && ch2.IsChecked!.Value)
                                         {
@@ -754,7 +930,7 @@ namespace DesARMA
                     }
                     else
                     {
-                        if (!Directory.Exists(mainConfig.Folder + $"\\{Reest.abbreviatedName.Count + 1}. Схеми"))
+                        if (!Directory.Exists(@MainConfig.Folder + $"\\{Reest.abbreviatedName.Count + 1}. Схеми"))
                         {
                             //MessageBox.Show("Yeeees");
                             checkBox.IsChecked = false;
@@ -767,9 +943,7 @@ namespace DesARMA
                                 var tr = list[tag.Item1];
                                 if (tr != null)
                                 {
-                                    var ch = tr.Item1 as CheckBox;
-                                    var ch2 = tr.Item2 as CheckBox;
-                                    if (ch != null && ch2 != null)
+                                    if (tr.Item1 is CheckBox ch && tr.Item2 is CheckBox ch2)
                                     {
                                         if (ch.IsChecked!.Value && ch2.IsChecked!.Value)
                                         {
@@ -789,8 +963,7 @@ namespace DesARMA
         {
             //MessageBox.Show("ClickCheckBoxNo");
 
-            var checkBox = sender as CheckBox;
-            if (checkBox != null)
+            if (sender is CheckBox checkBox)
             {
                 var idNumReestr = checkBox.Tag;
                 if(idNumReestr != null)
@@ -798,7 +971,7 @@ namespace DesARMA
                     Tuple<int, int, FigYesNo> tag = (Tuple<int, int, FigYesNo>)idNumReestr;
                     if(Reest.abbreviatedName.Count > tag.Item2 - 1)
                     {
-                        if (!Directory.Exists(mainConfig.Folder + $"\\{tag.Item2}. {Reest.abbreviatedName[tag.Item2 - 1]}"))
+                        if (!Directory.Exists(@MainConfig.Folder + $"\\{tag.Item2}. {Reest.abbreviatedName[tag.Item2 - 1]}"))
                         {
                             checkBox.IsChecked = false;
                         }
@@ -810,9 +983,7 @@ namespace DesARMA
                                 var tr = list[tag.Item1];
                                 if (tr != null)
                                 {
-                                    var ch = tr.Item1 as CheckBox;
-                                    var ch2 = tr.Item2 as CheckBox;
-                                    if (ch != null && ch2 != null)
+                                    if (tr.Item1 is CheckBox ch && tr.Item2 is CheckBox ch2)
                                     {
                                         if (ch.IsChecked!.Value && ch2.IsChecked!.Value)
                                         {
@@ -826,7 +997,7 @@ namespace DesARMA
                     }
                     else
                     {
-                        if (!Directory.Exists(mainConfig.Folder + $"\\{Reest.abbreviatedName.Count + 1}. Схеми"))
+                        if (!Directory.Exists(@MainConfig.Folder + $"\\{Reest.abbreviatedName.Count + 1}. Схеми"))
                         {
                             checkBox.IsChecked = false;
                         }
@@ -838,9 +1009,7 @@ namespace DesARMA
                                 var tr = list[tag.Item1];
                                 if (tr != null)
                                 {
-                                    var ch = tr.Item1 as CheckBox;
-                                    var ch2 = tr.Item2 as CheckBox;
-                                    if (ch != null && ch2 != null)
+                                    if (tr.Item1 is CheckBox ch && tr.Item2 is CheckBox ch2)
                                     {
                                         if (ch.IsChecked!.Value && ch2.IsChecked!.Value)
                                         {
@@ -863,8 +1032,8 @@ namespace DesARMA
             {
                 Update();
 
-                if (figurants!=null && listFigurantCheckListCONTROL.Count != 0 && listFigurantCheckListSHEMA.Count != 0)
-                for (int i = 0; i < figurants.Count; i++)
+                if (Figurants != null && listFigurantCheckListCONTROL.Count != 0 && listFigurantCheckListSHEMA.Count != 0)
+                for (int i = 0; i < Figurants.Count; i++)
                 {
                    
                         if(listFigurantCheckListCONTROL.Count > i)
@@ -872,7 +1041,7 @@ namespace DesARMA
                             var listCONTROL = listFigurantCheckListCONTROL[i];
                             if (listCONTROL != null)
                             {
-                                figurants[i].Control = GetStringFromBools(listCONTROL);
+                                Figurants[i].Control = GetStringFromBools(listCONTROL);
                             }
                         }
                         else
@@ -885,7 +1054,7 @@ namespace DesARMA
                             var listShema = listFigurantCheckListSHEMA[i];
                             if (listShema != null)
                             {
-                                figurants[i].Shema = GetStringFromBools(listShema);
+                                Figurants[i].Shema = GetStringFromBools(listShema);
                             }
                             else
                             {
@@ -894,8 +1063,8 @@ namespace DesARMA
                         }
                     
                 }
-                mainConfig.Control = GetStringFromBools(listContr);
-                mainConfig.Shema = GetStringFromBools(listSh);
+                @MainConfig.Control = GetStringFromBools(listContr);
+                @MainConfig.Shema = GetStringFromBools(listSh);
                 modelContext.SaveChanges();
             }
             catch (Exception ex)
@@ -907,11 +1076,11 @@ namespace DesARMA
         {
             try
             {
-                if (figurants != null)
+                if (Figurants != null)
                 {
                     var listBoolControl = new List<List<bool>?>();
                     var listBoolShema = new List<List<bool>?>();
-                    foreach (var item in figurants)
+                    foreach (var item in Figurants)
                     {
                         listBoolControl.Add(new List<bool>());
                         listBoolShema.Add(new List<bool>());
@@ -920,22 +1089,19 @@ namespace DesARMA
                     var listShema = new List<bool>();
                     for (int i = 0; i < treeView1.Items.Count; i++)
                     {
-                        var stackPanel1 = treeView1.Items[i] as StackPanel;
-
-                        if (stackPanel1 != null)
+                        if (treeView1.Items[i] is StackPanel stackPanel1)
                         {
                             var treeViewItem = stackPanel1.Children[3] as TreeViewItem;
                             bool isControlNice = true;
                             for (int iTVI = 0; iTVI < treeViewItem!.Items.Count; iTVI++)
                             {
 
-                                var treeViewFigStackPanel = treeViewItem.Items[iTVI] as StackPanel;
-                                if (treeViewFigStackPanel != null)
+                                if (treeViewItem.Items[iTVI] is StackPanel treeViewFigStackPanel)
                                 {
-                                    var treeViewFigControl = treeViewFigStackPanel.Children[0] as CheckBox;
-                                    var treeViewFigShema = treeViewFigStackPanel.Children[1] as CheckBox;
 
-                                    if (treeViewFigShema != null && treeViewFigControl != null)
+                                    if (treeViewFigStackPanel.Children[1] is CheckBox treeViewFigShema 
+                                        &&
+                                        treeViewFigStackPanel.Children[0] is CheckBox treeViewFigControl)
                                     {
                                         var IsCheckedTreeViewFigControl = treeViewFigControl.IsChecked;
                                         if (IsCheckedTreeViewFigControl != null)
@@ -982,8 +1148,7 @@ namespace DesARMA
                                             //TODO 
                                             for (int indexF = 2; indexF < treeViewFigStackPanel.Children.Count; indexF++)
                                             {
-                                                var itemF = treeViewFigStackPanel.Children[indexF] as TextBlock;
-                                                if(itemF != null)
+                                                if(treeViewFigStackPanel.Children[indexF] is TextBlock itemF)
                                                 {
                                                     itemF.Foreground = Brushes.CornflowerBlue;
                                                 }
@@ -1004,13 +1169,12 @@ namespace DesARMA
                                 }
 
                             }
-                            var checkContr = stackPanel1.Children[0] as CheckBox;
-                            var checkShema = stackPanel1.Children[1] as CheckBox;
-                            if (checkContr != null && checkShema != null)
+                            if (stackPanel1.Children[0] is CheckBox checkContr &&
+                                stackPanel1.Children[1] is CheckBox checkShema)
                             {
                                 if (i < Reest.abbreviatedName.Count)
                                 {
-                                    if (!Directory.Exists(mainConfig.Folder + "\\" + $"{i + 1}. " + Reest.abbreviatedName[i]))
+                                    if (!Directory.Exists(@MainConfig.Folder + "\\" + $"{i + 1}. " + Reest.abbreviatedName[i]))
                                     {
                                         checkContr.IsChecked = false;
                                         checkShema.IsChecked = false;
@@ -1020,7 +1184,7 @@ namespace DesARMA
                                 }
                                 else
                                 {
-                                    if (!Directory.Exists(mainConfig.Folder + "\\" + $"{i + 1}. Схеми"))
+                                    if (!Directory.Exists(@MainConfig.Folder + "\\" + $"{i + 1}. Схеми"))
                                     {
                                         checkContr.IsChecked = false;
                                         checkShema.IsChecked = false;
@@ -1031,8 +1195,7 @@ namespace DesARMA
                                 
                                 listControl.Add(checkContr.IsChecked!.Value);
                             }
-                            var checkShem = stackPanel1.Children[1] as CheckBox;
-                            if (checkShem != null)
+                            if (stackPanel1.Children[1] is CheckBox checkShem)
                             {
                                 listShema.Add(checkShem.IsChecked!.Value);
                             }
@@ -1065,28 +1228,24 @@ namespace DesARMA
                 }
             }
         }
-        public Tuple<bool, bool> isHaveEmptyCheckBoes(int idNumReestr)
+        public Tuple<bool, bool> IsHaveEmptyCheckBoxes(int idNumReestr)
         {
             bool isEmpty = true;
             bool isEmpty2 = true;
             if (treeView1.Items.Count > idNumReestr - 1)
             {
-                var chCONTROL = treeView1.Items[idNumReestr - 1] as CheckBox;
-                if (chCONTROL != null)
+                if (treeView1.Items[idNumReestr - 1] is CheckBox chCONTROL)
                 {
-                    var chSHEMA = chCONTROL.Content as CheckBox;
-                    if (chSHEMA != null)
+                    if (chCONTROL.Content is CheckBox chSHEMA)
                     {
-                        var viewItem = chSHEMA.Content as TreeViewItem;
-                        if (viewItem != null)
+                        if (chSHEMA.Content is TreeViewItem viewItem)
                         {
                             var listFig = viewItem.Items;
                             if (listFig != null)
                             {
                                 foreach (var item in listFig)
                                 {
-                                    var chListFig = item as CheckBox;
-                                    if(chListFig != null)
+                                    if(item is CheckBox chListFig)
                                     {
                                         var isChListFig = chListFig.IsChecked;
                                         if(isChListFig != null)
@@ -1096,8 +1255,7 @@ namespace DesARMA
                                                 isEmpty = false;
                                             }
                                         }
-                                        var chIn = chListFig.Content as CheckBox;
-                                        if(chIn != null)
+                                        if(chListFig.Content is CheckBox chIn)
                                         {
                                             var isChInListFig = chIn.IsChecked;
                                             if( isChInListFig != null)
@@ -1118,7 +1276,7 @@ namespace DesARMA
             }
             return new Tuple<bool, bool>(isEmpty, isEmpty2);
         }
-        public bool isAllFigChecked(Tuple<int, int, FigYesNo> tag)
+        public bool IsAllFigChecked(Tuple<int, int, FigYesNo> tag)
         {
             if(tag != null)
             {
@@ -1152,14 +1310,13 @@ namespace DesARMA
         public List<Tuple<CheckBox?, CheckBox?>>? GetFigListTupleCheckBoxes(int id)
         {
             TreeViewItem? treeViewItem = GetTreeViewItem(id);
-            List<Tuple<CheckBox?, CheckBox?>> listRet = new List<Tuple<CheckBox?, CheckBox?>>();
+            List<Tuple<CheckBox?, CheckBox?>> listRet = new();
 
             if (treeViewItem != null)
             {
                 foreach (var item in treeViewItem.Items)
                 {
-                    var stack = item as StackPanel;
-                    if(stack != null)
+                    if(item is StackPanel stack)
                     {
                         listRet.Add(Tuple.Create(stack.Children[0] as CheckBox, stack.Children[1] as CheckBox));
                     }

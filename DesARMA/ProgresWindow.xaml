@@ -13,7 +13,7 @@
         Background="Transparent" ShowInTaskbar="False" Loaded="ProgresWindow_Loaded" >
     <Grid >
         <Image   Margin="1" 
-                   gif:ImageBehavior.AnimatedSource="https://static.wikia.nocookie.net/nyancat/images/b/b9/OriginalNyan.gif/revision/latest?cb=20221126212440" />
+                   gif:ImageBehavior.AnimatedSource="/DesARMA;component/Drawings/download/download4.gif" />
 
     </Grid>
 </Window>

@@ -74,19 +74,19 @@
         HorizontalAlignment="Center" Margin="0,0,0,34" Grid.RowSpan="2" />
 
 
-             <Button Background="{StaticResource 4ColorStyle}" 
+        <Button Background="{StaticResource 4ColorStyle}" 
                     Width="50" Grid.Column="0" Grid.Row="2" Click="ToDiskButtonClick" ToolTip="Зібрати папки в додатки">
                 <Image   Margin="1"
                    Source="https://cdn-icons-png.flaticon.com/512/4910/4910593.png" 
                    ></Image>
             </Button>
-            <Button Background="{StaticResource 4ColorStyle}"  Click="ChangeFolderButtonClick" 
+        <Button Background="{StaticResource 4ColorStyle}"  Click="ChangeFolderButtonClick" 
                     Width="50" Grid.Column="0" Grid.Row="3" ToolTip="Перемістити або задати папку запиту">
                 <Image   Margin="1"
                    Source="https://cdn-icons-png.flaticon.com/512/235/235251.png" 
                    ></Image>
             </Button>
-            <Button Background="{StaticResource 4ColorStyle}"
+        <Button Background="{StaticResource 4ColorStyle}"
                     Click="Button_ClickSave"  Width="50" Grid.Column="0" Grid.Row="4" ToolTip="Зберегти дані про поточний запит в базу даних">
                 <Image Margin="1"
                    Source="https://icon-library.com/images/file-save-icon/file-save-icon-28.jpg" HorizontalAlignment="Left"
@@ -107,7 +107,7 @@
         <Button Background="{StaticResource 4ColorStyle}" 
                     Click="Button_Progress" Width="50" Grid.Column="0" Grid.Row="7" ToolTip="Вставити дані в декілька запитів">
             <Image Margin="1" Name="nameIm"
-                   gif:ImageBehavior.AnimatedSource="C:\app\5eeea355389655.59822ff824b72 (1).gif"
+                   gif:ImageBehavior.AnimatedSource="/DesARMA;component/Drawings/cat.gif"
                     HorizontalAlignment="Left">
             </Image>
         </Button>

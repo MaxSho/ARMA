@@ -21,9 +21,7 @@ namespace DesARMA
     /// </summary>
     public partial class ProgresWindow : Window
     {
-        Figurant item;
-        string path;
-        public ProgresWindow(Figurant item, string path)
+        public ProgresWindow()
         {
             InitializeComponent();
             Closing += ProgresWindow_Closing;
@@ -31,8 +29,6 @@ namespace DesARMA
             Deactivated += ProgressWindow_Deactivated;
             Activated += ProgressWindow_Activated;
 
-            this.item = item;
-            this.path = path;
         }
         public void CreateEDR()
         {
@@ -45,8 +41,8 @@ namespace DesARMA
             Topmost = true;
 
             this.Show();
-            var dsd = new SearchEDR(item.Code, item.Name, null, 500, SearchType.Base, path + "\\auto");
-            dsd.CreatePDF();
+            //var dsd = new SearchEDR(item.Code, item.Name, null, 500, SearchType.Base, path + "\\auto");
+            //dsd.CreatePDF();
 
         }
 

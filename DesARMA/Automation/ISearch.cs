@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace DesARMA.Automation
 {
-    public class Search
+    public interface ISearch
     {
-
+        public void CreatePDF();
+        public void CreateExel();
     }
 }

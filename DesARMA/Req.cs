@@ -74,7 +74,7 @@ namespace DesARMA
 
         public static async Task<List<string>>  Pars(Figurant fig)
         {
-            List<string> listOrg = new List<string>();
+            List<string> listOrg = new ();
             string? code;
             if (fig.ResFiz != null)
                 code = fig.Ipn;
@@ -86,15 +86,15 @@ namespace DesARMA
             var stCountOnPage = st.Split("dle_per_page = ")[1];
             var indFinishStCount = stCountOnPage.IndexOf(';');
             if (indFinishStCount == 0) return null!;
-            var dle_per_page = Convert.ToInt32(stCountOnPage.Substring(0, indFinishStCount));
+            var dle_per_page = Convert.ToInt32(stCountOnPage[0 .. indFinishStCount]);
             //Console.WriteLine(dle_per_page);
 
             var stCountAll = st.Split("dle_records = ")[1];
             var indFinishStCountAll = stCountAll.IndexOf(';');
-            var dle_records = Convert.ToInt32(stCountAll.Substring(0, indFinishStCountAll));
+            var dle_records = Convert.ToInt32(stCountAll[0..indFinishStCountAll]);
             //Console.WriteLine(dle_records);
 
-            int CountP = 0;
+            int CountP;
             if (dle_records % dle_per_page == 0) CountP = dle_records / dle_per_page;
             else CountP = dle_records / dle_per_page + 1;
             for (int page = 1; page <= CountP; page++)

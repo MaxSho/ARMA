@@ -9,6 +9,7 @@ using NPOI.XWPF.Model;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace DesARMA.Registers
 {
@@ -60,18 +61,23 @@ namespace DesARMA.Registers
             // Додати додаткові властивості до параграфу, якщо потрібно
             paragraph.Alignment = ParagraphAlignment.LEFT; // вирівнювання по центру
         }
-        public void Create(List<List<string?>?> list)
+        public void Create(List<List<string?>?> list, string path = "C:\\app\\EDRSh.docx", 
+            string path2 = "C:\\app\\Відповідь\\Відповідь 1.docx",
+            string path3 = "C:\\app\\Відповідь\\Відповідь.docx"
+            )
         {
-            string path3 = "";
             XWPFDocument doc1;
-            var path = "C:\\app\\EDRSh.docx";
-            path3 = $"C:\\app\\Відповідь\\Відповідь {1}.docx";
+            //string path = "C:\\app\\EDRSh.docx";
+            //string path2 = $"C:\\app\\Відповідь\\Відповідь {1}.docx";
             FileInfo fileInfo = new FileInfo(path);
-            fileInfo.CopyTo(path3, true);
+            fileInfo.CopyTo(path2, true);
 
-            doc1 = new XWPFDocument(OPCPackage.Open(path3));
+            
 
-            int i=0;
+            doc1 = new XWPFDocument(new FileStream(path2, FileMode.Open));
+            //doc1 = new XWPFDocument(OPCPackage.Open(path2));
+
+            int i = 0;
             foreach (var item in Reest.namesField)
             {
                 CreateParHead(item, doc1);
@@ -101,16 +107,16 @@ namespace DesARMA.Registers
                 i++;
             }
 
-            var path4 = "C:\\app\\Відповідь\\Відповідь.docx";
+            //string path3 = "C:\\app\\Відповідь\\Відповідь.docx";
 
             //Збереження звіта 
-            using (FileStream sw = File.Create(path4))
+            using (FileStream sw = File.Create(path3))
             {
                 doc1.Write(sw);
             }
 
             doc1.Close();
-            File.Delete(path4);
+            File.Delete(path2);
 
         }
     }

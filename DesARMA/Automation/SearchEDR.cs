@@ -31,7 +31,7 @@ namespace DesARMA.Automation
         Chief, // - дані керівника,
         Assignee // - дані представників
     }
-    class SearchEDR: Search
+    class SearchEDR: ISearch
     {
         HttpClient client = new HttpClient();
 
@@ -267,10 +267,22 @@ namespace DesARMA.Automation
         }
         public void CreatePDF()
         {
-            var list = GetListAboutSub(subjectsMore.First());
-            PDF pDF = new PDF();
+            if (subjectsMore != null)
+            {
+                foreach (var item in subjectsMore)
+                {
+                    var list = GetListAboutSub(item);
+                    PDF pDF = new PDF();
 
-            pDF.Create(list);
+
+                    pDF.Create(list, System.IO.Path.Combine(Environment.CurrentDirectory + "\\FilesReestSh\\EDRSh.docx"), 
+                        path + $"\\{code},{GetWhithout(name)},{passport}\\i2d{item.id}.docx", 
+                        path + $"\\{code},{GetWhithout(name)},{passport}\\id{item.id}.docx");
+
+                    
+                }
+            }
+            
 
             //PDF.CreatePDFEDR(new FileStream("C:\\app\\ReportName.pdf", FileMode.Create), GetListAboutSub(subjectsMore.FirstOrDefault()));
             //if (subjectsMore != null)

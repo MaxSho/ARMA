@@ -461,7 +461,7 @@ namespace DesARMA
                 treeView1.Items.Clear();
 
 
-                AllDirectories allDirectories = new AllDirectories(mains.Last(), mcIs, ClickOnCheckBox, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
+                AllDirectories allDirectories = new AllDirectories(mains.Last(), mcIs, Button_ClickUpdate, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
                                         this.Resources["GreenEmpty"] as SolidColorBrush
                                         , treeView1, modelContext
                                        );
@@ -563,7 +563,7 @@ namespace DesARMA
                 treeView1.Items.Clear();
 
 
-                AllDirectories allDirectories = new AllDirectories(mains.Last(), mcIs, ClickOnCheckBox, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
+                AllDirectories allDirectories = new AllDirectories(mains.Last(), mcIs, Button_ClickUpdate, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
                                         this.Resources["GreenEmpty"] as SolidColorBrush
                                         , treeView1, modelContext
                                        );
@@ -844,7 +844,7 @@ namespace DesARMA
                     AllDirectories allDirectories = new AllDirectories(main, (from b in modelContext.MainConfigs
                                                                              where b.NumbInput.Equals(createRequestWindow.CodeRequest)
                                                                              select b).First(),
-                        ClickOnCheckBox, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
+                        Button_ClickUpdate, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
                         this.Resources["GreenEmpty"] as SolidColorBrush
                         , treeView1, modelContext
                        );
@@ -878,7 +878,7 @@ namespace DesARMA
 
                 if(prevMc != null && main != null)
                 {
-                    AllDirectories allDirectories = new AllDirectories(main, prevMc, ClickOnCheckBox, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
+                    AllDirectories allDirectories = new AllDirectories(main, prevMc, Button_ClickUpdate, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
                         this.Resources["GreenEmpty"] as SolidColorBrush
                         , treeView1, modelContext
                        );
@@ -1774,7 +1774,7 @@ namespace DesARMA
             //}
 
             var main = (from m in modelContext.Mains where m.NumbInput == mc.NumbInput select m).First();
-            AllDirectories allDirectories = new AllDirectories(main, mc, ClickOnCheckBox, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
+            AllDirectories allDirectories = new AllDirectories(main, mc, Button_ClickUpdate, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
                     this.Resources["GreenEmpty"] as SolidColorBrush, treeView1, modelContext
                      );
 
@@ -1842,7 +1842,7 @@ namespace DesARMA
             //mc.Shema = strS;
 
             var main = (from m in modelContext.Mains where m.NumbInput == mc.NumbInput select m).First();
-            AllDirectories allDirectories = new AllDirectories(main, mc, ClickOnCheckBox, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
+            AllDirectories allDirectories = new AllDirectories(main, mc, Button_ClickUpdate, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
                     this.Resources["GreenEmpty"] as SolidColorBrush, treeView1, modelContext
                      );
 
@@ -2207,7 +2207,7 @@ namespace DesARMA
                 var main = modelContext.Mains.Find(numberInTextBox.Text);
                 if (mc != null && main != null)
                 {
-                    AllDirectories allDirectories = new AllDirectories(main, mc, ClickOnCheckBox,
+                    AllDirectories allDirectories = new AllDirectories(main, mc, Button_ClickUpdate,
                         this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
                         this.Resources["GreenEmpty"] as SolidColorBrush
                         , treeView1, modelContext
