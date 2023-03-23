@@ -74,7 +74,9 @@ namespace DesARMA
             {
                 InitializeComponent();
 
-                //var dsd = new SearchEDR(null, "Хомин Андрій Петрович", null, 500, SearchType.Base, "C:\\app");
+                //var dsd = new SearchEDR("21926977", null, null, 500, SearchType.Base, "C:\\app");
+                //var dsd = new SearchEDR("35361979", null, null, 500, SearchType.Base, "C:\\app");
+
                 //dsd.CreateExel();
 
                 //PDF.lksdfjhs();

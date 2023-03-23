@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Options;
+﻿using DesARMA.Registers.EDR;
+using Microsoft.Extensions.Options;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -25,7 +27,9 @@ namespace DesARMA.Registers.EDR
         public Inline_model_0? executive_power { get; set; } // inline_model_0
         public string? object_name { get; set; }
         public List<Founder?>? founders { get; set; }
-        public List<Beneficiaries?>? beneficiaries { get; set; } //(Array[Beneficiary] або Reason, optional)
+        //public List<BeneficiariesOrReson?>? beneficiaries { get; set; } //(Array[Beneficiary] або Reason, optional)
+        [NotMapped]
+        public object? beneficiaries { get; set; }
         public List<Branch?>? branches { get; set; }
         public Inline_model_1? authorised_capital { get; set; } // inline_model_1
         public string? management { get; set; }
@@ -44,10 +48,17 @@ namespace DesARMA.Registers.EDR
         public Inline_model_7? primary_activity_kind { get; set; } // inline_model_7
         public string? prev_registration_end_term { get; set; }
         public Contacts? contacts { get; set; }
+        [NotMapped]
         public List<string?>? open_enforcements { get; set; }
     }
-    public class Beneficiaries
+    public interface BeneficiariesOrReson
     {
+        public List<string> GetList();
+    }
+    public class Beneficiaries//: BeneficiariesOrReson
+    {
+        [ForeignKey("id")]
+        public int id { get; set; }
         public string? reason { get; set; }
         public string? name { get; set; }
         public string?  code { get; set; }
@@ -59,10 +70,26 @@ namespace DesARMA.Registers.EDR
         public decimal? role { get; set; }
         public string?  role_text { get; set; }
         public decimal? interest { get; set; }
-
+        //public List<string> GetList()
+        //{
+        //    return null;
+        //}
+    }
+    public class Reason//: BeneficiariesOrReson
+    {
+        [ForeignKey("id")]
+        public int id { get; set; }
+        public string? reason { get; set; }
+        //[NotMapped]
+        //public List<string> GetList()
+        //{
+        //    return null;
+        //}
     }
     public class RelatedSubject
     {
+        [ForeignKey("id")]
+        public int IdF { get; set; }
         public string? name { get; set; }
         public string? code { get; set; }
         public Address? address { get; set; }
@@ -75,6 +102,8 @@ namespace DesARMA.Registers.EDR
     }
     public class Branch
     {
+        [ForeignKey("id")]
+        public int id { get; set; }
         public string? name { get; set; }
         public string? code { get; set; }
         public decimal? role { get; set; }
@@ -89,6 +118,8 @@ namespace DesARMA.Registers.EDR
     }
     public class Head
     {
+        [ForeignKey("id")]
+        public int idF { get; set; }
         public string? name { get; set; }
         public string? code { get; set; }
         public Address? address { get; set; }
@@ -104,6 +135,8 @@ namespace DesARMA.Registers.EDR
     }
     public class Founder
     {
+        [ForeignKey("id")]
+        public int idF { get; set; }
         public string? name { get; set; }
         public string? code { get; set; }
         public string? country { get; set; }
@@ -118,12 +151,16 @@ namespace DesARMA.Registers.EDR
     }
     public class ActivityKind
     {
+        [ForeignKey("id")]
+        public decimal id { get; set; }
         public string? name { get; set; }
         public string? code { get; set; }
         public bool? is_primary { get; set; }
     }
     public class Address
     {
+        [ForeignKey("id")]
+        public int id { get; set; }
         public string? zip { get; set; }
         public string? country { get; set; }
         public string? address { get; set; }
@@ -131,14 +168,18 @@ namespace DesARMA.Registers.EDR
     }
     public class Contacts
     {
+        [ForeignKey("id")]
+        public int id { get; set; }
         public string? email { get; set; }
+        [NotMapped]
         public List<string?>? tel { get; set; }
         public string? fax { get; set; }
         public string? web_page { get; set; }
     }
-    
     public class Inline_model
     {
+        [ForeignKey("id")]
+        public int id { get; set; }
         public string? name { get; set; }
         public decimal? include_olf { get; set; }
         public string? display { get; set; }
@@ -151,16 +192,22 @@ namespace DesARMA.Registers.EDR
     }
     public class Inline_model_0
     {
+        [ForeignKey("id")]
+        public int id { get; set; }
         public string? name { get; set; }
         public string? code { get; set; }
     }
     public class Inline_model_1
     {
+        [ForeignKey("id")]
+        public int id { get; set; }
         public double? value { get; set; }
         public string? date { get; set; }
     }
     public class Inline_model_2
     {
+        [ForeignKey("id")]
+        public int id { get; set; }
         public string? date { get; set; }
         public string? record_number { get; set; }
         public string? record_date { get; set; }
@@ -171,6 +218,8 @@ namespace DesARMA.Registers.EDR
     }
     public class Inline_model_3
     {
+        [ForeignKey("id")]
+        public int id { get; set; }
         public string? date { get; set; }
         public decimal? state { get; set; }
         public string? state_text { get; set; }
@@ -181,6 +230,8 @@ namespace DesARMA.Registers.EDR
     }
     public class Inline_model_4
     {
+        [ForeignKey("id")]
+        public int id { get; set; }
         public string? date { get; set; }
         public decimal? state { get; set; }
         public string? state_text { get; set; }
@@ -190,6 +241,8 @@ namespace DesARMA.Registers.EDR
     }
     public class Inline_model_5
     {
+        [ForeignKey("id")]
+        public int id { get; set; }
         public string? date { get; set; }
         public string? record_number { get; set; }
         public string? doc_number { get; set; }
@@ -200,6 +253,8 @@ namespace DesARMA.Registers.EDR
     }
     public class Inline_model_6
     {
+        [ForeignKey("id")]
+        public int id { get; set; }
         public string? name { get; set; }
         public string? code { get; set; }
         public decimal? type { get; set; }
@@ -212,6 +267,8 @@ namespace DesARMA.Registers.EDR
     }
     public class Inline_model_7
     {
+        [ForeignKey("id")]
+        public int id { get; set; }
         public string? name { get; set; }
         public string? code { get; set; }
         public string? reg_number { get; set; }
@@ -219,6 +276,8 @@ namespace DesARMA.Registers.EDR
     }
     public class Inline_model_8
     {
+        [ForeignKey("id")]
+        public int id { get; set; }
         public string? atu { get; set; }
         public string? atu_code { get; set; }
         public string? street { get; set; }
@@ -229,5 +288,4 @@ namespace DesARMA.Registers.EDR
         public string? num_type { get; set; }
         public string? num { get; set; }
     }
-
 }

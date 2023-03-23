@@ -296,7 +296,7 @@ namespace DesARMA
                     {
                         if (IsAvailableDirectory(numberR, Reest.abbreviatedName[numberR - 1]))
                         {
-                            ProgresWindow progresWindow = new ();
+                            ProgresWindow progresWindow = new (Figurants);
                             System.Windows.Application.Current.Dispatcher.Invoke(() =>
                             {
                                 progresWindow.Show();
@@ -321,7 +321,10 @@ namespace DesARMA
                                         {
                                             var searchEDRTask = Task.Run(() =>
                                             {
-                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, SearchType.Beneficiar, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, 
+                                                    SearchType.Beneficiar, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
+                                                    progresWindow, true);
+                                                
                                                 dsd.CreateExel();
                                                 dsd.CreatePDF();
 
@@ -343,7 +346,9 @@ namespace DesARMA
                                         {
                                             var searchEDRTask = Task.Run(() =>
                                             {
-                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, SearchType.Founder, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, 
+                                                    SearchType.Founder, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
+                                                    progresWindow, true);
                                                 dsd.CreateExel();
                                                 dsd.CreatePDF();
 
@@ -354,7 +359,8 @@ namespace DesARMA
                                         {
                                             var searchEDRTask = Task.Run(() =>
                                             {
-                                                var dsd = new SearchEDR(item.Code, item.Name, null, 500, SearchType.Founder, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                var dsd = new SearchEDR(item.Code, item.Name, null, 500, 
+                                                    SearchType.Founder, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}", progresWindow);
                                                 dsd.CreateExel();
                                                 dsd.CreatePDF();
                                             });
@@ -374,7 +380,9 @@ namespace DesARMA
                                         {
                                             var searchEDRTask = Task.Run(() =>
                                             {
-                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, SearchType.Chief, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, 
+                                                    SearchType.Chief, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
+                                                    progresWindow, true);
                                                 dsd.CreateExel();
                                                 dsd.CreatePDF();
 
@@ -395,7 +403,9 @@ namespace DesARMA
                                         {
                                             var searchEDRTask = Task.Run(() =>
                                             {
-                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, SearchType.Assignee, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, 
+                                                    SearchType.Assignee, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
+                                                    progresWindow, true);
                                                 dsd.CreateExel();
                                                 dsd.CreatePDF();
 
@@ -416,7 +426,9 @@ namespace DesARMA
                                         {
                                             var searchEDRTask = Task.Run(() =>
                                             {
-                                                var dsd = new SearchEDR(item.Code, item.Name, null, 500, SearchType.Base, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                var dsd = new SearchEDR(item.Code, item.Name, null, 500, 
+                                                    SearchType.Base, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
+                                                    progresWindow);
                                                 dsd.CreateExel();
                                                 dsd.CreatePDF();
                                             });
@@ -437,7 +449,9 @@ namespace DesARMA
                                         {
                                             var searchEDRTask = Task.Run(() =>
                                             {
-                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, SearchType.Base, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500, 
+                                                    SearchType.Base, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
+                                                    progresWindow, true);
                                                 dsd.CreateExel();
                                                 dsd.CreatePDF();
 
@@ -448,10 +462,10 @@ namespace DesARMA
                                 }
                             }
                             updatePanel(new object(), new RoutedEventArgs());
-                            System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                            {
-                                progresWindow.Close();
-                            });
+                            //System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                            //{
+                            //    progresWindow.Close();
+                            //});
                             
                         }
                     }

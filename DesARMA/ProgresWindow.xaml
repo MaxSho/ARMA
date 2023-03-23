@@ -6,14 +6,17 @@
         xmlns:local="clr-namespace:DesARMA"
         mc:Ignorable="d"
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
-        Title="ProgresWindow" Height="180" Width="320" WindowStartupLocation="CenterScreen"
+        Title="ProgresWindow" Height="800" Width="320" WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
         Opacity="1"
         Background="Transparent" ShowInTaskbar="False" Loaded="ProgresWindow_Loaded" >
     <Grid >
-        <Image   Margin="1" 
+        <StackPanel Name="stack1">
+            <Image   Height="180" Width="320" 
                    gif:ImageBehavior.AnimatedSource="/DesARMA;component/Drawings/download/download4.gif" />
+           
+        </StackPanel>
 
     </Grid>
 </Window>

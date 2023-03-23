@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,20 +22,25 @@ namespace DesARMA
     /// </summary>
     public partial class ProgresWindow : Window
     {
-        public ProgresWindow()
+        public List<Figurant> figurants = new List<Figurant>();
+        public ProgresWindow(List<Figurant> figurants)
         {
             InitializeComponent();
-            Closing += ProgresWindow_Closing;
             Loaded += ProgresWindow_Loaded;
-            Deactivated += ProgressWindow_Deactivated;
-            Activated += ProgressWindow_Activated;
+            this.figurants = figurants;
 
+            foreach (var item in figurants)
+            {
+                var b = new Button();
+                b.Content = item.NumbInput;
+                stack1.Children.Add(b);
+            }
         }
         public void CreateEDR()
         {
+            stack1.Dispatcher.Invoke(() => { var b = new Button(); b.Click += (s, e) => { this.Close(); }; b.Content = "fsdfsdf\ndfd"; stack1.Children.Add(b);});
             
         }
-
         private void ProgresWindow_Loaded(object sender, RoutedEventArgs e)
         {
             // Встановлення властивості Topmost на true для того, щоб вікно було поверх інших вікон
