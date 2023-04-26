@@ -271,6 +271,31 @@ namespace DesARMA.Automation
             //await task;
             //task.Wait();
         }
+        private string GetStrToken()
+        {
+            string shif = ConfigurationManager.AppSettings["token"].ToString();
+            List<byte> arrByteReturn = new List<byte>();
+            List<byte> arrByteReturnDecrypt = new List<byte>();
+            for (int i = 3; i <= shif.Length; i += 3)
+            {
+                var subStr = shif.Substring(i - 3, 3);
+                arrByteReturn.Add(Convert.ToByte(subStr));
+            }
+
+            List<byte> key = new List<byte>();
+            for (int i = arrByteReturn.Count - 8; i < arrByteReturn.Count; i++)
+            {
+                key.Add(arrByteReturn[i]);
+            }
+
+            for (int i = 0; i < arrByteReturn.Count - key.Count; i++)
+            {
+                arrByteReturnDecrypt.Add(Convert.ToByte(arrByteReturn[i] ^ key[i % key.Count]));
+            }
+
+            string result2 = System.Text.Encoding.UTF8.GetString(arrByteReturnDecrypt.ToArray());
+            return result2;
+        }
         public async void GetInfoSubjectsMore()
         {
             //first app
@@ -374,7 +399,7 @@ namespace DesARMA.Automation
                 RequestUri = new Uri(Reqstr!),
                 Headers =
                 {
-                    { "Authorization", "Token 6c48e3a0948ec23c5de170299134e98ee2ff90e0" },
+                    { "Authorization", GetStrToken()},
                 }
             };
             var response = client.SendAsync(request).Result;
@@ -401,7 +426,7 @@ namespace DesARMA.Automation
                 RequestUri = new Uri(Reqstr!),
                 Headers =
                 {
-                    { "Authorization", "Token 6c48e3a0948ec23c5de170299134e98ee2ff90e0" },
+                    { "Authorization", GetStrToken() },
                 }
             };
             var response = await client.SendAsync(request);
