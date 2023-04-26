@@ -6,17 +6,78 @@
         xmlns:local="clr-namespace:DesARMA"
         mc:Ignorable="d"
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
-        Title="ProgresWindow" Height="800" Width="320" WindowStartupLocation="CenterScreen"
+        Title="ProgresWindow" Height="800" Width="520" WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
         Opacity="1"
-        Background="Transparent" ShowInTaskbar="False" Loaded="ProgresWindow_Loaded" >
-    <Grid >
-        <StackPanel Name="stack1">
-            <Image   Height="180" Width="320" 
-                   gif:ImageBehavior.AnimatedSource="/DesARMA;component/Drawings/download/download4.gif" />
-           
-        </StackPanel>
+        Background="Transparent" Loaded="ProgresWindow_Loaded" Closing="ProgresWindow_Closing" ResizeMode="CanResizeWithGrip">
+    <Window.Resources>
+        <SolidColorBrush x:Key="GreenEmpty" Color="Green"/>
+        <SolidColorBrush x:Key="WhiteEmpty" Color="White"/>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Arial"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Padding" Value="10"/>
+        </Style>
+        <SolidColorBrush x:Key="1ColorStyle" Color="#2C3333" />
+        <SolidColorBrush x:Key="2ColorStyle" Color="#395B64" />
+        <SolidColorBrush x:Key="3ColorStyle" Color="#A5C9CA" />
+        <SolidColorBrush x:Key="4ColorStyle" Color="#E7F6F2" />
+        <SolidColorBrush x:Key="5ColorStyle" Color="#009900" />
+        <SolidColorBrush x:Key="YellowEmpty" Color="#D1D100" />
+        <SolidColorBrush x:Key="RedEmpty" Color="#E64E4E" />
+        <Style TargetType="Label">
+            <Setter Property="Label.Background" Value="{StaticResource 1ColorStyle}" />
+            <Setter Property="Label.Foreground" Value="{StaticResource 3ColorStyle}" />
+            <Setter Property="Label.FontSize" Value="16" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Label.Background" Value="{StaticResource 3ColorStyle}" />
+            <Setter Property="Label.Foreground" Value="{StaticResource 1ColorStyle}" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Label.Background" Value="{StaticResource RedEmpty}" />
+            <Setter Property="Label.Foreground" Value="{StaticResource 1ColorStyle}" />
+            <Setter Property="FontSize" Value="26"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+    </Window.Resources>
+    <Grid Name="gridTop" MouseLeftButtonDown="Grid_MouseLeftButtonDown">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="180"></RowDefinition>
+            <RowDefinition Height="70"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="9*">
+            </ColumnDefinition>
+            <ColumnDefinition Width="1*">
+            </ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Label Name="tit"  Grid.Row="0"  Grid.Column="0" HorizontalContentAlignment="Center"/>
+        <Button Grid.Row="0" Grid.Column="1" Content="Перервати" FontSize="15" Margin="0" Padding="0"
+                Click="Button_Click">
+            
+        </Button>
+        <Image  Grid.Row="1" Name="imageTop" Grid.ColumnSpan="2"
+                       gif:ImageBehavior.AnimatedSource="/DesARMA;component/Drawings/download/download6.gif" Margin="10"/>
+        <!--<Border Grid.Row="1" Opacity="0.9" Margin="10">
+            <TextBlock TextWrapping="Wrap" Grid.Row="1" Background="{StaticResource 1ColorStyle}"
+                       Foreground="{StaticResource 4ColorStyle}"
+                       TextAlignment = "Center">
+            
+            </TextBlock>n 
+        </Border>-->
+        
+        <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto"
+                      Grid.ColumnSpan="2">
+            <StackPanel Name="stack1" >
+                
+
+            </StackPanel>
+        </ScrollViewer>
 
     </Grid>
 </Window>

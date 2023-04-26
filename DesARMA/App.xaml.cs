@@ -13,5 +13,6 @@ namespace DesARMA
     /// </summary>
     public partial class App : Application
     {
+        public List<Window> ChildWindows { get; } = new List<Window>();
     }
 }

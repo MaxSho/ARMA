@@ -1,18 +1,27 @@
 ﻿using DesARMA.Registers.EDR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using DesARMA.ModelCentextEDR;
 
 namespace DesARMA.Registers.EDR
 {
     public class Subject
     {
-        public decimal? id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdSubject { get; set; }
+        public decimal id { get; set; }
         public decimal? state { get; set; }
         public string? state_text { get; set; }
         public string? code { get; set; }
@@ -27,9 +36,39 @@ namespace DesARMA.Registers.EDR
         public Inline_model_0? executive_power { get; set; } // inline_model_0
         public string? object_name { get; set; }
         public List<Founder?>? founders { get; set; }
-        //public List<BeneficiariesOrReson?>? beneficiaries { get; set; } //(Array[Beneficiary] або Reason, optional)
+
         [NotMapped]
+        [JsonProperty("beneficiaries")]
+        [JsonConverter(typeof(BeneficiariesConverter))]
         public object? beneficiaries { get; set; }
+        public List<Beneficiaries?>? subBeneficiar
+        {
+            get
+            {
+                if (beneficiaries is List<Beneficiaries?> list)
+                    return list;
+                return null;
+            }
+            set
+            {
+                if (value is List<Beneficiaries?> list)
+                    beneficiaries = list;
+            }
+        }
+        public Reason? reasons
+        {
+            get
+            {
+                if (beneficiaries is Reason reason)
+                    return reason;
+                return null;
+            }
+            set
+            {
+                if (value is Reason reason)
+                    beneficiaries = reason;
+            }
+        }
         public List<Branch?>? branches { get; set; }
         public Inline_model_1? authorised_capital { get; set; } // inline_model_1
         public string? management { get; set; }
@@ -50,46 +89,37 @@ namespace DesARMA.Registers.EDR
         public Contacts? contacts { get; set; }
         [NotMapped]
         public List<string?>? open_enforcements { get; set; }
+
+
     }
-    public interface BeneficiariesOrReson
+    public class Beneficiaries
     {
-        public List<string> GetList();
-    }
-    public class Beneficiaries//: BeneficiariesOrReson
-    {
-        [ForeignKey("id")]
-        public int id { get; set; }
-        public string? reason { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdBeneficiar { get; set; }
         public string? name { get; set; }
-        public string?  code { get; set; }
+        public string? code { get; set; }
         public string? country { get; set; }
         public Address? address { get; set; }
         public string? last_name { get; set; }
         public string? first_middle_name { get; set; }
         public decimal? beneficiaries_type { get; set; }
         public decimal? role { get; set; }
-        public string?  role_text { get; set; }
+        public string? role_text { get; set; }
         public decimal? interest { get; set; }
-        //public List<string> GetList()
-        //{
-        //    return null;
-        //}
     }
-    public class Reason//: BeneficiariesOrReson
+    public class Reason
     {
-        [ForeignKey("id")]
-        public int id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdReason { get; set; }
         public string? reason { get; set; }
-        //[NotMapped]
-        //public List<string> GetList()
-        //{
-        //    return null;
-        //}
     }
     public class RelatedSubject
     {
-        [ForeignKey("id")]
-        public int IdF { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdRelatedSubject { get; set; }
         public string? name { get; set; }
         public string? code { get; set; }
         public Address? address { get; set; }
@@ -102,8 +132,9 @@ namespace DesARMA.Registers.EDR
     }
     public class Branch
     {
-        [ForeignKey("id")]
-        public int id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdBranch { get; set; }
         public string? name { get; set; }
         public string? code { get; set; }
         public decimal? role { get; set; }
@@ -118,8 +149,9 @@ namespace DesARMA.Registers.EDR
     }
     public class Head
     {
-        [ForeignKey("id")]
-        public int idF { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdHead { get; set; }
         public string? name { get; set; }
         public string? code { get; set; }
         public Address? address { get; set; }
@@ -135,8 +167,9 @@ namespace DesARMA.Registers.EDR
     }
     public class Founder
     {
-        [ForeignKey("id")]
-        public int idF { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdFounder { get; set; }
         public string? name { get; set; }
         public string? code { get; set; }
         public string? country { get; set; }
@@ -151,16 +184,18 @@ namespace DesARMA.Registers.EDR
     }
     public class ActivityKind
     {
-        [ForeignKey("id")]
-        public decimal id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdActivityKind { get; set; }
         public string? name { get; set; }
         public string? code { get; set; }
         public bool? is_primary { get; set; }
     }
     public class Address
     {
-        [ForeignKey("id")]
-        public int id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdAddress { get; set; }
         public string? zip { get; set; }
         public string? country { get; set; }
         public string? address { get; set; }
@@ -168,8 +203,9 @@ namespace DesARMA.Registers.EDR
     }
     public class Contacts
     {
-        [ForeignKey("id")]
-        public int id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int IdContact { get; set; }
         public string? email { get; set; }
         [NotMapped]
         public List<string?>? tel { get; set; }
@@ -178,8 +214,9 @@ namespace DesARMA.Registers.EDR
     }
     public class Inline_model
     {
-        [ForeignKey("id")]
-        public int id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdInline_model { get; set; }
         public string? name { get; set; }
         public decimal? include_olf { get; set; }
         public string? display { get; set; }
@@ -192,22 +229,25 @@ namespace DesARMA.Registers.EDR
     }
     public class Inline_model_0
     {
-        [ForeignKey("id")]
-        public int id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdInline_model0 { get; set; }
         public string? name { get; set; }
         public string? code { get; set; }
     }
     public class Inline_model_1
     {
-        [ForeignKey("id")]
-        public int id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdInline_model1 { get; set; }
         public double? value { get; set; }
         public string? date { get; set; }
     }
     public class Inline_model_2
     {
-        [ForeignKey("id")]
-        public int id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdInline_model2 { get; set; }
         public string? date { get; set; }
         public string? record_number { get; set; }
         public string? record_date { get; set; }
@@ -218,8 +258,9 @@ namespace DesARMA.Registers.EDR
     }
     public class Inline_model_3
     {
-        [ForeignKey("id")]
-        public int id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdInline_model3 { get; set; }
         public string? date { get; set; }
         public decimal? state { get; set; }
         public string? state_text { get; set; }
@@ -230,8 +271,9 @@ namespace DesARMA.Registers.EDR
     }
     public class Inline_model_4
     {
-        [ForeignKey("id")]
-        public int id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdInline_model4 { get; set; }
         public string? date { get; set; }
         public decimal? state { get; set; }
         public string? state_text { get; set; }
@@ -241,8 +283,9 @@ namespace DesARMA.Registers.EDR
     }
     public class Inline_model_5
     {
-        [ForeignKey("id")]
-        public int id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdInline_model5 { get; set; }
         public string? date { get; set; }
         public string? record_number { get; set; }
         public string? doc_number { get; set; }
@@ -253,8 +296,9 @@ namespace DesARMA.Registers.EDR
     }
     public class Inline_model_6
     {
-        [ForeignKey("id")]
-        public int id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdInline_model6 { get; set; }
         public string? name { get; set; }
         public string? code { get; set; }
         public decimal? type { get; set; }
@@ -267,8 +311,9 @@ namespace DesARMA.Registers.EDR
     }
     public class Inline_model_7
     {
-        [ForeignKey("id")]
-        public int id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdInline_model7 { get; set; }
         public string? name { get; set; }
         public string? code { get; set; }
         public string? reg_number { get; set; }
@@ -276,8 +321,9 @@ namespace DesARMA.Registers.EDR
     }
     public class Inline_model_8
     {
-        [ForeignKey("id")]
-        public int id { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal IdInline_model8 { get; set; }
         public string? atu { get; set; }
         public string? atu_code { get; set; }
         public string? street { get; set; }
@@ -287,5 +333,63 @@ namespace DesARMA.Registers.EDR
         public string? building { get; set; }
         public string? num_type { get; set; }
         public string? num { get; set; }
+    }
+    public class BeneficiariesConverter : JsonConverter
+    {
+        private readonly DbContext _dbContext;
+
+        public BeneficiariesConverter(DbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+        public BeneficiariesConverter()
+        {
+            _dbContext = new ModelContextEDR();
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return (objectType == typeof(object));
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null)
+                return null;
+
+            JObject jsonObject;
+
+
+            if (reader.TokenType == JsonToken.StartObject)
+            {
+                jsonObject = JObject.Load(reader);
+                Reason reason = jsonObject.ToObject<Reason>()!;
+                return reason;
+
+            }
+            else if (reader.TokenType == JsonToken.StartArray)
+            {
+                var array = JArray.Load(reader);
+                // обробляємо масив тут, наприклад:
+                var beneficiaries = array.ToObject<List<Beneficiaries>>();
+                return beneficiaries;
+            }
+            else
+            {
+                throw new JsonReaderException("Unexpected token type: " + reader.TokenType);
+            }
+
+            // обробляємо об'єкт JSON тут
+
+            var subject = new Subject();
+            subject.beneficiaries = jsonObject;
+            serializer.Populate(jsonObject.CreateReader(), subject);
+
+            return subject;
+        }
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

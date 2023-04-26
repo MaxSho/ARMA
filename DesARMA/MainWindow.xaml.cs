@@ -465,7 +465,7 @@ namespace DesARMA
 
                 AllDirectories allDirectories = new AllDirectories(mains.Last(), mcIs, Button_ClickUpdate, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
                                         this.Resources["GreenEmpty"] as SolidColorBrush
-                                        , treeView1, modelContext
+                                        , treeView1, modelContext, this
                                        );
                 allDirectories.CreateNewTree();
 
@@ -567,7 +567,7 @@ namespace DesARMA
 
                 AllDirectories allDirectories = new AllDirectories(mains.Last(), mcIs, Button_ClickUpdate, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
                                         this.Resources["GreenEmpty"] as SolidColorBrush
-                                        , treeView1, modelContext
+                                        , treeView1, modelContext, this
                                        );
                 allDirectories.CreateNewTree();
 
@@ -848,7 +848,7 @@ namespace DesARMA
                                                                              select b).First(),
                         Button_ClickUpdate, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
                         this.Resources["GreenEmpty"] as SolidColorBrush
-                        , treeView1, modelContext
+                        , treeView1, modelContext, this
                        );
                     allDirectories.CreateNewTree();
 
@@ -882,7 +882,7 @@ namespace DesARMA
                 {
                     AllDirectories allDirectories = new AllDirectories(main, prevMc, Button_ClickUpdate, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
                         this.Resources["GreenEmpty"] as SolidColorBrush
-                        , treeView1, modelContext
+                        , treeView1, modelContext, this
                        );
                     allDirectories.CreateNewTree();
                 }
@@ -1007,20 +1007,19 @@ namespace DesARMA
                         {
                             if (!(bool)b)
                             {
-                                var nameReest = sp.Children[2] as System.Windows.Controls.TreeViewItem;
+                                var nameReest = sp.Children[3] as System.Windows.Controls.TreeViewItem;
 
                                 if (nameReest != null)
                                 {
                                     if (Directory.Exists(prevM.Folder + "\\" + nameReest.Header))
                                     {
-
                                         listNotCheckControl.Add(nameReest.Header.ToString());
                                         //return;
                                     }
                                 }
                                 else
                                 {
-                                    System.Windows.MessageBox.Show($"Не знайдено назву реэстру");
+                                    System.Windows.MessageBox.Show($"Не знайдено назву реєстру");
                                     return false;
                                 }
                             }
@@ -1086,7 +1085,10 @@ namespace DesARMA
                 string name = nameSubTextBox.Text;
                 string address1 = addressOrgTextBox.Text;
                 string date1 = dateRequestDatePicker.Text;
-                string date2 = dateInTextBox.Text.Substring(0, 10);
+                string date2 = "";
+                if (dateInTextBox.Text != null && dateInTextBox.Text.Length >= 10)
+                    date2 = dateInTextBox.Text?.Substring(0, 10) ?? "";
+
                 string number1 = numberRequestTextBox.Text;
                 string number2 = numberInTextBox.Text;
                 int count_Shemat = 0;
@@ -1164,9 +1166,8 @@ namespace DesARMA
 
                 if (m != null)
                 {
-                    
-                        ListDefendantsWindow listDefendantsWindow = new ListDefendantsWindow(modelContext,
-                        numberInTextBox.Text, "Перелік фігурантів", false, inactivityTimer);
+                    ListDefendantsWindow listDefendantsWindow = new ListDefendantsWindow(modelContext,
+                        numberInTextBox.Text, "Перелік фігурантів", false, Button_ClickUpdate, inactivityTimer);
                         listDefendantsWindow.Owner = this;
                         listDefendantsWindow.Show();
 
@@ -1311,8 +1312,11 @@ namespace DesARMA
 
                 if (m != null)
                 {
-                    
-                    ListDefendantsWindow listDefendantsWindow = new ListDefendantsWindow(modelContext, numberInTextBox.Text, "Перелік пов'язаних осіб", true, inactivityTimer);
+                    var mc = (from mcIn in modelContext.MainConfigs where m.NumbInput == mcIn.NumbInput select mcIn).First();
+                    AllDirectories allDirectories = new(m, mc, Button_ClickUpdate, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
+                    this.Resources["GreenEmpty"] as SolidColorBrush, treeView1, modelContext, this);
+
+                    ListDefendantsWindow listDefendantsWindow = new ListDefendantsWindow(modelContext, numberInTextBox.Text, "Перелік пов'язаних осіб", true, Button_ClickUpdate, inactivityTimer);
                     listDefendantsWindow.Owner = this;
                     listDefendantsWindow.Show();
 
@@ -1447,6 +1451,11 @@ namespace DesARMA
                 {
                     if (!SaveAllDB())
                         System.Windows.MessageBox.Show("Виникла помилка збереження");
+                }
+
+                foreach (System.Windows.Window childWindow in ((App)System.Windows.Application.Current).ChildWindows)
+                {
+                    childWindow.Close();
                 }
             }
 
@@ -1777,7 +1786,7 @@ namespace DesARMA
 
             var main = (from m in modelContext.Mains where m.NumbInput == mc.NumbInput select m).First();
             AllDirectories allDirectories = new AllDirectories(main, mc, Button_ClickUpdate, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
-                    this.Resources["GreenEmpty"] as SolidColorBrush, treeView1, modelContext
+                    this.Resources["GreenEmpty"] as SolidColorBrush, treeView1, modelContext, this
                      );
 
             allDirectories.CreateNewTree();
@@ -1845,7 +1854,7 @@ namespace DesARMA
 
             var main = (from m in modelContext.Mains where m.NumbInput == mc.NumbInput select m).First();
             AllDirectories allDirectories = new AllDirectories(main, mc, Button_ClickUpdate, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
-                    this.Resources["GreenEmpty"] as SolidColorBrush, treeView1, modelContext
+                    this.Resources["GreenEmpty"] as SolidColorBrush, treeView1, modelContext, this
                      );
 
             allDirectories.SaveToDB();
@@ -2212,7 +2221,7 @@ namespace DesARMA
                     AllDirectories allDirectories = new AllDirectories(main, mc, Button_ClickUpdate,
                         this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
                         this.Resources["GreenEmpty"] as SolidColorBrush
-                        , treeView1, modelContext
+                        , treeView1, modelContext, this
                          );
 
                     //allDirectories.CreateNewTree(treeView1);

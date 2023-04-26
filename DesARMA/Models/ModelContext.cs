@@ -67,26 +67,27 @@ namespace DesARMA.Models
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<DictWork> DictWorks { get; set; } = null!;
         //EDR
-        //public virtual DbSet<Subject> Subjects { get; set; } = null!;
-        //public virtual DbSet<Beneficiaries> Beneficiaries { get; set; } = null!;
-        //public virtual DbSet<Reason>  Reasons { get; set; } = null!;
-        //public virtual DbSet<RelatedSubject> RelatedSubject { get; set; } = null!;
-        //public virtual DbSet<Branch> Branches { get; set; } = null!;
-        //public virtual DbSet<Head> Heads { get; set; } = null!;
-        //public virtual DbSet<Founder> Founders { get; set; } = null!;
-        //public virtual DbSet<ActivityKind> ActivityKinds { get; set; } = null!;
-        //public virtual DbSet<Address> Addresses { get; set; } = null!;
-        //public virtual DbSet<Contacts> Contacts { get; set; } = null!;
-        //public virtual DbSet<Inline_model> Inline_model { get; set; } = null!;
-        //public virtual DbSet<Inline_model_0> Inline_model_0 { get; set; } = null!;
-        //public virtual DbSet<Inline_model_1> Inline_model_1 { get; set; } = null!;
-        //public virtual DbSet<Inline_model_2> Inline_model_2 { get; set; } = null!;
-        //public virtual DbSet<Inline_model_3> Inline_model_3 { get; set; } = null!;
-        //public virtual DbSet<Inline_model_4> Inline_model_4 { get; set; } = null!;
-        //public virtual DbSet<Inline_model_5> Inline_model_5 { get; set; } = null!;
-        //public virtual DbSet<Inline_model_6> Inline_model_6 { get; set; } = null!;
-        //public virtual DbSet<Inline_model_7> Inline_model_7 { get; set; } = null!;
-        //public virtual DbSet<Inline_model_8> Inline_model_8 { get; set; } = null!;
+        public virtual DbSet<Subject> Subjects { get; set; } = null!;
+        public virtual DbSet<Beneficiaries> Beneficiaries { get; set; } = null!;
+        public virtual DbSet<Reason> Reasons { get; set; } = null!;
+        public virtual DbSet<RelatedSubject> RelatedSubject { get; set; } = null!;
+        public virtual DbSet<Branch> Branches { get; set; } = null!;
+        public virtual DbSet<Head> Heads { get; set; } = null!;
+        public virtual DbSet<Founder> Founders { get; set; } = null!;
+        public virtual DbSet<ActivityKind> ActivityKinds { get; set; } = null!;
+        public virtual DbSet<Address> Addresses { get; set; } = null!;
+        public virtual DbSet<Contacts> Contacts { get; set; } = null!;
+        public virtual DbSet<Inline_model> Inline_model { get; set; } = null!;
+        public virtual DbSet<Inline_model_0> Inline_model_0 { get; set; } = null!;
+        public virtual DbSet<Inline_model_1> Inline_model_1 { get; set; } = null!;
+        public virtual DbSet<Inline_model_2> Inline_model_2 { get; set; } = null!;
+        public virtual DbSet<Inline_model_3> Inline_model_3 { get; set; } = null!;
+        public virtual DbSet<Inline_model_4> Inline_model_4 { get; set; } = null!;
+        public virtual DbSet<Inline_model_5> Inline_model_5 { get; set; } = null!;
+        public virtual DbSet<Inline_model_6> Inline_model_6 { get; set; } = null!;
+        public virtual DbSet<Inline_model_7> Inline_model_7 { get; set; } = null!;
+        public virtual DbSet<Inline_model_8> Inline_model_8 { get; set; } = null!;
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

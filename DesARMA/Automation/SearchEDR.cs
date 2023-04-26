@@ -20,6 +20,14 @@ using System.Windows.Media;
 using System.Xml.Linq;
 using DesARMA.Registers;
 using SixLabors.ImageSharp.Drawing;
+using DesARMA.Models;
+using DesARMA.ModelCentextEDR;
+using System.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using NPOI.SS.Formula.Functions;
+using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace DesARMA.Automation
 {
@@ -45,55 +53,96 @@ namespace DesARMA.Automation
         private string? Reqstr;
         private string? ReqstrId;
 
-        private List<EDRClass>? subjects;
+        public List<EDRClass>? subjects;
         private List<Subject>? subjectsMore;
         ProgresWindow progresWindow;
 
         private string path;
         private bool isFO;
+        Figurant figurant;
+
+        private ModelContext modelContext;
+        private ModelContextEDR modelContextEDR;
+        int numberR;
         public SearchEDR(string? code, string? name, string? passport, int limit, SearchType? searchType,
-                        string path, ProgresWindow progresWindow, bool isFO = false)
+                        string path, ProgresWindow progresWindow, Figurant figurant, ModelContext modelContext, bool isFO = false, int numberR = 15)
         {
-            this.progresWindow = progresWindow;
-            if (searchType == null)
-                this.searchType = SearchType.Base;
-            else
-                this.searchType = searchType;
+            try
+            {
+                client.Timeout = TimeSpan.FromMinutes(10);
+                this.modelContext = modelContext;
+                this.modelContextEDR = new ModelContextEDR();
+                this.numberR = numberR;
+                this.progresWindow = progresWindow;
+                if (searchType == null)
+                    this.searchType = SearchType.Base;
+                else
+                    this.searchType = searchType;
 
-            this.code = code;
-            this.name = name;
-            this.passport = passport;
-            this.limit = limit;
+                this.figurant = figurant;
+                this.code = code;
+                this.name = name;
+                this.passport = passport;
+                this.limit = limit;
 
-            if (!Directory.Exists(path))
-                throw new Exception("Програма не може знайти шлях: " + path);
+                if (!Directory.Exists(path))
+                    throw new Exception("Програма не може знайти шлях: " + path);
 
-            this.path = path;
-            this.isFO = isFO;
+                this.path = path;
+                this.isFO = isFO;
 
-            SetParamsInReqstr();
-            SetReqstrId();
+                SetParamsInReqstr();
+                SetReqstrId();
 
-            GetInfoSubjects();
-            GetInfoSubjectsMore();
+                GetInfoSubjects();
+                GetInfoSubjectsMore();
 
-            ////MessageBox.Show(subjectsMore.First().beneficiaries.GetType().ToString());
-            //if(subjectsMore.First().beneficiaries is JArray arr)
-            //{
-            //    MessageBox.Show(arr.ToString());
-            //    var dsf = JsonConvert.DeserializeObject<List<Beneficiaries>>(arr.ToString());
 
-            //    //MessageBox.Show("" + (arr is List<Beneficiaries>));
-            //}
-            //if (subjectsMore.First().beneficiaries is JObject obj)
-            //{
-            //    var dsf = JsonConvert.DeserializeObject<Reason>(obj.ToString());
-            //    MessageBox.Show(dsf.reason);
-            //}
+                //if (subjects != null && subjects?.Count == 0)
+                //{
+                //    progresWindow.NotDataFigur(figurant);
+                //}
+                //else
+                //{
+                //    progresWindow.SetDoneFigNow(figurant);
+                //}
 
-            progresWindow.CreateEDR();
+                //ToCheckFigInTree(numberR - 1);
+
+                
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
-        
+        public void SaveToDB()
+        {
+            if(subjectsMore != null)
+            foreach (var item in subjectsMore)
+            {
+                modelContextEDR.Subjects.Add(item);
+                modelContextEDR.SaveChanges();
+            }
+        }
+        public void ToCheckFigInTree(int indR)
+        {
+            var listC = AllDirectories.GetBoolsFromString(figurant.Control);
+            var listS = AllDirectories.GetBoolsFromString(figurant.Shema);
+            if (subjects != null && subjects.Count > 0)
+            {
+                //figurant.Control = 
+                listC[indR] = true;
+                listS[indR] = false;
+            }
+            else
+            {
+                listC[indR] = false;
+                listS[indR] = true;
+            }
+            figurant.Control = AllDirectories.GetStringFromBools(listC);
+            figurant.Shema = AllDirectories.GetStringFromBools(listS);
+        }
         private string? GetWhithout(string? str)
         {
             return str?.Replace('\'', '-')?.
@@ -177,7 +226,7 @@ namespace DesARMA.Automation
                 throw new Exception("string in config error");
             }
             this.Reqstr = this.Reqstr.SetCode(code)
-                .SetName(code == null ? name : null)
+                .SetName(code == null || code == "" ? name : null)
                 .SetPassport(passport)
                 .SetLimit(limit)
                 .SetSearchType(searchType);
@@ -193,32 +242,154 @@ namespace DesARMA.Automation
         public void GetInfoSubjects()
         {
             string response = "";
-            var task = Task.Run(async () => { // Викликаємо метод GetResp() в асинхронному таску
-                response = await GetResp();
+
+            try
+            {
+                response = GetRespS();
                 subjects = JsonConvert.DeserializeObject<List<EDRClass>>(response);
-            });
-            task.Wait(); // Очікуємо завершення таску
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
+
+            //string response = "";
+
+            //var task = Task.Run(async () => { // Викликаємо метод GetResp() в асинхронному таску
+            //    try
+            //    {
+            //        response = await GetResp();
+            //        subjects = JsonConvert.DeserializeObject<List<EDRClass>>(response);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        throw ex;
+            //    }
+
+            //});
+            //await task;
+            //task.Wait();
         }
-        public void GetInfoSubjectsMore()
+        public async void GetInfoSubjectsMore()
         {
-            subjectsMore = new List<Subject>();
-            if (subjects != null)
-                for (int i = 0; i < subjects.Count; i++)
-                {
-                    var id = subjects[i].id;
-                    if (id != null)
-                    {
-                        string response = "";
-                        var task = Task.Run(async () => { // Викликаємо метод GetResp() в асинхронному таску
-                            response = await GetRespId((uint)id);
-                            subjectsMore.Add(JsonConvert.DeserializeObject<Subject>(response));
-                        });
-                        task.Wait(); // Очікуємо завершення таску
+            //first app
+            //{
+            //    subjectsMore = new List<Subject>();
+            //    if (subjects != null)
+            //        for (int i = 0; i < subjects.Count; i++)
+            //        {
+            //            var id = subjects[i].id;
+            //            if (id != null)
+            //            {
+            //                string response = "";
 
+            //                var task = Task.Run(async () => { // Викликаємо метод GetResp() в асинхронному таску
+            //                    try
+            //                    {
+            //                        response = await GetRespId((uint)id);
+            //                        subjectsMore.Add(JsonConvert.DeserializeObject<Subject>(response));
+            //                    }
+            //                    catch (Exception ex)
+            //                    {
+            //                        Debug.WriteLine($"\t THROW {i} - subMore {DateTime.Now}");
+            //                        throw ex;
+            //                    }
+            //                });
+            //                Debug.WriteLine($"\t {i} - start subMore {DateTime.Now}");
+            //                task.Wait();
+            //                Debug.WriteLine($"\t {i} - finish subMore {DateTime.Now}");
+            //            }
+            //        }
+            //}
+
+            //second
+            {
+                subjectsMore = new List<Subject>();
+                if (subjects != null)
+                {
+                    var tasks = new List<Task>(); //Task[subjects.Count];
+
+                    for (int i = 0; i < subjects.Count; i++)
+                    {
+                        var id = subjects[i].id;
+                        if (id != null)
+                        {
+                            string response = "";
+
+                            tasks.Add(Task.Run(async () =>
+                            {
+                                try
+                                {
+                                    response = await GetRespId((uint)id);
+                                    subjectsMore.Add(JsonConvert.DeserializeObject<Subject>(response));
+                                }
+                                catch (Exception ex)
+                                {
+                                    Debug.WriteLine($"\t THROW {i} - subMore {DateTime.Now}");
+                                    throw ex;
+                                }
+                            }
+                            ));
+                        }
+
+                    }
+                    Debug.WriteLine($"\t - start subMore ALL {DateTime.Now}");
+                    await Task.WhenAll(tasks).ContinueWith( _ =>
+                    {
+                        Debug.WriteLine($"\t - finish subMore ALL {DateTime.Now}");
+                        CreatePDF();
+                        if (subjects != null && subjects?.Count == 0)
+                        {
+                            progresWindow.NotDataFigur(figurant);
+                                
+                        }
+                        else
+                        {
+                            progresWindow.SetDoneFigNow(figurant);
+                        }
+                        ToCheckFigInTree(numberR - 1);
+                        SaveToDB();
                         
                     }
+                        );
+                    //foreach (var item in tasks)
+                    //{
+                    //    await item;
+                    //}
+                   
+                    //Task.WaitAll(tasks);
                 }
+            }
+            //not synh
+            { 
+                
+            }
+        }
+        public string GetRespS()
+        {
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(Reqstr!),
+                Headers =
+                {
+                    { "Authorization", "Token 6c48e3a0948ec23c5de170299134e98ee2ff90e0" },
+                }
+            };
+            var response = client.SendAsync(request).Result;
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var content = response.Content.ReadAsStringAsync().Result;
+               // var content = response.Content.ReadAsStream().Read() ToString();
+                return content;
+            }
+            else
+            {
+                throw new Exception($"Request failed: {response.StatusCode}");
+
+            }
         }
         public async Task<string> GetResp()
         {
@@ -234,8 +405,8 @@ namespace DesARMA.Automation
                 }
             };
             var response = await client.SendAsync(request);
-
-            if (response.IsSuccessStatusCode)
+            
+            if(response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var content = await response.Content.ReadAsStringAsync();
                 return content;
@@ -243,6 +414,7 @@ namespace DesARMA.Automation
             else
             {
                 throw new Exception($"Request failed: {response.StatusCode}");
+                
             }
         }
         private async Task<string> GetRespId(uint id)
@@ -260,7 +432,7 @@ namespace DesARMA.Automation
             };
             var response = await client.SendAsync(request);
 
-            if (response.IsSuccessStatusCode)
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var content = await response.Content.ReadAsStringAsync();
                 return content;
@@ -282,38 +454,49 @@ namespace DesARMA.Automation
         }
         public void CreatePDF()
         {
-            if (subjectsMore != null)
+            if (subjectsMore != null && subjectsMore.Count > 0)
             {
-
+                List<List<List<string?>?>> listAll = new();
+                List<bool> listBoolIsFiz = new();
                 foreach (var item in subjectsMore)
                 {
-                    var list = GetListAboutSubPDF(item);
-                    PDF pDF = new PDF();
+                    listBoolIsFiz.Add(item.code == null);
 
-                    string nameFolder = $"\\{GetWhithout(name)}_{code}";
-                    string nameFile;
-                    if (code == null)
-                        nameFile = $"\\Витяг_{StringExtension.GetStringForSearchTypeUKR(searchType, isFO)}_{GetWhithout(name)}.docx";
+                    if (item.code != null)
+                        listAll.Add(GetListAboutSubPDF(item));
                     else
-                        nameFile = $"\\Витяг_{StringExtension.GetStringForSearchTypeUKR(searchType, isFO)}_{code}.docx";
-
-                    string nameFileTemp;
-                    if (code == null)
-                        nameFileTemp = $"\\Витяг_{StringExtension.GetStringForSearchTypeUKR(searchType, isFO)}_{GetWhithout(name)}Temp.docx";
-                    else
-                        nameFileTemp = $"\\Витяг_{StringExtension.GetStringForSearchTypeUKR(searchType, isFO)}_{code}Temp.docx";
-
-                    if (!Directory.Exists(path + nameFolder))
-                        Directory.CreateDirectory(path + nameFolder);
-
-                    pDF.CreateNamesFieldPDF(list, System.IO.Path.Combine(Environment.CurrentDirectory + "\\FilesReestSh\\EDRSh.docx"),
-                        path + nameFolder + nameFileTemp,
-                        path + nameFolder + nameFile);
-
-                    
+                        listAll.Add(GetListAboutSubPDFFiz(item));
+                    //GetListAboutSubPDFFiz
                 }
+
+                PDF pDF = new PDF();
+
+                string nameFolder = $"\\{GetWhithout(name)}_{code}";
+                string nameFile;
+                if (code == null)
+                    nameFile = $"\\Витяг_{StringExtension.GetStringForSearchTypeUKR(searchType, isFO)}_{GetWhithout(name)}.docx";
+                else
+                    nameFile = $"\\Витяг_{StringExtension.GetStringForSearchTypeUKR(searchType, isFO)}_{code}.docx";
+
+                string nameFileTemp;
+                if (code == null)
+                    nameFileTemp = $"\\Витяг_{StringExtension.GetStringForSearchTypeUKR(searchType, isFO)}_{GetWhithout(name)}Temp.docx";
+                else
+                    nameFileTemp = $"\\Витяг_{StringExtension.GetStringForSearchTypeUKR(searchType, isFO)}_{code}Temp.docx";
+
+                if (!Directory.Exists(path + nameFolder))
+                    Directory.CreateDirectory(path + nameFolder);
+
+                pDF.CreateNamesFieldPDF(listAll, new object[] { (figurant.Ipn == null && figurant.Fio == null), code ?? "не заданий", searchType ?? SearchType.Base },
+                    listBoolIsFiz,
+                    System.IO.Path.Combine(Environment.CurrentDirectory + "\\FilesReestSh\\EDRSh.docx"),
+                    path + nameFolder + nameFileTemp,
+                    path + nameFolder + nameFile
+                    );
+
+
             }
-            
+
 
             //PDF.CreatePDFEDR(new FileStream("C:\\app\\ReportName.pdf", FileMode.Create), GetListAboutSub(subjectsMore.FirstOrDefault()));
             //if (subjectsMore != null)
@@ -459,7 +642,7 @@ namespace DesARMA.Automation
                 }
             }
             //16
-            strings.Add(new List<string?>() { subject.founding_document });
+            strings.Add(new List<string?>() { subject.founding_document_name });
             //17 
             strings.Add(new List<string?>() { subject.registration?.record_date });
             //18
@@ -683,16 +866,30 @@ namespace DesARMA.Automation
             strings.Add(new List<string?>() { subject.state_text });
             //5
             strings.Add(new List<string?>() { subject.olf_name });
-            //6 + 7
+            //6 + 7  -- 6
             if(subject.executive_power?.name == null && subject.executive_power?.code == null)
                 strings.Add(new List<string?>());
             else
-                strings.Add(new List<string?>() { $"{subject.executive_power?.name} {subject.executive_power?.code}" });
-            //8
+                strings.Add(new List<string?>() { $"{subject.executive_power?.name}, {subject.executive_power?.code}" });
+            //8  -- 7
             strings.Add(new List<string?>() { subject.address?.address });
-            //9
+            //24 -- 7.1
+            strings.Add(new List<string?>());
+            if (subject.contacts != null)
+            {
+                if (subject.contacts.tel != null)
+                {
+                    foreach (var item in subject.contacts.tel)
+                    {
+                        strings.Last()?.Add(item);
+                    }
+                }
+            }
+            //25 -- 7.2
+            strings.Add(new List<string?>() { subject.contacts?.email });
+            //9  -- 8
             strings.Add(new List<string?>() { $"{subject.primary_activity_kind?.code} {subject.primary_activity_kind?.name}" });
-            //10
+            //10 -- 9
             strings.Add(new List<string?>());
             if (subject.activity_kinds != null)
             {
@@ -708,126 +905,18 @@ namespace DesARMA.Automation
                     }
                 }
             }
-            //11
+            //11 -- 10
             strings.Add(new List<string?>() { subject.management });
-            //12-15 +
+            //12-15 -- 11
             strings.Add(new List<string?>());
             if (subject.founders != null)
             {
                 foreach (var item in subject.founders)
                 {
-                    strings.Last()?.Add($"{item?.name} {item?.country} {item?.address?.address} {item?.capital}");
+                    strings.Last()?.Add($"{item?.name}, {item?.country}, {item?.address?.address}, {item?.capital}");
                 }
             }
-            //16
-            strings.Add(new List<string?>() { subject.founding_document });
-            //17 
-            strings.Add(new List<string?>() { subject.registration?.record_date });
-            //18
-            strings.Add(new List<string?>() { subject.registration?.record_number });
-            //19
-            strings.Add(new List<string?>() { subject.object_name });
-            //20-23 +
-            strings.Add(new List<string?>());
-            if (subject.registrations != null)
-            {
-                foreach (var item in subject.registrations)
-                {
-                    strings.Last()?.Add($"{item?.start_date} {item?.start_num} {item?.name} {item?.code}");
-                }
-            }
-            //24
-            strings.Add(new List<string?>());
-            if (subject.contacts != null)
-            {
-                if (subject.contacts.tel != null)
-                {
-                    foreach (var item in subject.contacts.tel)
-                    {
-                        strings.Last()?.Add(item);
-                    }
-                }
-            }
-            //25
-            strings.Add(new List<string?>() { subject.contacts?.email });
-            //26-37 +
-            strings.Add(new List<string?>());
-            if (subject.branches != null)
-            {
-                foreach (var item in subject.branches)
-                {
-                    Head? head = GetTheNewestHead(item?.heads);
-
-                    string str = "";
-                    if (item?.contacts != null)
-                    {
-                        if (item.contacts.tel != null)
-                        {
-                            foreach (var itemTel in item.contacts.tel)
-                            {
-                                str += itemTel + "; ";
-                            }
-                        }
-                    }
-
-                    strings.Last()?.Add(
-                        $"{item?.name} " +
-                        $"{item?.code} " +
-                        $"{item?.role_text} " +
-                        $"{item?.type_text} " +
-                        $"{item?.create_date} " +
-                        $"{head?.name + " " + head?.first_middle_name} " +
-                        $"{head?.appointment_date} " +
-                        $"{head?.restriction} " +
-                        $"{item?.address?.address} " +
-                        $"{str} " +
-                        $"{item?.contacts?.email} " +
-                        $"{item?.contacts?.web_page} "
-                        );
-                }
-            }
-            //38
-            strings.Add(new List<string?>() { subject.termination?.date });
-            //39
-            strings.Add(new List<string?>() { subject.termination?.cause });
-            //40-42 +
-            strings.Add(new List<string?>());
-            if (subject.heads != null)
-            {
-                foreach (var item in subject.heads)
-                {
-                    if (item?.role == 7 || item?.role == 8 || item?.role == 13 || item?.role == 18)
-                    {
-                        strings.Last()?.Add($"{item?.last_name + " " + item?.first_middle_name} {item?.address?.address} {item?.role_text}");
-                    }
-                }
-            }
-            //43
-            strings.Add(new List<string?>() { subject.prev_registration_end_term });
-            //44-47
-            strings.Add(new List<string?>() { subject.bankruptcy?.doc_number });
-            strings.Add(new List<string?>() { subject.bankruptcy?.doc_date });
-            strings.Add(new List<string?>() { subject.bankruptcy?.date_judge });
-            strings.Add(new List<string?>() { subject.bankruptcy?.court_name });
-            //48-53 +
-            strings.Add(new List<string?>());
-            if (subject.assignees != null)
-            {
-                foreach (var item in subject.assignees)
-                {
-                    strings.Last()?.Add($"{item?.name} {item?.code} {item?.address?.address} {item?.last_name + " " + item?.first_middle_name} {item?.role_text} {item?.url}");
-                }
-            }
-            //54 - 59 +
-            strings.Add(new List<string?>());
-            if (subject.predecessors != null)
-            {
-                foreach (var item in subject.predecessors)
-                {
-                    strings.Last()?.Add($"{item?.name} {item?.code} {item?.address?.address} {item?.last_name + " " + item?.first_middle_name} {item?.role_text} {item?.url}");
-                }
-            }
-            //60-67 +
+            //60-67 -- 12
             strings.Add(new List<string?>());
             if (subject.beneficiaries is JArray arr)
             {
@@ -841,16 +930,16 @@ namespace DesARMA.Automation
                             var str = item?.beneficiaries_type == 5 ? "Прямий вирішальний вплив" :
                                 item?.beneficiaries_type == 6 ? "Непрямий вирішальний вплив" :
                                 item?.beneficiaries_type == 7 ? "Прямий та непрямий вирішальний вплив" : "";
-                            
+
                             strings.Last()?.Add(
-                                $"{item?.name} " +
-                                $"{item?.code} " +
-                                $"{item?.country} " +
+                                $"{item?.name}, " +
+                                $"{item?.code}, " +
+                                $"{item?.country}, " +
                                 $"{item?.address?.address} " +
-                                $"{item?.last_name + " " + item?.first_middle_name ?? ""} " +
+                                $"{item?.last_name + " " + item?.first_middle_name ?? ""}, " +
                                 $"{str} " +
-                                $"{item?.role_text} " +
-                                $"{item?.interest} ");
+                                $"{item?.role_text}, " +
+                                $"{item?.interest}, ");
                         }
                     }
                 }
@@ -860,8 +949,7 @@ namespace DesARMA.Automation
                 var reason = JsonConvert.DeserializeObject<Reason>(obj.ToString());
                 strings.Last()?.Add(reason.reason);
             }
-
-            //68-69
+            //68-69 -- 13
             strings.Add(new List<string?>());
             if (subject.heads != null)
             {
@@ -882,17 +970,172 @@ namespace DesARMA.Automation
                             head.role == 12 ||
                             head.role == 17)
                         {
-                            strings.Last()?.Add($"{head.last_name + " " + head.first_middle_name} {head.role_text}");
+                            strings.Last()?.Add($"{head.last_name + " " + head.first_middle_name}, {head.role_text}");
                         }
                     }
                 }
             }
-            //70
+            //70 -- 14
             if (subject.authorised_capital?.value == null)
                 strings.Add(new List<string?>());
             else
                 strings.Add(new List<string?>() { subject.authorised_capital?.value + "" });
-            //71
+            //16 -- 15
+            strings.Add(new List<string?>() { subject.founding_document_name });
+            //17 -- 16
+            strings.Add(new List<string?>() { subject.registration?.record_date });
+            //26-37 -- 17
+            strings.Add(new List<string?>());
+            if (subject.branches != null)
+            {
+                foreach (var item in subject.branches)
+                {
+                    Head? head = GetTheNewestHead(item?.heads);
+
+                    string str = "";
+                    if (item?.contacts != null)
+                    {
+                        if (item.contacts.tel != null)
+                        {
+                            foreach (var itemTel in item.contacts.tel)
+                            {
+                                str += itemTel + "; ";
+                            }
+                        }
+                    }
+
+                    strings.Last()?.Add(
+                        $"{item?.name}, " +
+                        $"{item?.code}, " +
+                        $"{item?.role_text}, " +
+                        $"{item?.type_text}, " +
+                        $"{item?.create_date}, " +
+                        $"{head?.name + " " + head?.first_middle_name}, " +
+                        $"{head?.appointment_date}, " +
+                        $"{head?.restriction}, " +
+                        $"{item?.address?.address}, " +
+                        $"{str}, " +
+                        $"{item?.contacts?.email}, " +
+                        $"{item?.contacts?.web_page}"
+                        );
+                }
+            }
+            //38 -- 18
+            strings.Add(new List<string?>() { subject.termination?.date });
+            //39 -- 19
+            strings.Add(new List<string?>() { subject.termination?.cause });
+            //40-42 -- 20
+            strings.Add(new List<string?>());
+            if (subject.heads != null)
+            {
+                foreach (var item in subject.heads)
+                {
+                    if (item?.role == 7 || item?.role == 8 || item?.role == 13 || item?.role == 18)
+                    {
+                        strings.Last()?.Add($"{item?.last_name + " " + item?.first_middle_name}, {item?.address?.address} {item?.role_text}");
+                    }
+                }
+            }
+            //43 -- 21
+            strings.Add(new List<string?>() { subject.prev_registration_end_term });
+            //48-53 -- 22
+            strings.Add(new List<string?>());
+            if (subject.assignees != null)
+            {
+                foreach (var item in subject.assignees)
+                {
+                    strings.Last()?.Add($"{item?.name}, {item?.code}, {item?.address?.address}, {item?.last_name + " " + item?.first_middle_name}, {item?.role_text}, {item?.url}");
+                }
+            }
+            //54 - 59 -- 23
+            strings.Add(new List<string?>());
+            if (subject.predecessors != null)
+            {
+                foreach (var item in subject.predecessors)
+                {
+                    strings.Last()?.Add($"{item?.name}, {item?.code}, {item?.address?.address}, {item?.last_name + " " + item?.first_middle_name}, {item?.role_text}, {item?.url}");
+                }
+            }
+            //44-47 -- 24-27
+            strings.Add(new List<string?>() { subject.bankruptcy?.doc_number });
+            strings.Add(new List<string?>() { subject.bankruptcy?.doc_date });
+            strings.Add(new List<string?>() { subject.bankruptcy?.date_judge });
+            strings.Add(new List<string?>() { subject.bankruptcy?.court_name });
+            //19 -- 28
+            strings.Add(new List<string?>() { subject.object_name });
+            //18 -- 29
+            strings.Add(new List<string?>() { subject.registration?.record_number });
+            //20-23 -- 30
+            strings.Add(new List<string?>());
+            if (subject.registrations != null)
+            {
+                foreach (var item in subject.registrations)
+                {
+                    strings.Last()?.Add($"{item?.start_date}, {item?.start_num}, {item?.name}, {item?.code}");
+                }
+            }
+           
+            return strings;
+        }
+        public List<List<string?>?> GetListAboutSubPDFFiz(Subject subject)
+        {
+            //var subject = subjectsMore?.First() ?? new Subject();
+            List<List<string?>?> strings = new List<List<string?>?>();
+            //1
+            strings.Add(new List<string?>() { subject.names?.display });
+            //4
+            strings.Add(new List<string?>() { subject.state_text });
+            // nonName
+            strings.Add(new List<string?>() { subject.country });
+            //8  -- 7
+            strings.Add(new List<string?>() { subject.address?.address });
+            //24 -- 8
+            strings.Add(new List<string?>());
+            if (subject.contacts != null)
+            {
+                if (subject.contacts.tel != null)
+                {
+                    foreach (var item in subject.contacts.tel)
+                    {
+                        strings.Last()?.Add(item);
+                    }
+                }
+            }
+            //25 -- 9
+            strings.Add(new List<string?>() { subject.contacts?.email });
+            //9  -- 10
+            strings.Add(new List<string?>() { $"{subject.primary_activity_kind?.code} {subject.primary_activity_kind?.name}" });
+            //10 -- 11
+            strings.Add(new List<string?>());
+            if (subject.activity_kinds != null)
+            {
+                foreach (var item in subject.activity_kinds)
+                {
+                    var ispr = item?.is_primary;
+                    if (ispr != null)
+                    {
+                        if (!ispr.Value)
+                        {
+                            strings.Last()?.Add($"{item?.code} {item?.name}");
+                        }
+                    }
+                }
+            }
+            //17 -- 18
+            strings.Add(new List<string?>() { subject.registration?.record_date });
+            //19 -- 30
+            strings.Add(new List<string?>() { subject.object_name });
+            //18 -- 31
+            strings.Add(new List<string?>() { subject.registration?.record_number });
+            //20-23 -- 32
+            strings.Add(new List<string?>());
+            if (subject.registrations != null)
+            {
+                foreach (var item in subject.registrations)
+                {
+                    strings.Last()?.Add($"{item?.start_date}, {item?.start_num}, {item?.name}, {item?.code}");
+                }
+            }
 
             return strings;
         }

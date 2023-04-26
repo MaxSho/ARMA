@@ -12,12 +12,23 @@
 
   <ItemGroup>
     <None Remove="Drawings\cat.gif" />
+    <None Remove="Drawings\done\done1.png" />
+    <None Remove="Drawings\done\done2.png" />
+    <None Remove="Drawings\done\done3.png" />
     <None Remove="Drawings\download\download1.gif" />
     <None Remove="Drawings\download\download2.gif" />
     <None Remove="Drawings\download\download3.gif" />
     <None Remove="Drawings\download\download4.gif" />
     <None Remove="Drawings\download\download5.gif" />
     <None Remove="Drawings\download\download6.gif" />
+    <None Remove="Drawings\error\error1.png" />
+    <None Remove="Drawings\error\error2.png" />
+    <None Remove="Drawings\ExtractFromTheRegister\extract.png" />
+    <None Remove="Drawings\ExtractFromTheRegister\resume.png" />
+    <None Remove="Drawings\notdone\notdone1.png" />
+    <None Remove="Drawings\notdone\notdone10.png" />
+    <None Remove="Drawings\notdone\notdone2.png" />
+    <None Remove="Drawings\notdone\notdone3.png" />
     <None Remove="Files\2.ico" />
     <None Remove="Files\iconSave.jpg" />
   </ItemGroup>
@@ -85,6 +96,15 @@
     <Resource Include="Drawings\cat.gif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Drawings\done\done1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\done\done2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\done\done3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Drawings\download\download1.gif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -101,6 +121,30 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Drawings\download\download6.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\error\error2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\error\error1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\ExtractFromTheRegister\extract.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\ExtractFromTheRegister\resume.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\notdone\notdone1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\notdone\notdone10.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\notdone\notdone2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\notdone\notdone3.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Files\2.ico">

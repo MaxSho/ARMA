@@ -104,14 +104,14 @@
                    Source="https://img.freepik.com/free-icon/database_318-359818.jpg" HorizontalAlignment="Left">
             </Image>
         </Button>
-        <Button Background="{StaticResource 4ColorStyle}" 
+        <Button Background="{StaticResource 4ColorStyle}" Visibility="Hidden" 
                     Click="Button_Progress" Width="50" Grid.Column="0" Grid.Row="7" ToolTip="Вставити дані в декілька запитів">
-            <Image Margin="1" Name="nameIm"
+            <Image Margin="1" Name="nameIm" 
                    gif:ImageBehavior.AnimatedSource="/DesARMA;component/Drawings/cat.gif"
                     HorizontalAlignment="Left">
             </Image>
         </Button>
-        <StackPanel Grid.Column="0" Grid.Row="8" Grid.RowSpan="20"  
+        <StackPanel Grid.Column="0" Grid.Row="7" Grid.RowSpan="20"  
                     Background="{StaticResource 1ColorStyle}"  >
         </StackPanel>
 
@@ -331,7 +331,7 @@
             </MenuItem>
             <MenuItem Header="Edit" ></MenuItem>
             <MenuItem Header="View" ></MenuItem>-->
-            <Label>Version 1.5</Label>
+            <Label>Version 2.0</Label>
         </Menu>
 
         
