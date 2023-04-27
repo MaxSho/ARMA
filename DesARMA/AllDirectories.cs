@@ -340,7 +340,7 @@ namespace DesARMA
                                         {
                                             try
                                             {
-                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500,
+                                                var dsd = new SearchEDR(cts, item.Ipn, item.Fio, null, 500,
                                                 SearchType.Beneficiar, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
                                                 progresWindow, item, modelContext, true, numberR);
 
@@ -401,7 +401,7 @@ namespace DesARMA
                                             {
                                                 try
                                                 {
-                                                    var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500,
+                                                    var dsd = new SearchEDR(cts,  item.Ipn, item.Fio, null, 500,
                                                     SearchType.Founder, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
                                                     progresWindow, item, modelContext, true);
                                                     //dsd.CreateExel();
@@ -446,7 +446,7 @@ namespace DesARMA
                                             {
                                                 try
                                                 {
-                                                    var dsd = new SearchEDR(item.Code, item.Name, null, 500,
+                                                    var dsd = new SearchEDR(cts, item.Code, item.Name, null, 500,
                                                     SearchType.Founder, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}", 
                                                     progresWindow, item, modelContext);
                                                     //dsd.CreateExel();
@@ -517,7 +517,7 @@ namespace DesARMA
                                         {
                                             try
                                             {
-                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500,
+                                                var dsd = new SearchEDR(cts, item.Ipn, item.Fio, null, 500,
                                                 SearchType.Chief, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
                                                 progresWindow, item, modelContext, true);
                                                 //dsd.CreateExel();
@@ -576,7 +576,7 @@ namespace DesARMA
                                         {
                                             try
                                             {
-                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500,
+                                                var dsd = new SearchEDR(cts, item.Ipn, item.Fio, null, 500,
                                                 SearchType.Assignee, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
                                                 progresWindow, item, modelContext, true);
                                             }
@@ -641,7 +641,7 @@ namespace DesARMA
                                         {
                                             try
                                             {
-                                                var dsd = new SearchEDR(item.Code, item.Name, null, 500,
+                                                var dsd = new SearchEDR(cts, item.Code, item.Name, null, 500,
                                                 SearchType.Base, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
                                                 progresWindow, item, modelContext);
                                             }
@@ -698,7 +698,7 @@ namespace DesARMA
                                         {
                                             try
                                             {
-                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500,
+                                                var dsd = new SearchEDR(cts, item.Ipn, item.Fio, null, 500,
                                                 SearchType.Base, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
                                                 progresWindow, item, modelContext, true);
 

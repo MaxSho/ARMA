@@ -63,8 +63,12 @@ namespace DesARMA.Automation
 
         private ModelContext modelContext;
         private ModelContextEDR modelContextEDR;
+
+        CancellationToken ct;
+        CancellationTokenSource cts;
+
         int numberR;
-        public SearchEDR(string? code, string? name, string? passport, int limit, SearchType? searchType,
+        public SearchEDR(CancellationTokenSource cts, string? code, string? name, string? passport, int limit, SearchType? searchType,
                         string path, ProgresWindow progresWindow, Figurant figurant, ModelContext modelContext, bool isFO = false, int numberR = 15)
         {
             try
@@ -78,6 +82,9 @@ namespace DesARMA.Automation
                     this.searchType = SearchType.Base;
                 else
                     this.searchType = searchType;
+
+                this.cts = cts;
+                this.ct = cts.Token;
 
                 this.figurant = figurant;
                 this.code = code;
@@ -354,7 +361,7 @@ namespace DesARMA.Automation
                                     Debug.WriteLine($"\t THROW {i} - subMore {DateTime.Now}");
                                     throw ex;
                                 }
-                            }
+                            }, ct
                             ));
                         }
 
