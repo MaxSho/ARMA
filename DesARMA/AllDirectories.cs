@@ -448,7 +448,7 @@ namespace DesARMA
                                                 {
                                                     var dsd = new SearchEDR(item.Code, item.Name, null, 500,
                                                     SearchType.Founder, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}", 
-                                                    progresWindow, item, modelContext);
+                                                    progresWindow, item, modelContext, false, numberR);
                                                     //dsd.CreateExel();
                                                     //dsd.CreatePDF();
 
