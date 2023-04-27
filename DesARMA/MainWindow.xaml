@@ -6,7 +6,9 @@
         xmlns:local="clr-namespace:DesARMA"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
+        
         Title="DeskAPMA" MinHeight="400" MinWidth="400" FontSize="16" WindowState="Maximized"
         ResizeMode="CanResizeWithGrip" Closing="App_Closing" PreviewMouseMove="Window_PreviewMouseMove"  MouseMove="Window_MouseMove" 
         Loaded="Window_Loaded">
@@ -72,19 +74,19 @@
         HorizontalAlignment="Center" Margin="0,0,0,34" Grid.RowSpan="2" />
 
 
-             <Button Background="{StaticResource 4ColorStyle}" 
+        <Button Background="{StaticResource 4ColorStyle}" 
                     Width="50" Grid.Column="0" Grid.Row="2" Click="ToDiskButtonClick" ToolTip="Зібрати папки в додатки">
                 <Image   Margin="1"
                    Source="https://cdn-icons-png.flaticon.com/512/4910/4910593.png" 
                    ></Image>
             </Button>
-            <Button Background="{StaticResource 4ColorStyle}"  Click="ChangeFolderButtonClick" 
+        <Button Background="{StaticResource 4ColorStyle}"  Click="ChangeFolderButtonClick" 
                     Width="50" Grid.Column="0" Grid.Row="3" ToolTip="Перемістити або задати папку запиту">
                 <Image   Margin="1"
                    Source="https://cdn-icons-png.flaticon.com/512/235/235251.png" 
                    ></Image>
             </Button>
-            <Button Background="{StaticResource 4ColorStyle}"
+        <Button Background="{StaticResource 4ColorStyle}"
                     Click="Button_ClickSave"  Width="50" Grid.Column="0" Grid.Row="4" ToolTip="Зберегти дані про поточний запит в базу даних">
                 <Image Margin="1"
                    Source="https://icon-library.com/images/file-save-icon/file-save-icon-28.jpg" HorizontalAlignment="Left"
@@ -102,7 +104,13 @@
                    Source="https://img.freepik.com/free-icon/database_318-359818.jpg" HorizontalAlignment="Left">
             </Image>
         </Button>
-
+        <Button Background="{StaticResource 4ColorStyle}" Visibility="Hidden" 
+                    Click="Button_Progress" Width="50" Grid.Column="0" Grid.Row="7" ToolTip="Вставити дані в декілька запитів">
+            <Image Margin="1" Name="nameIm" 
+                   gif:ImageBehavior.AnimatedSource="/DesARMA;component/Drawings/cat.gif"
+                    HorizontalAlignment="Left">
+            </Image>
+        </Button>
         <StackPanel Grid.Column="0" Grid.Row="7" Grid.RowSpan="20"  
                     Background="{StaticResource 1ColorStyle}"  >
         </StackPanel>
@@ -323,7 +331,7 @@
             </MenuItem>
             <MenuItem Header="Edit" ></MenuItem>
             <MenuItem Header="View" ></MenuItem>-->
-            <Label>Version 1.5</Label>
+            <Label>Version 2.0</Label>
         </Menu>
 
         

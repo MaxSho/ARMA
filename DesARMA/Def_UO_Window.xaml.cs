@@ -36,12 +36,7 @@ namespace DesARMA
                 residentTextBox.IsChecked = figurant.ResUr == 2;
                 figurant.Status = isConn ? 2 : 1;
 
-                //string shif = ConfigurationManager.AppSettings["hv"].ToString();
-                //inactivityTimer.Interval = 60_000 * Convert.ToInt32(shif);
-                //inactivityTimer.Tick += (sender, args) =>
-                //{
-                //    Environment.Exit(0);
-                //};
+                
                 inactivityTimer.Start();
             }
             catch(Exception e)

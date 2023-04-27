@@ -41,10 +41,10 @@ namespace DesARMA.CombinedResponseWindows
         List<string> listNumIn;
         public List<int> numbColorInReestr;
         public int numbColorShema;
-        ModelContext modelContext;
-        Main main;
+        readonly ModelContext modelContext;
+        readonly Main main;
         public List<Figurant> figurants;
-        private System.Windows.Forms.Timer inactivityTimer = new System.Windows.Forms.Timer();
+        private readonly System.Windows.Forms.Timer inactivityTimer = new System.Windows.Forms.Timer();
         public EntryOfPersonsInvolvedInTheCombinedRegistersWindow(ModelContext modelContext, Main main, List<string> listNumIn,
             System.Windows.Forms.Timer inactivityTimer)
         {
@@ -133,14 +133,11 @@ namespace DesARMA.CombinedResponseWindows
         {
             for (int i = 1; i < treeView1.Items.Count; i++)
             {
-                var st = treeView1.Items[i] as StackPanel;
-                if(st != null)
+                if(treeView1.Items[i] is StackPanel st)
                 {
-                    var ti = st.Children[2] as TreeViewItem;
-                    if(ti != null)
+                    if(st.Children[2] is TreeViewItem ti)
                     {
-                        var tiH = ti.Header as TextBlock;
-                        if(tiH != null)
+                        if(ti.Header is TextBlock tiH)
                         {
                             if (numbColorInReestr[i - 1] == 3)
                             {
@@ -148,7 +145,7 @@ namespace DesARMA.CombinedResponseWindows
                             }
                             else if (numbColorInReestr[i - 1] == 2)
                             {
-                                tiH.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush;// new SolidColorBrush(Colors.White);
+                                tiH.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush; // new SolidColorBrush(Colors.White);
                             }
                             else if (numbColorInReestr[i - 1] == 1)
                             {
@@ -157,13 +154,11 @@ namespace DesARMA.CombinedResponseWindows
                         }
                         foreach (var itemF in ti.Items)
                         {
-                            var stF = itemF as StackPanel;
-                            if(stF != null)
+                            if(itemF is StackPanel stF)
                             {
                                 foreach (var itemTB in stF.Children)
                                 {
-                                    var cutTB = itemTB as TextBlock;
-                                    if(cutTB != null)
+                                    if(itemTB is TextBlock cutTB)
                                     {
                                         if (numbColorInReestr[i - 1] == 3)
                                         {
@@ -186,60 +181,60 @@ namespace DesARMA.CombinedResponseWindows
 
             }
         }
-        private void SetColorShema()
-        {
+        //private void SetColorShema()
+        //{
 
-            var st = treeViewShema.Items[0] as StackPanel;
-            if (st != null)
-            {
-                var ti = st.Children[2] as TreeViewItem;
-                if (ti != null)
-                {
-                    var tiH = ti.Header as TextBlock;
-                    if (tiH != null)
-                    {
-                        if (numbColorShema == 3)
-                        {
-                            tiH.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush; ;
-                        }
-                        else if (numbColorShema == 2)
-                        {
-                            tiH.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush;// new SolidColorBrush(Colors.White);
-                        }
-                        else if (numbColorShema == 1)
-                        {
-                            tiH.Foreground = this.Resources["RedEmpty"] as SolidColorBrush; //new SolidColorBrush(Colors.Red);
-                        }
-                    }
-                    foreach (var itemF in ti.Items)
-                    {
-                        var stF = itemF as StackPanel;
-                        if (stF != null)
-                        {
-                            foreach (var itemTB in stF.Children)
-                            {
-                                var cutTB = itemTB as TextBlock;
-                                if (cutTB != null)
-                                {
-                                    if (numbColorShema == 3)
-                                    {
-                                        cutTB.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush; ;
-                                    }
-                                    else if (numbColorShema == 2)
-                                    {
-                                        cutTB.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush;// new SolidColorBrush(Colors.White);
-                                    }
-                                    else if (numbColorShema == 1)
-                                    {
-                                        cutTB.Foreground = this.Resources["RedEmpty"] as SolidColorBrush; //new SolidColorBrush(Colors.Red);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        //    var st = treeViewShema.Items[0] as StackPanel;
+        //    if (st != null)
+        //    {
+        //        var ti = st.Children[2] as TreeViewItem;
+        //        if (ti != null)
+        //        {
+        //            var tiH = ti.Header as TextBlock;
+        //            if (tiH != null)
+        //            {
+        //                if (numbColorShema == 3)
+        //                {
+        //                    tiH.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush; ;
+        //                }
+        //                else if (numbColorShema == 2)
+        //                {
+        //                    tiH.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush;// new SolidColorBrush(Colors.White);
+        //                }
+        //                else if (numbColorShema == 1)
+        //                {
+        //                    tiH.Foreground = this.Resources["RedEmpty"] as SolidColorBrush; //new SolidColorBrush(Colors.Red);
+        //                }
+        //            }
+        //            foreach (var itemF in ti.Items)
+        //            {
+        //                var stF = itemF as StackPanel;
+        //                if (stF != null)
+        //                {
+        //                    foreach (var itemTB in stF.Children)
+        //                    {
+        //                        var cutTB = itemTB as TextBlock;
+        //                        if (cutTB != null)
+        //                        {
+        //                            if (numbColorShema == 3)
+        //                            {
+        //                                cutTB.Foreground = this.Resources["GreenEmpty"] as SolidColorBrush; ;
+        //                            }
+        //                            else if (numbColorShema == 2)
+        //                            {
+        //                                cutTB.Foreground = this.Resources["4ColorStyle"] as SolidColorBrush;// new SolidColorBrush(Colors.White);
+        //                            }
+        //                            else if (numbColorShema == 1)
+        //                            {
+        //                                cutTB.Foreground = this.Resources["RedEmpty"] as SolidColorBrush; //new SolidColorBrush(Colors.Red);
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
         private void CreateTreeView1()
         {
             treeView1.Items.Add($"Контроль/Схема");
@@ -340,9 +335,11 @@ namespace DesARMA.CombinedResponseWindows
         }
         private StackPanel CreateItem(int num)
         {
-            StackPanel stackPanel = new StackPanel();
-            stackPanel.Orientation = Orientation.Horizontal;
-            stackPanel.Margin = new Thickness(0, 10, 0, 0);
+            StackPanel stackPanel = new()
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 10, 0, 0)
+            };
 
             stackPanel.Children.Add(CreateCheckBox(CheckEnum.Control, num));
             stackPanel.Children.Add(CreateCheckBox(CheckEnum.Shema, num));
@@ -352,10 +349,12 @@ namespace DesARMA.CombinedResponseWindows
         }
         private StackPanel CreateItemShema(int num)
         {
-            StackPanel stackPanel = new StackPanel();
-            stackPanel.Orientation = Orientation.Horizontal;
-            stackPanel.Margin = new Thickness(0, 10, 0, 0);
-
+            StackPanel stackPanel = new()
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 10, 0, 0)
+            };
+            
             stackPanel.Children.Add(CreateCheckBoxShema(CheckEnum.Control, num));
             stackPanel.Children.Add(CreateCheckBoxShema(CheckEnum.Shema, num));
             stackPanel.Children.Add(CreateTreeViewItemShema(num));
@@ -364,21 +363,25 @@ namespace DesARMA.CombinedResponseWindows
         }
         private CheckBox CreateCheckBox(CheckEnum checkEnum, int num)
         {
-            CheckBox checkBox = new CheckBox();
-            checkBox.Margin = new Thickness(5, 0, 0, 0);
-            checkBox.Tag = new Tuple<CheckEnum, int>(checkEnum, num);
+            CheckBox checkBox = new()
+            {
+                Margin = new Thickness(5, 0, 0, 0),
+                Tag = new Tuple<CheckEnum, int>(checkEnum, num)
+            };
             checkBox.Click += CheckBoxClick;
             return checkBox;   
         }
         private CheckBox CreateCheckBoxShema(CheckEnum checkEnum, int num)
         {
-            CheckBox checkBox = new CheckBox();
-            checkBox.Margin = new Thickness(5, 0, 0, 0);
-            checkBox.Tag = new Tuple<CheckEnum, int>(checkEnum, num);
+            CheckBox checkBox = new()
+            {
+                Margin = new Thickness(5, 0, 0, 0),
+                Tag = new Tuple<CheckEnum, int>(checkEnum, num)
+            };
             checkBox.Click += CheckBoxClickShema;
             return checkBox;
         }
-        private List<UIElement> CreateUIElementFigurant(Figurant figurant)
+        private static List<UIElement> CreateUIElementFigurant(Figurant figurant)
         {
             List<UIElement> listRet = new List<UIElement>();
             string str = GetDefInString(figurant);
@@ -388,73 +391,101 @@ namespace DesARMA.CombinedResponseWindows
                 var list = str!.Split('^');
                 if (list.Length == 6)
                 {
-                    TextBlock textBlock = new TextBlock();
-                    textBlock.Text = list[0];
-                    textBlock.FontSize = 14;
+                    TextBlock textBlock = new()
+                    {
+                        Text = list[0],
+                        FontSize = 14,
+                        Padding = new Thickness(20, 0, 0, 0),
+                        ToolTip = "Натисніть, щоб скопіювати"
+                    };
                     textBlock.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock.Text); } catch (Exception ex) { } };
                     textBlock.MouseEnter += (w, r) => { textBlock.Opacity = 0.5; };
                     textBlock.MouseLeave += (w, r) => { textBlock.Opacity = 1; };
-                    textBlock.Padding = new Thickness(20, 0, 0, 0);
-                    textBlock.ToolTip = "Натисніть, щоб скопіювати";
                     listRet.Add(textBlock);
 
 
-                    TextBlock textBlockTemp = new TextBlock();
-                    textBlockTemp.Text = list[1];
-                    textBlockTemp.FontSize = 14;
+                    TextBlock textBlockTemp = new()
+                    {
+                        Text = list[1],
+                        FontSize = 14
+                    };
                     listRet.Add(textBlockTemp);
 
 
 
-                    TextBlock textBlock1 = new TextBlock();
-                    textBlock1.Text = list[2];
-                    textBlock1.FontSize = 14;
+                    TextBlock textBlock1 = new()
+                    {
+                        Text = list[2],
+                        FontSize = 14,
+                        ToolTip = "Натисніть, щоб скопіювати"
+                    };
                     textBlock1.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock1.Text); } catch (Exception ex) { } };
                     textBlock1.MouseEnter += (w, r) => { textBlock1.Opacity = 0.5; };
                     textBlock1.MouseLeave += (w, r) => { textBlock1.Opacity = 1; };
-                    textBlock1.ToolTip = "Натисніть, щоб скопіювати";
                     listRet.Add(textBlock1);
 
-                    TextBlock textBlockTemp2 = new TextBlock();
+                    TextBlock textBlockTemp2 = new()
+                    {
+                        Text = list[3],
+                        FontSize = 14
+                    };
                     textBlockTemp2.Text = list[3];
                     textBlockTemp2.FontSize = 14;
                     listRet.Add(textBlockTemp2);
 
-                    TextBlock textBlockTemp3 = new TextBlock();
+                    TextBlock textBlockTemp3 = new()
+                    {
+                        Text = list[4],
+                        FontSize = 14
+                    };
                     textBlockTemp3.Text = list[4];
                     textBlockTemp3.FontSize = 14;
                     listRet.Add(textBlockTemp3);
 
-                    TextBlock textBlock2 = new TextBlock();
-                    textBlock2.Text = list[5];
-                    textBlock2.FontSize = 14;
+                    TextBlock textBlock2 = new()
+                    {
+                        Text = list[5],
+                        FontSize = 14,
+                        ToolTip = "Натисніть, щоб скопіювати"
+                    };
                     textBlock2.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock2.Text); } catch (Exception ex) { } };
                     textBlock2.MouseEnter += (w, r) => { textBlock2.Opacity = 0.5; };
                     textBlock2.MouseLeave += (w, r) => { textBlock2.Opacity = 1; };
-                    textBlock2.ToolTip = "Натисніть, щоб скопіювати";
                     listRet.Add(textBlock2);
                 }
                 else if (list.Length == 4)
                 {
-                    TextBlock textBlock = new TextBlock();
-                    textBlock.Text = list[0];
-                    textBlock.FontSize = 14;
+                    TextBlock textBlock = new()
+                    {
+                        Text = list[0],
+                        FontSize = 14,
+                        Padding = new Thickness(20, 0, 0, 0),
+                        ToolTip = "Натисніть, щоб скопіювати"
+                    };
                     textBlock.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock.Text); } catch (Exception ex) { } };
                     textBlock.MouseEnter += (w, r) => { textBlock.Opacity = 0.5; };
                     textBlock.MouseLeave += (w, r) => { textBlock.Opacity = 1; };
-                    textBlock.Padding = new Thickness(20, 0, 0, 0);
-                    textBlock.ToolTip = "Натисніть, щоб скопіювати";
                     listRet.Add(textBlock);
 
 
-                    TextBlock textBlockTemp = new TextBlock();
+                    TextBlock textBlockTemp = new()
+                    {
+                        Text = list[1],
+                        FontSize = 14
+                    };
+
                     textBlockTemp.Text = list[1];
                     textBlockTemp.FontSize = 14;
                     listRet.Add(textBlockTemp);
 
 
 
-                    TextBlock textBlock1 = new TextBlock();
+                    TextBlock textBlock1 = new()
+                    {
+                        Text = list[2],
+                        FontSize = 14,
+                        ToolTip = "Натисніть, щоб скопіювати"
+                    };
                     textBlock1.Text = list[2];
                     textBlock1.FontSize = 14;
                     textBlock1.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock1.Text); } catch (Exception ex) { } };
@@ -463,70 +494,90 @@ namespace DesARMA.CombinedResponseWindows
                     textBlock1.ToolTip = "Натисніть, щоб скопіювати";
                     listRet.Add(textBlock1);
 
-                    TextBlock textBlockTemp2 = new TextBlock();
+                    TextBlock textBlockTemp2 = new()
+                    {
+                        Text = list[0],
+                        FontSize = 14
+                    };
                     textBlockTemp2.Text = list[3];
                     textBlockTemp2.FontSize = 14;
                     listRet.Add(textBlockTemp2);
                 }
                 else if (list.Length == 3)
                 {
-                    TextBlock textBlock = new TextBlock();
-                    textBlock.Text = list[0];
-                    textBlock.FontSize = 14;
+                    TextBlock textBlock = new()
+                    {
+                        Text = list[0],
+                        FontSize = 14,
+                        Padding = new Thickness(20, 0, 0, 0),
+                        ToolTip = "Натисніть, щоб скопіювати"
+                    };
+
                     textBlock.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock.Text); } catch (Exception ex) { } };
                     textBlock.MouseEnter += (w, r) => { textBlock.Opacity = 0.5; };
                     textBlock.MouseLeave += (w, r) => { textBlock.Opacity = 1; };
-                    textBlock.Padding = new Thickness(20, 0, 0, 0);
-                    textBlock.ToolTip = "Натисніть, щоб скопіювати";
                     listRet.Add(textBlock);
 
 
-                    TextBlock textBlockTemp = new TextBlock();
+                    TextBlock textBlockTemp = new()
+                    {
+                        Text = list[1],
+                        FontSize = 14
+                    };
+
                     textBlockTemp.Text = list[1];
                     textBlockTemp.FontSize = 14;
                     listRet.Add(textBlockTemp);
 
+                    TextBlock textBlock1 = new()
+                    {
+                        Text = list[2],
+                        FontSize = 14,
+                        ToolTip = "Натисніть, щоб скопіювати"
+                    };
 
-
-                    TextBlock textBlock1 = new TextBlock();
-                    textBlock1.Text = list[2];
-                    textBlock1.FontSize = 14;
                     textBlock1.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock1.Text); } catch (Exception ex) { } };
                     textBlock1.MouseEnter += (w, r) => { textBlock1.Opacity = 0.5; };
                     textBlock1.MouseLeave += (w, r) => { textBlock1.Opacity = 1; };
-                    textBlock1.ToolTip = "Натисніть, щоб скопіювати";
                     listRet.Add(textBlock1);
                 }
                 else if (list.Length == 1)
                 {
-                    TextBlock textBlock = new TextBlock();
-                    textBlock.Text = list[0];
-                    textBlock.FontSize = 14;
+                    TextBlock textBlock = new()
+                    {
+                        Text = list[0],
+                        FontSize = 14,
+                        Padding = new Thickness(20, 0, 0, 0),
+                        ToolTip = "Натисніть, щоб скопіювати"
+                    };
+
                     textBlock.PreviewMouseDown += (w, r) => { try { System.Windows.Clipboard.SetText(textBlock.Text); } catch (Exception ex) { } };
                     textBlock.MouseEnter += (w, r) => { textBlock.Opacity = 0.5; };
                     textBlock.MouseLeave += (w, r) => { textBlock.Opacity = 1; };
-                    textBlock.Padding = new Thickness(20, 0, 0, 0);
-                    textBlock.ToolTip = "Натисніть, щоб скопіювати";
                     listRet.Add(textBlock);
                 }
             }
             return listRet;
         }
-        private TextBlock CreateTextBlockFigurant(Figurant figurant)
+        private static TextBlock CreateTextBlockFigurant(Figurant figurant)
         {
-            TextBlock textBlock = new TextBlock();
-            textBlock.Margin = new Thickness(10, -2, 0, 0);
-            textBlock.Text = GetDefInString(figurant);
+            TextBlock textBlock = new()
+            {
+                Margin = new Thickness(10, -2, 0, 0),
+                Text = GetDefInString(figurant)
+        };
             return textBlock;
         }
-        private TextBlock CreateTextBlockReest(int num)
+        private static TextBlock CreateTextBlockReest(int num)
         {
-            TextBlock textBlock = new TextBlock();
-            textBlock.Margin = new Thickness(10, 0, 0, 0);
-            textBlock.Text = $"{num}. {Reest.abbreviatedName[num - 1]}";
+            TextBlock textBlock = new()
+            {
+                Margin = new Thickness(10, 0, 0, 0),
+                Text = $"{num}. {Reest.abbreviatedName[num - 1]}"
+            };
             return textBlock;
         }
-        private TextBlock CreateTextBlockShema(int num)
+        private static TextBlock CreateTextBlockShema(int num)
         {
             TextBlock textBlock = new TextBlock();
             textBlock.Margin = new Thickness(10, 0, 0, 0);
@@ -550,8 +601,10 @@ namespace DesARMA.CombinedResponseWindows
         }
         private StackPanel CreateStackPanelFigurantsShema(Figurant figurant, int num)
         {
-            StackPanel stackPanel = new StackPanel();
-            stackPanel.Orientation = Orientation.Horizontal;
+            StackPanel stackPanel = new()
+            {
+                Orientation = Orientation.Horizontal,
+            };
 
 
             stackPanel.Children.Add(CreateCheckBoxShema(CheckEnum.Yes, num));
@@ -634,14 +687,16 @@ namespace DesARMA.CombinedResponseWindows
             textBlockYes.FontSize = 11;
             textBlockYes.Margin = new Thickness(5, 0, 0, 0);
 
-            TextBlock textBlockNo = new TextBlock();
-            textBlockNo.Text = "ні";
-            textBlockNo.Tag = num;
+            TextBlock textBlockNo = new()
+            {
+                Text = "ні",
+                Tag = num,
+                FontSize = 11,
+                Margin = new Thickness(8, 0, 0, 0)
+            };
             textBlockNo.PreviewMouseDown += ClickAllFigurantShema;
             textBlockNo.MouseEnter += (w, r) => { textBlockNo.Opacity = 0.5; };
             textBlockNo.MouseLeave += (w, r) => { textBlockNo.Opacity = 1; };
-            textBlockNo.FontSize = 11;
-            textBlockNo.Margin = new Thickness(8, 0, 0, 0);
 
             stackPanel.Children.Add(textBlockYes);
             stackPanel.Children.Add(textBlockNo);
@@ -654,27 +709,20 @@ namespace DesARMA.CombinedResponseWindows
             inactivityTimer.Stop();
             try
             {
-                var tb = sender as TextBlock;
-                if (tb != null)
+                if (sender is TextBlock tb)
                 {
                     int num = (int)tb.Tag;
                     if (treeView1.Items.Count >= num + 1)
                     {
-                        var stRe = treeView1.Items[num] as StackPanel;
-                        if (stRe != null)
+                        if (treeView1.Items[num] is StackPanel stRe)
                         {
-                            var treeItem = stRe.Children[2] as TreeViewItem;
-                            if (treeItem != null)
+                            if (stRe.Children[2] is TreeViewItem treeItem)
                             {
                                 foreach (var itemF in treeItem.Items)
                                 {
-                                    var stF = itemF as StackPanel;
-                                    if (stF != null)
+                                    if (itemF is StackPanel stF)
                                     {
-                                        var chYes = stF.Children[0] as CheckBox;
-                                        var chNo = stF.Children[1] as CheckBox;
-
-                                        if (chYes != null && chNo != null)
+                                        if (stF.Children[0] is CheckBox chYes && stF.Children[1] is CheckBox chNo)
                                         {
                                             if (tb.Text == "так")
                                             {
@@ -712,25 +760,18 @@ namespace DesARMA.CombinedResponseWindows
             inactivityTimer.Stop();
             try
             {
-                var tb = sender as TextBlock;
-                if (tb != null)
+                if (sender is TextBlock tb)
                 {
                     int num = (int)tb.Tag;
-                    var stRe = treeViewShema.Items[0] as StackPanel;
-                    if (stRe != null)
+                    if (treeViewShema.Items[0] is StackPanel stRe)
                     {
-                        var treeItem = stRe.Children[2] as TreeViewItem;
-                        if (treeItem != null)
+                        if (stRe.Children[2] is TreeViewItem treeItem)
                         {
                             foreach (var itemF in treeItem.Items)
                             {
-                                var stF = itemF as StackPanel;
-                                if (stF != null)
+                                if (itemF is StackPanel stF)
                                 {
-                                    var chYes = stF.Children[0] as CheckBox;
-                                    var chNo = stF.Children[1] as CheckBox;
-
-                                    if (chYes != null && chNo != null)
+                                    if (stF.Children[0] is CheckBox chYes && stF.Children[1] is CheckBox chNo)
                                     {
                                         if (tb.Text == "так")
                                         {
@@ -764,13 +805,11 @@ namespace DesARMA.CombinedResponseWindows
             inactivityTimer.Stop();
             try
             {
-                CheckBox checkBox = sender as CheckBox;
-                if (checkBox != null)
+                if (sender is CheckBox checkBox)
                 {
                     if (checkBox.Tag != null)
                     {
-                        var checkTuple = checkBox.Tag as Tuple<CheckEnum, int>;
-                        if (checkTuple != null)
+                        if (checkBox.Tag is Tuple<CheckEnum, int> checkTuple)
                         {
                             if (checkTuple.Item1 == CheckEnum.Control)
                             {
@@ -808,13 +847,11 @@ namespace DesARMA.CombinedResponseWindows
             inactivityTimer.Stop();
             try
             {
-                CheckBox checkBox = sender as CheckBox;
-                if (checkBox != null)
+                if (sender is CheckBox checkBox)
                 {
                     if (checkBox.Tag != null)
                     {
-                        var checkTuple = checkBox.Tag as Tuple<CheckEnum, int>;
-                        if (checkTuple != null)
+                        if (checkBox.Tag is Tuple<CheckEnum, int> checkTuple)
                         {
                             if (checkTuple.Item1 == CheckEnum.Control)
                             {
@@ -849,16 +886,13 @@ namespace DesARMA.CombinedResponseWindows
         }
         void IfhaveTwoCheck(int num, CheckEnum checkEnum)
         {
-            var st = treeView1.Items[num] as StackPanel;
-            if (st != null)
+            if (treeView1.Items[num] is StackPanel st)
             {
-                var chC = st.Children[0] as CheckBox;
-                var chS = st.Children[1] as CheckBox;
-                var tri = st.Children[2] as TreeViewItem;
-                if(tri != null && chC != null)
+                if(st.Children[2] is TreeViewItem tri 
+                    &&
+                    st.Children[0] is CheckBox chC)
                 {
-                    var tiH = tri.Header as TextBlock;
-                    if (tiH != null)
+                    if (tri.Header is TextBlock tiH)
                     {
                         if (numbColorInReestr[num - 1] == (int)StatusFolder.NotEmpty)
                         {
@@ -880,12 +914,9 @@ namespace DesARMA.CombinedResponseWindows
                     var isAllCh = true;
                     foreach (var itemF in tri.Items)
                     {
-                        var stF = itemF as StackPanel;
-                        if (stF != null)
+                        if (itemF is StackPanel stF)
                         {
-                            var chYes = stF.Children[0] as CheckBox;
-                            var chNo = stF.Children[1] as CheckBox;
-                            if(chYes != null && chNo != null)
+                            if(stF.Children[0] is CheckBox chYes && stF.Children[1] is CheckBox chNo)
                             {
                                 if (chYes.IsChecked.Value && chNo.IsChecked.Value)
                                 {
@@ -903,8 +934,7 @@ namespace DesARMA.CombinedResponseWindows
                                 {
                                     foreach (var itemTB in stF.Children)
                                     {
-                                        var cutTB = itemTB as TextBlock;
-                                        if (cutTB != null)
+                                        if (itemTB is TextBlock cutTB)
                                         {
                                             if (numbColorInReestr[num - 1] == (int)StatusFolder.NotEmpty)
                                             {
@@ -932,8 +962,7 @@ namespace DesARMA.CombinedResponseWindows
                                     {
                                         foreach (var itemTB in stF.Children)
                                         {
-                                            var cutTB = itemTB as TextBlock;
-                                            if (cutTB != null)
+                                            if (itemTB is TextBlock cutTB)
                                             {
                                                 cutTB.Foreground = this.Resources["BlueCheck"] as SolidColorBrush;
                                             }
@@ -960,16 +989,12 @@ namespace DesARMA.CombinedResponseWindows
         }
         void IfhaveTwoCheckShema(int num, CheckEnum checkEnum)
         {
-            var st = treeViewShema.Items[0] as StackPanel;
-            if (st != null)
+            if (treeViewShema.Items[0] is StackPanel st)
             {
-                var chC = st.Children[0] as CheckBox;
-                var chS = st.Children[1] as CheckBox;
-                var tri = st.Children[2] as TreeViewItem;
-                if (tri != null && chC != null)
+                if (st.Children[2] is TreeViewItem tri &&
+                    st.Children[0] is CheckBox chC)
                 {
-                    var tiH = tri.Header as TextBlock;
-                    if (tiH != null)
+                    if (tri.Header is TextBlock tiH)
                     {
                         if (numbColorShema == (int)StatusFolder.NotEmpty)
                         {
@@ -991,12 +1016,9 @@ namespace DesARMA.CombinedResponseWindows
                     var isAllCh = true;
                     foreach (var itemF in tri.Items)
                     {
-                        var stF = itemF as StackPanel;
-                        if (stF != null)
+                        if (itemF is StackPanel stF)
                         {
-                            var chYes = stF.Children[0] as CheckBox;
-                            var chNo = stF.Children[1] as CheckBox;
-                            if(chYes != null && chNo != null)
+                            if(stF.Children[0] is CheckBox chYes && stF.Children[1] is CheckBox chNo)
                             {
                                 if (chYes.IsChecked.Value && chNo.IsChecked.Value)
                                 {
@@ -1014,8 +1036,7 @@ namespace DesARMA.CombinedResponseWindows
                                 {
                                     foreach (var itemTB in stF.Children)
                                     {
-                                        var cutTB = itemTB as TextBlock;
-                                        if (cutTB != null)
+                                        if (itemTB is TextBlock cutTB)
                                         {
                                             if (numbColorShema == (int)StatusFolder.NotEmpty)
                                             {
@@ -1042,8 +1063,7 @@ namespace DesARMA.CombinedResponseWindows
                                     {
                                         foreach (var itemTB in stF.Children)
                                         {
-                                            var cutTB = itemTB as TextBlock;
-                                            if (cutTB != null)
+                                            if (itemTB is TextBlock cutTB)
                                             {
                                                 cutTB.Foreground = this.Resources["BlueCheck"] as SolidColorBrush;
                                             }
@@ -1068,16 +1088,14 @@ namespace DesARMA.CombinedResponseWindows
                 }
             }
         }
-        void update()
+        void Update()
         {
             List<bool> listIsExpanded = new List<bool>();
             foreach (var item in treeView1.Items)
             {
-                var st = item as StackPanel;
-                if(st != null)
+                if(item is StackPanel st)
                 {
-                    var tri = st.Children[2] as TreeViewItem;
-                    if(tri != null)
+                    if(st.Children[2] is TreeViewItem tri)
                     {
                         listIsExpanded.Add(tri.IsExpanded);
 
@@ -1088,22 +1106,18 @@ namespace DesARMA.CombinedResponseWindows
 
             foreach (var item in treeView1.Items)
             {
-                var st = item as StackPanel;
-                if (st != null)
+                if (item is StackPanel st)
                 {
-                    var chC = st.Children[0] as CheckBox;
-                    var chS = st.Children[1] as CheckBox;
-                    var tri = st.Children[2] as TreeViewItem;
-                    if(chC != null && chS != null && tri != null)
+                    if(st.Children[0] is CheckBox chC  &&
+                        st.Children[1] is CheckBox chS &&
+                        st.Children[2] is TreeViewItem tri)
                     {
                         foreach (var itemF in tri.Items)
                         {
-                            var stF = itemF as StackPanel;
-                            if (stF != null)
+                            if (itemF is StackPanel stF)
                             {
-                                var chYes = stF.Children[0] as CheckBox;
-                                var chNo = stF.Children[1] as CheckBox;
-                                if(chYes!=null && chNo != null)
+                                if(stF.Children[0] is CheckBox chYes &&
+                                    stF.Children[1] is CheckBox chNo)
                                 {
                                     if (chYes.IsChecked.Value || chNo.IsChecked.Value)
                                     {
@@ -1121,11 +1135,10 @@ namespace DesARMA.CombinedResponseWindows
         {
             if (d.ResFiz != null)
             {
-                string strDt = "";
                 var birth = d.DtBirth;
                 if (birth != null)
                 {
-                    return $"{d.Fio}^, ^{birth.ToString().Substring(0, 10)}^ р.н.^, РНОКПП ^{d.Ipn}";
+                    return $"{d.Fio}^, ^{birth.ToString()?[0..10] ?? ""}^ р.н.^, РНОКПП ^{d.Ipn}";
                 }
                 return $"{d.Fio}^, РНОКПП ^{d.Ipn}";
             }
@@ -1144,11 +1157,10 @@ namespace DesARMA.CombinedResponseWindows
         {
             if (d.ResFiz != null)
             {
-                string strDt = "";
                 var birth = d.DtBirth;
                 if (birth != null)
                 {
-                    return $"{d.Fio}, {birth.ToString().Substring(0, 10)} р.н., РНОКПП {d.Ipn}";
+                    return $"{d.Fio}, {birth.ToString()?[0..10] ?? ""} р.н., РНОКПП {d.Ipn}";
                 }
                 return $"{d.Fio}, РНОКПП {d.Ipn}";
             }
@@ -1159,28 +1171,28 @@ namespace DesARMA.CombinedResponseWindows
                 return $"{d.Name} (ЄДРПОУ {d.Code})";
             }
         }
-        private bool? GetCheckBoxControl(int num)
-        {
-            var st = treeView1.Items[num - 1] as StackPanel;
-            if (st != null)
-            {
-                var chC = st.Children[0] as CheckBox;
-                //var chS = st.Children[1] as CheckBox;
-                return chC.IsChecked.Value;
-            }
-            return null;
-        }
-        private bool? GetCheckBoxShema(int num)
-        {
-            var st = treeView1.Items[num - 1] as StackPanel;
-            if (st != null)
-            {
-                //var chC = st.Children[0] as CheckBox;
-                var chS = st.Children[1] as CheckBox;
-                return chS.IsChecked.Value;
-            }
-            return null;
-        }
+        //private bool? GetCheckBoxControl(int num)
+        //{
+        //    var st = treeView1.Items[num - 1] as StackPanel;
+        //    if (st != null)
+        //    {
+        //        var chC = st.Children[0] as CheckBox;
+        //        //var chS = st.Children[1] as CheckBox;
+        //        return chC.IsChecked.Value;
+        //    }
+        //    return null;
+        //}
+        //private bool? GetCheckBoxShema(int num)
+        //{
+        //    var st = treeView1.Items[num - 1] as StackPanel;
+        //    if (st != null)
+        //    {
+        //        //var chC = st.Children[0] as CheckBox;
+        //        var chS = st.Children[1] as CheckBox;
+        //        return chS.IsChecked.Value;
+        //    }
+        //    return null;
+        //}
         private void ButtonCreate_Click(object sender, RoutedEventArgs e)
         {
             inactivityTimer.Stop();
@@ -1224,8 +1236,7 @@ namespace DesARMA.CombinedResponseWindows
             {
                 if (numbColorInReestr[i-1] != 1)
                 {
-                    var st = treeView1.Items[i] as StackPanel;
-                    if(st != null)
+                    if(treeView1.Items[i] is StackPanel st)
                     {
                         var chC = st.Children[0] as CheckBox;
                         if (!chC!.IsChecked!.Value)
@@ -1237,8 +1248,7 @@ namespace DesARMA.CombinedResponseWindows
             }
             if(numbColorShema != 1)
             {
-                var st = treeViewShema.Items[0] as StackPanel;
-                if (st != null)
+                if (treeViewShema.Items[0] is StackPanel st)
                 {
                     var chC = st.Children[0] as CheckBox;
                     if (!chC!.IsChecked!.Value)
@@ -1321,7 +1331,7 @@ namespace DesARMA.CombinedResponseWindows
 
             return list;
         }
-        private bool IsListNoLogicEmpty(List<string> list)
+        private static bool IsListNoLogicEmpty(List<string> list)
         {
             foreach (var item in list)
             {
@@ -1406,26 +1416,26 @@ namespace DesARMA.CombinedResponseWindows
                 return treeViewShema.Items[0] as StackPanel;
             return null;
         }
-        private CheckBox? GetCheckControlReestr(int num)
-        {
-            var st = GetStackPanelReestr(num);
-            if (st != null)
-                if (st.Children.Count > 0)
-                {
-                    return st.Children[0] as CheckBox;
-                }
-            return null;
-        }
-        private CheckBox? GetCheckShemaReestr(int num)
-        {
-            var st = GetStackPanelReestr(num);
-            if (st != null)
-                if (st.Children.Count > 1)
-                {
-                    return st.Children[1] as CheckBox;
-                }
-            return null;
-        }
+        //private CheckBox? GetCheckControlReestr(int num)
+        //{
+        //    var st = GetStackPanelReestr(num);
+        //    if (st != null)
+        //        if (st.Children.Count > 0)
+        //        {
+        //            return st.Children[0] as CheckBox;
+        //        }
+        //    return null;
+        //}
+        //private CheckBox? GetCheckShemaReestr(int num)
+        //{
+        //    var st = GetStackPanelReestr(num);
+        //    if (st != null)
+        //        if (st.Children.Count > 1)
+        //        {
+        //            return st.Children[1] as CheckBox;
+        //        }
+        //    return null;
+        //}
         private TreeViewItem? GetTreeViewItemReestr(int num)
         {
             var st = GetStackPanelReestr(num);
@@ -1510,8 +1520,8 @@ namespace DesARMA.CombinedResponseWindows
         {
             for (int i = 0; i < figurants.Count; i++)
             {
-                List<bool?> listYes = new List<bool?>();
-                List<bool?> listNo = new List<bool?>();
+                List<bool?> listYes = new ();
+                List<bool?> listNo = new ();
 
                 for (int j = 0; j < Reest.abbreviatedName.Count + 1; j++)
                 {
@@ -1524,7 +1534,7 @@ namespace DesARMA.CombinedResponseWindows
             }
             modelContext.SaveChanges();
         }
-        private string GetStringFromCh(List<bool?> listb)
+        private static string GetStringFromCh(List<bool?> listb)
         {
             string retS = "";
 
@@ -1549,7 +1559,7 @@ namespace DesARMA.CombinedResponseWindows
             }
             return retS;
         }
-        private List<bool?> GetChFromString(string? str)
+        private static List<bool?> GetChFromString(string? str)
         {
             List<bool?> ret = new List<bool?>();
 

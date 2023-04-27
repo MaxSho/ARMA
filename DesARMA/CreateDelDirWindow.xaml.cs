@@ -21,16 +21,16 @@ namespace DesARMA
     /// </summary>
     public partial class CreateDelDirWindow : Window
     {
-        private System.Windows.Forms.Timer inactivityTimer = new System.Windows.Forms.Timer();
-        AllDirectories allDirectories { get; set; } = null!;
-        UpdateDel updateDel = null!;
+        private readonly System.Windows.Forms.Timer inactivityTimer = new ();
+        AllDirectories AllDirectories { get; set; } = null!;
+        readonly UpdateDel updateDel = null!;
         public CreateDelDirWindow(AllDirectories allDirectories, UpdateDel updateDel, System.Windows.Forms.Timer inactivityTimer)
         {
             try
             {
                 InitializeComponent();
 
-                this.allDirectories = allDirectories;
+                this.AllDirectories = allDirectories;
                 this.updateDel = updateDel;
                 this.inactivityTimer = inactivityTimer;
                 this.inactivityTimer = inactivityTimer;
@@ -57,10 +57,10 @@ namespace DesARMA
             try
             {
                 stackPanel1.Children.Clear();
-                var list = allDirectories.GetAllNotAvailableDirectories();
+                var list = AllDirectories.GetAllNotAvailableDirectories();
                 for (int i = 0; i < list.Count; i++)
                 {
-                    Button b = new Button();
+                    Button b = new ();
                     b.Click += CreateDirectory;
                     b.Content = list[i];
                     stackPanel1.Children.Add(b);
@@ -77,10 +77,9 @@ namespace DesARMA
             inactivityTimer.Stop();
             try
             {
-                var curB = sender as Button;
-                if (curB != null)
+                if (sender is Button curB)
                 {
-                    Directory.CreateDirectory($"{allDirectories.mainConfig.Folder}\\{curB.Content.ToString()}");
+                    Directory.CreateDirectory($"{AllDirectories.@MainConfig.Folder}\\{curB.Content}");
                     ShowButtons();
                     updateDel(null!, null!);
                     //MessageBox.Show($"Папка {curB.Content.ToString()} створена за розташуванням:\n{allDirectories.mainConfig.Folder}\\{curB.Content.ToString()}");
@@ -100,10 +99,9 @@ namespace DesARMA
             {
                 for (int i = 0; i < stackPanel1.Children.Count; i++)
                 {
-                    var curB = stackPanel1.Children[i] as Button;
-                    if (curB != null)
+                    if (stackPanel1.Children[i] is Button curB)
                     {
-                        Directory.CreateDirectory($"{allDirectories.mainConfig.Folder}\\{curB.Content.ToString()}");
+                        Directory.CreateDirectory($"{AllDirectories.@MainConfig.Folder}\\{curB.Content}");
                     }
                 }
                 ShowButtons();

@@ -22,6 +22,7 @@ namespace DesARMA
     /// <summary>
     /// Interaction logic for ListDefendantsWindow.xaml
     /// </summary>
+    /// 
     public partial class ListDefendantsWindow : System.Windows.Window
     {
         public static ListDefendantsWindow? Instance { get; private set; }
@@ -37,8 +38,9 @@ namespace DesARMA
         public static bool isOpenWindFig = true;
         MainWindow? win;
         bool isMeInWin = false;
-        
-        public ListDefendantsWindow(ModelContext modelContext, string numberIn, string tit, bool isConn, System.Windows.Forms.Timer inactivityTimer)
+        UpdateDel updateDel;
+
+        public ListDefendantsWindow(ModelContext modelContext, string numberIn, string tit, bool isConn, UpdateDel updateDel, System.Windows.Forms.Timer inactivityTimer)
         {
             try
             {
@@ -48,7 +50,7 @@ namespace DesARMA
                 this.numberIn = numberIn;
                 this.Title = tit;
                 this.isConn = isConn;
-
+                this.updateDel = updateDel;
 
 
 
@@ -144,29 +146,21 @@ namespace DesARMA
 
                 if (def_FO_Window.ShowDialog() == true)
                 {
-                    //MessageBox.Show($"{def_UO_Window.uo.name} \n {def_UO_Window.uo.code}  \n {def_UO_Window.uo.isResid}");
                     if (!def_FO_Window.isDelete)
                     {
                         if (def_FO_Window.figurant.Status == 2 )
                         {
                             def_FO_Window.figurant.LoginName = curM!.LoginName;
                             listConnectedPeople.Add(def_FO_Window.figurant);
-                            //var temp = new Figurant() { Status = true, NumbInput = numberIn, Name = def_UO_Window.figurant.Name, Ipn = def_UO_Window.figurant.Code, ResFiz = def_UO_Window.figurant.Status };
                             modelContext.Figurants.Add(def_FO_Window.figurant);
                             modelContext.SaveChanges();
-                            // listDictionaryConnectedPeople.Add(temp.Id, def_UO_Window.uo);
-
-                            //def_UO_Window.uo.IdinGlobDB = temp.Id;
 
                         }
                         else
                         {
                             def_FO_Window.figurant.LoginName = curM.LoginName;
-                            listDefendants.Add(def_FO_Window.figurant);
-                            //var temp = new Figurant() { Status = true, NumbInput = numberIn, Name = def_UO_Window.figurant.Name, Ipn = def_UO_Window.figurant.Code, ResFiz = def_UO_Window.figurant.Status };
-                            modelContext.Figurants.Add(def_FO_Window.figurant);
+                            listDefendants.Add(def_FO_Window.figurant); modelContext.Figurants.Add(def_FO_Window.figurant);
                             modelContext.SaveChanges();
-                            // listDictionaryDefendants.Add(temp.Id, def_UO_Window.figurant);
                         }
 
                     }
@@ -174,7 +168,7 @@ namespace DesARMA
                 }
                 else
                 {
-                    // MessageBox.Show("Авторизация не пройдена");
+                    
                 }
             }
             catch (Exception ex)
@@ -205,33 +199,20 @@ namespace DesARMA
                         {
                             var prevMc = modelContext.MainConfigs.Find(curM.NumbInput);
 
-                           // AllDirectories allDirectories = new AllDirectories(curM, prevMc, ClickOnCheckBox, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
-                           // this.Resources["GreenEmpty"] as SolidColorBrush
-                           // , treeView1, modelContext
-                           //);
-                           // allDirectories.CreateNewTree();
 
                             def_UO_Window.figurant.LoginName = curM!.LoginName;
                             listConnectedPeople.Add(def_UO_Window.figurant);
-                            //var temp = new Figurant() { Status = true, NumbInput = numberIn, Name = def_UO_Window.figurant.Name, Ipn = def_UO_Window.figurant.Code, ResFiz = def_UO_Window.figurant.Status };
                             modelContext.Figurants.Add(def_UO_Window.figurant);
                             modelContext.SaveChanges();
 
                         
-                        
-
-                            // listDictionaryConnectedPeople.Add(temp.Id, def_UO_Window.uo);
-                            //def_UO_Window.uo.IdinGlobDB = temp.Id;
-
                         }
                         else
                         {
                             def_UO_Window.figurant.LoginName = curM!.LoginName;
                             listDefendants.Add(def_UO_Window.figurant);
-                            //var temp = new Figurant() { Status = true, NumbInput = numberIn, Name = def_UO_Window.figurant.Name, Ipn = def_UO_Window.figurant.Code, ResFiz = def_UO_Window.figurant.Status };
                             modelContext.Figurants.Add(def_UO_Window.figurant);
                             modelContext.SaveChanges();
-                           // listDictionaryDefendants.Add(temp.Id, def_UO_Window.figurant);
                         }
 
                     }
@@ -266,7 +247,6 @@ namespace DesARMA
                         Def_UO_Window def_UO_Window = new Def_UO_Window(def, isConn, inactivityTimer);
                         if (def_UO_Window.ShowDialog() == true)
                         {
-                            //MessageBox.Show($"{def_UO_Window.uo.name} \n {def_UO_Window.uo.code}  \n {def_UO_Window.uo.isResid}");
                             if (!def_UO_Window.isDelete)
                             {
                             
@@ -281,7 +261,7 @@ namespace DesARMA
                         }
                         else
                         {
-                            // MessageBox.Show("Авторизация не пройдена");
+                          
                         }
                     }
                     else
@@ -289,7 +269,6 @@ namespace DesARMA
                         Def_FO_Window def_FO_Window = new Def_FO_Window(def, isConn, inactivityTimer);
                         if (def_FO_Window.ShowDialog() == true)
                         {
-                            //MessageBox.Show($"{def_UO_Window.uo.name} \n {def_UO_Window.uo.code}  \n {def_UO_Window.uo.isResid}");
                             if (!def_FO_Window.isDelete)
                             {
                             
@@ -304,7 +283,7 @@ namespace DesARMA
                         }
                         else
                         {
-                            // MessageBox.Show("Авторизация не пройдена");
+                            
                         }
                     }
 
@@ -318,45 +297,46 @@ namespace DesARMA
             inactivityTimer.Start();
         }
         private void UpdateListButton()
-           {
-                stackPanel1.Children.Clear();
-                int i = 1;
-                if (isConn)
-                    foreach (var item in listConnectedPeople)
+        {
+            stackPanel1.Children.Clear();
+            int i = 1;
+            if (isConn)
+                foreach (var item in listConnectedPeople)
+                {
+                    var b = new System.Windows.Controls.Button();
+                    b.FontSize = 16;
+                    b.Tag = i - 1;
+                    if (item.ResFiz != null)
                     {
-                        var b = new System.Windows.Controls.Button();
-                        b.FontSize = 16;
-                        b.Tag = i - 1;
-                        if(item.ResFiz != null)
-                        {
-                            b.Content = $"{i++}. {item.Fio} {item.Ipn}";
-                        }
-                        else
-                        {
-                            b.Content = $"{i++}. {item.Name} {item.Code}";
-                        }
-                    
-                        b.Click += DefClickButton;
-                        stackPanel1.Children.Add(b);
+                        b.Content = $"{i++}. {item.Fio} {item.Ipn}";
                     }
-                else
-                    foreach (var item in listDefendants)
+                    else
                     {
-                        var b = new System.Windows.Controls.Button();
-                        b.FontSize = 16;
-                        b.Tag = i - 1;
-                        if (item.ResFiz != null)
-                        {
-                            b.Content = $"{i++}. {item.Fio} {item.Ipn}";
-                        }
-                        else
-                        {
-                            b.Content = $"{i++}. {item.Name} {item.Code}";
-                        }
-                        b.Click += DefClickButton;
-                        stackPanel1.Children.Add(b);
+                        b.Content = $"{i++}. {item.Name} {item.Code}";
                     }
-            }
+
+                    b.Click += DefClickButton;
+                    stackPanel1.Children.Add(b);
+                }
+            else
+                foreach (var item in listDefendants)
+                {
+                    var b = new System.Windows.Controls.Button();
+                    b.FontSize = 16;
+                    b.Tag = i - 1;
+                    if (item.ResFiz != null)
+                    {
+                        b.Content = $"{i++}. {item.Fio} {item.Ipn}";
+                    }
+                    else
+                    {
+                        b.Content = $"{i++}. {item.Name} {item.Code}";
+                    }
+                    b.Click += DefClickButton;
+                    stackPanel1.Children.Add(b);
+                }
+            updateDel(new object(), new RoutedEventArgs());
+        }
 
         private void Window_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
