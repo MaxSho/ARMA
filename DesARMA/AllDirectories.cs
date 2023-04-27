@@ -307,7 +307,7 @@ namespace DesARMA
                             }, ct);
 
 
-                            
+                            List<Figurant> figsNotNeeded = new List<Figurant>() ;
 
                             //{
                             //    Base, // - дані ЮО, ФО;
@@ -322,7 +322,7 @@ namespace DesARMA
                                 if (Figurants != null)
                                 {
                                     var figs = (from f in Figurants where f.Ipn != null || f.Fio != null select f).ToList();
-                                    var figsNotNeeded = (from f in Figurants where f.Code != null || f.Name != null select f).ToList();
+                                    figsNotNeeded = (from f in Figurants where f.Code != null || f.Name != null select f).ToList();
                                     System.Windows.Application.Current.Dispatcher.Invoke(() =>
                                     {
                                         progresWindow.CreateListFig(figs);
@@ -403,7 +403,7 @@ namespace DesARMA
                                                 {
                                                     var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500,
                                                     SearchType.Founder, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
-                                                    progresWindow, item, modelContext, true);
+                                                    progresWindow, item, modelContext, true, numberR);
                                                     //dsd.CreateExel();
                                                     //dsd.CreatePDF();
 
@@ -448,7 +448,7 @@ namespace DesARMA
                                                 {
                                                     var dsd = new SearchEDR(item.Code, item.Name, null, 500,
                                                     SearchType.Founder, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}", 
-                                                    progresWindow, item, modelContext);
+                                                    progresWindow, item, modelContext, false, numberR);
                                                     //dsd.CreateExel();
                                                     //dsd.CreatePDF();
 
@@ -498,7 +498,7 @@ namespace DesARMA
                                 if (Figurants != null)
                                 {
                                     var figs = (from f in Figurants where f.Ipn != null || f.Fio != null select f).ToList();
-                                    var figsNotNeeded = (from f in Figurants where f.Code != null || f.Name != null select f).ToList();
+                                    figsNotNeeded = (from f in Figurants where f.Code != null || f.Name != null select f).ToList();
 
                                     System.Windows.Application.Current.Dispatcher.Invoke(() =>
                                     {
@@ -519,7 +519,7 @@ namespace DesARMA
                                             {
                                                 var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500,
                                                 SearchType.Chief, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
-                                                progresWindow, item, modelContext, true);
+                                                progresWindow, item, modelContext, true, numberR);
                                                 //dsd.CreateExel();
                                                 //dsd.CreatePDF();
 
@@ -558,7 +558,7 @@ namespace DesARMA
                                 if (Figurants != null)
                                 {
                                     var figs = (from f in Figurants where f.Ipn != null || f.Fio != null select f).ToList();
-                                    var figsNotNeeded = (from f in Figurants where f.Code != null || f.Name != null select f).ToList();
+                                    figsNotNeeded = (from f in Figurants where f.Code != null || f.Name != null select f).ToList();
                                     System.Windows.Application.Current.Dispatcher.Invoke(() =>
                                     {
                                         progresWindow.CreateListFig(figs);
@@ -578,7 +578,7 @@ namespace DesARMA
                                             {
                                                 var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500,
                                                 SearchType.Assignee, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
-                                                progresWindow, item, modelContext, true);
+                                                progresWindow, item, modelContext, true, numberR);
                                             }
                                             catch (Exception ex)
                                             {
@@ -613,7 +613,7 @@ namespace DesARMA
                                 if (Figurants != null)
                                 {
                                     var figs = (from f in Figurants where f.Code != null || f.Name != null select f).ToList();
-                                    var figsNotNeeded = (from f in Figurants where f.Ipn != null || f.Fio != null select f).ToList();
+                                    figsNotNeeded = (from f in Figurants where f.Ipn != null || f.Fio != null select f).ToList();
 
                                     await Task.Run(() =>
                                     {
@@ -643,7 +643,7 @@ namespace DesARMA
                                             {
                                                 var dsd = new SearchEDR(item.Code, item.Name, null, 500,
                                                 SearchType.Base, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
-                                                progresWindow, item, modelContext);
+                                                progresWindow, item, modelContext, false, numberR);
                                             }
                                             catch (Exception ex)
                                             {
@@ -676,7 +676,7 @@ namespace DesARMA
                                 if (Figurants != null)
                                 {
                                     var figs = (from f in Figurants where f.Ipn != null || f.Fio != null select f).ToList();
-                                    var figsNotNeeded = (from f in Figurants where f.Name != null || f.Name != null select f).ToList();
+                                    figsNotNeeded = (from f in Figurants where f.Name != null || f.Name != null select f).ToList();
 
                                     System.Windows.Application.Current.Dispatcher.Invoke(() =>
                                     {
@@ -700,7 +700,7 @@ namespace DesARMA
                                             {
                                                 var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500,
                                                 SearchType.Base, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
-                                                progresWindow, item, modelContext, true);
+                                                progresWindow, item, modelContext, true, numberR);
 
                                                
                                             }
@@ -720,7 +720,7 @@ namespace DesARMA
                                     {
                                         var listC = AllDirectories.GetBoolsFromString(item.Control);
                                         var listS = AllDirectories.GetBoolsFromString(item.Shema);
-                                        
+
                                         listC[numberR - 1] = false;
                                         listS[numberR - 1] = true;
 
@@ -729,16 +729,7 @@ namespace DesARMA
                                     }
                                 }
                             }
-                            modelContext.SaveChanges();
-                            CreateNewTree();
-
-                            if (mainWindow.treeView1.Items[numberR - 1] is StackPanel st)
-                            {
-                                if (st.Children[2] is System.Windows.Controls.Button bnew)
-                                {
-                                    bnew.IsEnabled = false;
-                                }
-                            }
+                            
 
 
                             await Task.Run(() =>
@@ -747,9 +738,24 @@ namespace DesARMA
                                 {
                                     if (progresWindow.GetIsEnd())
                                     {
+                                        
+
                                         System.Windows.Application.Current.Dispatcher.Invoke(() =>
                                         {
+                                            
+
                                             progresWindow.CreateEDR();
+                                            modelContext.SaveChanges();
+                                            CreateNewTree();
+
+                                            if (mainWindow.treeView1.Items[numberR - 1] is StackPanel st)
+                                            {
+                                                if (st.Children[2] is System.Windows.Controls.Button bnew)
+                                                {
+                                                    bnew.IsEnabled = false;
+                                                }
+                                            }
+
                                         });
                                         break;
                                     }
