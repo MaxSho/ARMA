@@ -331,15 +331,21 @@
             </MenuItem>
             <MenuItem Header="Edit" ></MenuItem>
             <MenuItem Header="View" ></MenuItem>-->
-            <Label>Version 2.0</Label>
+            <Label>Version 2.0.3</Label>
         </Menu>
 
         
         <ScrollViewer Grid.Column="4" Grid.Row="3"  Grid.RowSpan="21" Background="{StaticResource 1ColorStyle}"
-                      VerticalScrollBarVisibility="Auto">
+                      VerticalScrollBarVisibility="Auto" Padding="0 10 0 0">
             <StackPanel 
-                        x:Name="stackPanelButtonsGetData">
-            
+                        x:Name="stackPanelButtonsGetData" >
+                <Button Background="Transparent"  Width="50"
+                        BorderThickness="0"
+                ToolTip="Проставити усюди прапорці ні(в процесі розробки)">
+                    <Image x:Name="allCheckBoxImage" Grid.Column="0" Grid.Row="1" Margin="1"
+                            Source="/DesARMA;component/Drawings/allcheckbox/652733.png" 
+                   ></Image>
+                </Button>
             </StackPanel>
         </ScrollViewer>
         <Label Grid.Column="4" Grid.Row="2" Padding="15 15 0 0" Background="{StaticResource 1ColorStyle}" 

@@ -123,22 +123,26 @@ namespace DesARMA.Automation
                 throw ex;
             }
         }
-        public void SaveToDB()
+        public void SavesubjectsMoreToDB()
         {
-            if(subjectsMore != null)
-            foreach (var item in subjectsMore)
+            var modelContextEDR = new ModelContextEDR();
+            if (subjectsMore != null)
             {
-                modelContextEDR.Subjects.Add(item);
-                modelContextEDR.SaveChanges();
+                foreach (var item in subjectsMore)
+                {
+                    modelContextEDR.Subjects.Add(item);
                 }
+                modelContextEDR.SaveChanges();
+            }
+            
         }
         public void ToCheckFigInTree(int indR)
         {
+            var modelContext = new ModelContext();
             var listC = AllDirectories.GetBoolsFromString(figurant.Control);
             var listS = AllDirectories.GetBoolsFromString(figurant.Shema);
             if (subjects != null && subjects.Count > 0)
             {
-                //figurant.Control = 
                 listC[indR] = true;
                 listS[indR] = false;
             }
@@ -149,6 +153,7 @@ namespace DesARMA.Automation
             }
             figurant.Control = AllDirectories.GetStringFromBools(listC);
             figurant.Shema = AllDirectories.GetStringFromBools(listS);
+            modelContext.SaveChanges();
         }
         private string? GetWhithout(string? str)
         {
@@ -305,37 +310,7 @@ namespace DesARMA.Automation
         }
         public async void GetInfoSubjectsMore()
         {
-            //first app
-            //{
-            //    subjectsMore = new List<Subject>();
-            //    if (subjects != null)
-            //        for (int i = 0; i < subjects.Count; i++)
-            //        {
-            //            var id = subjects[i].id;
-            //            if (id != null)
-            //            {
-            //                string response = "";
-
-            //                var task = Task.Run(async () => { // Викликаємо метод GetResp() в асинхронному таску
-            //                    try
-            //                    {
-            //                        response = await GetRespId((uint)id);
-            //                        subjectsMore.Add(JsonConvert.DeserializeObject<Subject>(response));
-            //                    }
-            //                    catch (Exception ex)
-            //                    {
-            //                        Debug.WriteLine($"\t THROW {i} - subMore {DateTime.Now}");
-            //                        throw ex;
-            //                    }
-            //                });
-            //                Debug.WriteLine($"\t {i} - start subMore {DateTime.Now}");
-            //                task.Wait();
-            //                Debug.WriteLine($"\t {i} - finish subMore {DateTime.Now}");
-            //            }
-            //        }
-            //}
-
-            //second
+            
             {
                 subjectsMore = new List<Subject>();
                 if (subjects != null)
@@ -354,7 +329,152 @@ namespace DesARMA.Automation
                                 try
                                 {
                                     response = await GetRespId((uint)id);
-                                    subjectsMore.Add(JsonConvert.DeserializeObject<Subject>(response));
+                                    var curr = JsonConvert.DeserializeObject<Subject>(response);
+                                    bool isCor = false;
+                                    if(searchType == SearchType.Founder)
+                                    {
+                                        var listF = curr.founders;
+                                        if(listF != null)
+                                        {
+                                            foreach (var item in listF)
+                                            {
+                                                if(item != null)
+                                                {
+                                                    if (isFO)
+                                                    {
+                                                        if (item.first_middle_name != null)
+                                                        {
+                                                            if(item.last_name != null)
+                                                            {
+                                                                string nameItem = item.last_name + " " + item.first_middle_name;
+                                                                nameItem =  nameItem.Trim().ToLower();
+                                                                if (nameItem == name!.ToLower())
+                                                                {
+                                                                    isCor = true;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if(item.code == code)
+                                                        {
+                                                            isCor = true;
+                                                        }
+                                                    }
+                                                }
+                                                
+                                            }
+                                        }
+                                        else
+                                        {
+
+                                        }
+                                        
+                                    }
+                                    else if(searchType == SearchType.Beneficiar) 
+                                    {
+                                        List<Beneficiaries> listF = null!;
+                                        try
+                                        {
+                                            var beneficiariesArray = JArray.FromObject(curr.beneficiaries);
+                                            listF = JsonConvert.DeserializeObject<List<Beneficiaries>>(beneficiariesArray.ToString());
+                                        }
+                                        catch{ }
+                                        
+                                        if (listF != null)
+                                        {
+                                            foreach (var item in listF)
+                                            {
+                                                if (item != null)
+                                                {
+                                                    if (isFO)
+                                                    {
+                                                        if (item.first_middle_name != null)
+                                                        {
+                                                            if (item.last_name != null)
+                                                            {
+                                                                string nameItem = item.last_name + " " + item.first_middle_name;
+                                                                nameItem = nameItem.Trim().ToLower();
+                                                                if (nameItem == name!.ToLower())
+                                                                {
+                                                                    isCor = true;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                    else if(searchType == SearchType.Assignee) 
+                                    {
+                                        var listF = curr.heads;
+                                        if (listF != null)
+                                        {
+                                            foreach (var item in listF)
+                                            {
+                                                if (item != null && item.role == 2)
+                                                {
+                                                    if (isFO)
+                                                    {
+                                                        if (item.first_middle_name != null)
+                                                        {
+                                                            if (item.last_name != null)
+                                                            {
+                                                                string nameItem = item.last_name + " " + item.first_middle_name;
+                                                                nameItem = nameItem.Trim().ToLower();
+                                                                if (nameItem == name!.ToLower())
+                                                                {
+                                                                    isCor = true;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                    else if(searchType == SearchType.Chief) 
+                                    {
+                                        var listF = curr.heads;
+                                        if (listF != null)
+                                        {
+                                            foreach (var item in listF)
+                                            {
+                                                if (item != null && item.role == 3)
+                                                {
+                                                    if (isFO)
+                                                    {
+                                                        if (item.first_middle_name != null)
+                                                        {
+                                                            if (item.last_name != null)
+                                                            {
+                                                                string nameItem = item.last_name + " " + item.first_middle_name;
+                                                                nameItem = nameItem.Trim().ToLower();
+                                                                if (nameItem == name!.ToLower())
+                                                                {
+                                                                    isCor = true;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        isCor = true;
+                                    }
+                                    if (isCor)
+                                    {
+                                        subjectsMore.Add(curr);
+                                    }
+                                    
                                 }
                                 catch (Exception ex)
                                 {
@@ -369,19 +489,26 @@ namespace DesARMA.Automation
                     Debug.WriteLine($"\t - start subMore ALL {DateTime.Now}");
                     await Task.WhenAll(tasks).ContinueWith( _ =>
                     {
-                        Debug.WriteLine($"\t - finish subMore ALL {DateTime.Now}");
-                        CreatePDF();
-                        if (subjects != null && subjects?.Count == 0)
+                        try
                         {
-                            progresWindow.NotDataFigur(figurant);
-                                
+                            Debug.WriteLine($"\t - finish subMore ALL {DateTime.Now}");
+                            CreatePDF();
+                            if (subjectsMore != null && subjectsMore?.Count == 0)
+                            {
+                                progresWindow.NotDataFigur(figurant);
+
+                            }
+                            else
+                            {
+                                progresWindow.SetDoneFigNow(figurant);
+                            }
+                            ToCheckFigInTree(numberR - 1);
+                            SavesubjectsMoreToDB();
                         }
-                        else
+                        catch(Exception ex)
                         {
-                            progresWindow.SetDoneFigNow(figurant);
+                            MessageBox.Show(ex.Message);
                         }
-                        ToCheckFigInTree(numberR - 1);
-                        SaveToDB();
                         
                     }
                         );
@@ -486,47 +613,54 @@ namespace DesARMA.Automation
         }
         public void CreatePDF()
         {
-            if (subjectsMore != null && subjectsMore.Count > 0)
+            try
             {
-                List<List<List<string?>?>> listAll = new();
-                List<bool> listBoolIsFiz = new();
-                foreach (var item in subjectsMore)
+                if (subjectsMore != null && subjectsMore.Count > 0)
                 {
-                    listBoolIsFiz.Add(item.code == null);
+                    List<List<List<string?>?>> listAll = new();
+                    List<bool> listBoolIsFiz = new();
+                    foreach (var item in subjectsMore)
+                    {
+                        listBoolIsFiz.Add(item.code == null);
 
-                    if (item.code != null)
-                        listAll.Add(GetListAboutSubPDF(item));
+                        if (item.code != null)
+                            listAll.Add(GetListAboutSubPDF(item));
+                        else
+                            listAll.Add(GetListAboutSubPDFFiz(item));
+                        //GetListAboutSubPDFFiz
+                    }
+
+                    PDF pDF = new PDF();
+
+                    string nameFolder = $"\\{GetWhithout(name)}_{code}";
+                    string nameFile;
+                    if (code == null || code == "")
+                        nameFile = $"\\Витяг_{StringExtension.GetStringForSearchTypeUKR(searchType, isFO)}_{GetWhithout(name)}.docx";
                     else
-                        listAll.Add(GetListAboutSubPDFFiz(item));
-                    //GetListAboutSubPDFFiz
+                        nameFile = $"\\Витяг_{StringExtension.GetStringForSearchTypeUKR(searchType, isFO)}_{code}.docx";
+
+                    string nameFileTemp;
+                    if (code == null || code == "")
+                        nameFileTemp = $"\\Витяг_{StringExtension.GetStringForSearchTypeUKR(searchType, isFO)}_{GetWhithout(name)}Temp.docx";
+                    else
+                        nameFileTemp = $"\\Витяг_{StringExtension.GetStringForSearchTypeUKR(searchType, isFO)}_{code}Temp.docx";
+
+                    if (!Directory.Exists(path + nameFolder))
+                        Directory.CreateDirectory(path + nameFolder);
+
+                    pDF.CreateNamesFieldEDR_PDF(listAll, new object[] { (figurant.Ipn == null && figurant.Fio == null), code ?? "не заданий", searchType ?? SearchType.Base },
+                        listBoolIsFiz,
+                        System.IO.Path.Combine(Environment.CurrentDirectory + "\\FilesReestSh\\EDRSh.docx"),
+                        path + nameFolder + nameFileTemp,
+                        path + nameFolder + nameFile
+                        );
+
+
                 }
-
-                PDF pDF = new PDF();
-
-                string nameFolder = $"\\{GetWhithout(name)}_{code}";
-                string nameFile;
-                if (code == null)
-                    nameFile = $"\\Витяг_{StringExtension.GetStringForSearchTypeUKR(searchType, isFO)}_{GetWhithout(name)}.docx";
-                else
-                    nameFile = $"\\Витяг_{StringExtension.GetStringForSearchTypeUKR(searchType, isFO)}_{code}.docx";
-
-                string nameFileTemp;
-                if (code == null)
-                    nameFileTemp = $"\\Витяг_{StringExtension.GetStringForSearchTypeUKR(searchType, isFO)}_{GetWhithout(name)}Temp.docx";
-                else
-                    nameFileTemp = $"\\Витяг_{StringExtension.GetStringForSearchTypeUKR(searchType, isFO)}_{code}Temp.docx";
-
-                if (!Directory.Exists(path + nameFolder))
-                    Directory.CreateDirectory(path + nameFolder);
-
-                pDF.CreateNamesFieldPDF(listAll, new object[] { (figurant.Ipn == null && figurant.Fio == null), code ?? "не заданий", searchType ?? SearchType.Base },
-                    listBoolIsFiz,
-                    System.IO.Path.Combine(Environment.CurrentDirectory + "\\FilesReestSh\\EDRSh.docx"),
-                    path + nameFolder + nameFileTemp,
-                    path + nameFolder + nameFile
-                    );
-
-
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
 
 
@@ -905,7 +1039,7 @@ namespace DesARMA.Automation
                 strings.Add(new List<string?>() { $"{subject.executive_power?.name}, {subject.executive_power?.code}" });
             //8  -- 7
             strings.Add(new List<string?>() { subject.address?.address });
-            //24 -- 7.1
+            //24 -- 8
             strings.Add(new List<string?>());
             if (subject.contacts != null)
             {
@@ -917,11 +1051,11 @@ namespace DesARMA.Automation
                     }
                 }
             }
-            //25 -- 7.2
+            //25 -- 9
             strings.Add(new List<string?>() { subject.contacts?.email });
-            //9  -- 8
+            //9  -- 10
             strings.Add(new List<string?>() { $"{subject.primary_activity_kind?.code} {subject.primary_activity_kind?.name}" });
-            //10 -- 9
+            //10 -- 11
             strings.Add(new List<string?>());
             if (subject.activity_kinds != null)
             {
@@ -937,50 +1071,260 @@ namespace DesARMA.Automation
                     }
                 }
             }
-            //11 -- 10
+            //11 -- 12
             strings.Add(new List<string?>() { subject.management });
-            //12-15 -- 11
+            //12-15 -- 13
             strings.Add(new List<string?>());
             if (subject.founders != null)
             {
                 foreach (var item in subject.founders)
                 {
-                    strings.Last()?.Add($"{item?.name}, {item?.country}, {item?.address?.address}, {item?.capital}");
+                    if(item != null)
+                    {
+                        string strVal = "";
+                        bool isEmp = true;
+                        if (item.name != null && item.name != "")
+                        {
+                            strVal += item.name;
+                            isEmp = false;
+                        }
+                        if (item.country != null && item.country != "")
+                        {
+                            if (isEmp)
+                            {
+                                strVal += $"{item.country}";
+                            }
+                            else
+                            {
+                                strVal += $", {item.country}";
+                            }
+                            isEmp = false;
+                        }
+                        if (item!.address != null && item!.address.address != null && item!.address.address != "")
+                        {
+                            if (isEmp)
+                            {
+                                strVal += $"{item.address.address}";
+                            }
+                            else
+                            {
+                                strVal += $", {item.address.address}";
+                            }
+                            isEmp = false;
+                        }
+                        if (item.capital != null)
+                        {
+                            if (isEmp)
+                            {
+                                strVal += $"Розмір частки засновника (учасника): {item.capital} грн.";
+                            }
+                            else
+                            {
+                                strVal += $", Розмір частки засновника (учасника): {item.capital} грн.";
+                            }
+                            isEmp = false;
+                        }
+                        strings.Last()?.Add(strVal);
+                    }
+                    
+                    
                 }
             }
-            //60-67 -- 12
+            //60-67 -- 14
             strings.Add(new List<string?>());
-            if (subject.beneficiaries is JArray arr)
+
+            //
+            //
+
+            try
             {
-                var listBenef = JsonConvert.DeserializeObject<List<Beneficiaries>>(arr.ToString());
+                var beneficiariesArray = JArray.FromObject(subject.beneficiaries);
+                var listBenef = JsonConvert.DeserializeObject<List<Beneficiaries>>(beneficiariesArray.ToString());
                 if (listBenef != null)
                 {
                     foreach (var item in listBenef)
                     {
-                        if (item?.role == 19)
+                        if (item != null && item.role == 19)
                         {
                             var str = item?.beneficiaries_type == 5 ? "Прямий вирішальний вплив" :
-                                item?.beneficiaries_type == 6 ? "Непрямий вирішальний вплив" :
-                                item?.beneficiaries_type == 7 ? "Прямий та непрямий вирішальний вплив" : "";
+                                       item?.beneficiaries_type == 6 ? "Непрямий вирішальний вплив" :
+                                       item?.beneficiaries_type == 7 ? "Прямий та непрямий вирішальний вплив" : "";
 
-                            strings.Last()?.Add(
-                                $"{item?.name}, " +
-                                $"{item?.code}, " +
-                                $"{item?.country}, " +
-                                $"{item?.address?.address} " +
-                                $"{item?.last_name + " " + item?.first_middle_name ?? ""}, " +
-                                $"{str} " +
-                                $"{item?.role_text}, " +
-                                $"{item?.interest}, ");
+                            string strVal = "";
+                            bool isEmp = true; 
+                            if (item!.name != null && item.name != "")
+                            {
+                                strVal += $"{item?.name}";
+                                isEmp = false;
+                            }
+                            if (item!.code != null && item.code != "")
+                            {
+                                if (isEmp)
+                                {
+                                    strVal += $"{item?.code}";
+                                }
+                                else
+                                {
+                                    strVal += $", {item?.code}";
+                                }
+                                isEmp = false;
+                            }
+                            if(item!.name != null && item.name != "" || item!.code != null && item.code != "")
+                            {
+                                strVal += ",\n";
+                                if (item!.last_name != null && item.last_name != "" || item!.first_middle_name != null && item.first_middle_name != "")
+                                {
+
+                                    if (isEmp)
+                                    {
+                                        strVal += $"{item.last_name + " " + item.first_middle_name}";
+                                    }
+                                    else
+                                    {
+                                        strVal += $"{item.last_name + " " + item.first_middle_name}";
+                                    }
+                                    isEmp = false;
+                                }
+                            }
+                            else
+                            {
+                                if (item!.last_name != null && item.last_name != "" || item!.first_middle_name != null && item.first_middle_name != "")
+                                {
+
+                                    if (isEmp)
+                                    {
+                                        strVal += $"{item.last_name + " " + item.first_middle_name}";
+                                    }
+                                    else
+                                    {
+                                        strVal += $", {item.last_name + " " + item.first_middle_name}";
+                                    }
+                                    isEmp = false;
+                                }
+                            }
+                            
+                            if (item!.role_text != null && item!.role_text != "")
+                            {
+                                if (isEmp)
+                                {
+                                    strVal += $"{item!.role_text}";
+                                }
+                                else
+                                {
+                                    strVal += $", {item!.role_text}";
+                                }
+                                isEmp = false;
+                            }
+                            if (str != null && str != "")
+                            {
+
+                                if (isEmp)
+                                {
+                                    strVal += $"{str}";
+                                }
+                                else
+                                {
+                                    strVal += $", {str}";
+                                }
+                                isEmp = false;
+                            }
+
+                            
+                            if (item!.country != null && item.country != "")
+                            {
+                                
+                                if (isEmp)
+                                {
+                                    strVal += $"{item?.country}";
+                                }
+                                else
+                                {
+                                    strVal += $", {item?.country}";
+                                }
+                                isEmp = false;
+                            }
+                            if (item!.address != null && item!.address.address != null && item!.address.address != "")
+                            {
+                                if (isEmp)
+                                {
+                                    strVal += $"{item.address.address}";
+                                }
+                                else
+                                {
+                                    strVal += $", {item.address.address}";
+                                }
+                                isEmp = false;
+                            }
+                            
+                            if (item!.interest != null)
+                            {
+                                if (isEmp)
+                                {
+                                    strVal += $"Відсоток частки статутного капіталу або відсоток права голосу: {item!.interest} %";
+                                }
+                                else
+                                {
+                                    strVal += $", Відсоток частки статутного капіталу або відсоток права голосу: {item!.interest} %";
+                                }
+                                isEmp = false;
+                            }
+                            strings.Last()?.Add(strVal);
+
                         }
                     }
                 }
             }
-            if (subject.beneficiaries is JObject obj)
+            catch { }
+
+            try
             {
-                var reason = JsonConvert.DeserializeObject<Reason>(obj.ToString());
+                var beneficiariesValue = JValue.FromObject(subject.beneficiaries);
+                var reason = JsonConvert.DeserializeObject<Reason>(beneficiariesValue.ToString());
                 strings.Last()?.Add(reason.reason);
             }
+            catch { }
+
+            
+           
+
+            //if (subject.beneficiaries is JArray arr)
+            //{
+            //    var listBenef = JsonConvert.DeserializeObject<List<Beneficiaries>>(arr.ToString());
+            //    if (listBenef != null)
+            //    {
+            //        foreach (var item in listBenef)
+            //        {
+            //            if (item?.role == 19)
+            //            {
+            //                var str = item?.beneficiaries_type == 5 ? "Прямий вирішальний вплив" :
+            //                    item?.beneficiaries_type == 6 ? "Непрямий вирішальний вплив" :
+            //                    item?.beneficiaries_type == 7 ? "Прямий та непрямий вирішальний вплив" : "";
+
+            //                strings.Last()?.Add(
+            //                    $"{item?.name}, " +
+            //                    $"{item?.code}, " +
+            //                    $"{item?.country}, " +
+            //                    $"{item?.address?.address} " +
+            //                    $"{item?.last_name + " " + item?.first_middle_name ?? ""}, " +
+            //                    $"{str} " +
+            //                    $"{item?.role_text}, " +
+            //                    $"{item?.interest}, ");
+            //            }
+            //        }
+            //    }
+            //}
+            
+            //if (subject.beneficiaries is JValue val)
+            //{
+            //    MessageBox.Show("DFgdfg");
+            //}
+
+
+            //if (subject.beneficiaries is JObject obj)
+            //{
+            //    var reason = JsonConvert.DeserializeObject<Reason>(obj.ToString());
+            //    strings.Last()?.Add(reason.reason);
+            //}
             //68-69 -- 13
             strings.Add(new List<string?>());
             if (subject.heads != null)
@@ -1011,7 +1355,7 @@ namespace DesARMA.Automation
             if (subject.authorised_capital?.value == null)
                 strings.Add(new List<string?>());
             else
-                strings.Add(new List<string?>() { subject.authorised_capital?.value + "" });
+                strings.Add(new List<string?>() { subject.authorised_capital?.value + " грн." });
             //16 -- 15
             strings.Add(new List<string?>() { subject.founding_document_name });
             //17 -- 16

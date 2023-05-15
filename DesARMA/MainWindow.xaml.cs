@@ -74,13 +74,7 @@ namespace DesARMA
             {
                 InitializeComponent();
 
-                //var dsd = new SearchEDR("21926977", null, null, 500, SearchType.Base, "C:\\app");
-                //var dsd = new SearchEDR("35361979", null, null, 500, SearchType.Base, "C:\\app");
-
-                //dsd.CreateExel();
-
-                //PDF.lksdfjhs();
-
+                //SearchRPS sfde = new("\"ТОВ \"\"АВІА-ПЛАЗА ПЛЮС\"\"", "39209863", false);
 
                 CreateTimer();
                 Auth();

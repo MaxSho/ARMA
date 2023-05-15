@@ -37,17 +37,21 @@ namespace DesARMA.Registers
         }
         private void CreateParInHead(string item, XWPFDocument doc1)
         {
-            // Створити новий параграф
-            XWPFParagraph paragraph = doc1.CreateParagraph();
+            var arr = item.Split('\n');
+            foreach (var st in arr)
+            {
+                XWPFParagraph paragraph = doc1.CreateParagraph();
+                XWPFRun run = paragraph.CreateRun();
+                run.SetText(st);
+                run.FontSize = 12;
+                run.FontFamily = "Times New Roman";
 
-            // Додати текст в параграф
-            XWPFRun run = paragraph.CreateRun();
-            run.SetText(item);
-            run.FontSize = 12;
-            run.FontFamily = "Times New Roman";
-
-            // Додати додаткові властивості до параграфу, якщо потрібно
-            paragraph.Alignment = ParagraphAlignment.LEFT; // вирівнювання по центру
+                // Додати додаткові властивості до параграфу, якщо потрібно
+                paragraph.Alignment = ParagraphAlignment.LEFT; // вирівнювання по центру
+                paragraph.SpacingBeforeLines = 30;
+            }
+            
+           
         }
         private void CreateParEndHead(XWPFDocument doc1)
         {
@@ -77,114 +81,7 @@ namespace DesARMA.Registers
             // Додати додаткові властивості до параграфу, якщо потрібно
             paragraph.Alignment = ParagraphAlignment.BOTH; // вирівнювання по центру
         }
-        private void Shapka(XWPFDocument doc1)
-        {
-            CreateParEnter(doc1);
-            CreateParEnter(doc1);
-            CreateParEnter(doc1);
-
-            {
-                // Створити новий параграф
-                XWPFParagraph paragraph = doc1.CreateParagraph();
-
-                // Додати текст в параграф
-                XWPFRun run = paragraph.CreateRun();
-                run.SetText("ВИТЯГ");
-                run.FontSize = 12;
-                run.FontFamily = "Times New Roman";
-
-                // Додати додаткові властивості до параграфу, якщо потрібно
-                paragraph.Alignment = ParagraphAlignment.CENTER; // вирівнювання
-            }
-            {
-                // Створити новий параграф
-                XWPFParagraph paragraph = doc1.CreateParagraph();
-
-                // Додати текст в параграф
-                XWPFRun run = paragraph.CreateRun();
-                run.SetText("з Єдиного державного реєстру юридичних осіб, фізичних осіб-підприємців та громадських формувань");
-                run.FontSize = 12;
-                run.FontFamily = "Times New Roman";
-
-                // Додати додаткові властивості до параграфу, якщо потрібно
-                paragraph.Alignment = ParagraphAlignment.CENTER; // вирівнювання
-            }
-            {
-                // Створити новий параграф
-                XWPFParagraph paragraph = doc1.CreateParagraph();
-
-                // Додати текст в параграф
-                XWPFRun run = paragraph.CreateRun();
-                run.SetText("Станом на 09.03.2023 16:39:21 відповідно до наступних \tкритеріїв пошуку: Код ЄДРПОУ засновника (учасника) юридичної особи: 39759997 надається інформація з Єдиного державного реєстру юридичних осіб, фізичних осіб-підприємців та громадських формувань (ЄДР) у кількості 4 записів:");
-                run.FontSize = 12;
-                run.FontFamily = "Times New Roman";
-
-                // Додати додаткові властивості до параграфу, якщо потрібно
-                paragraph.Alignment = ParagraphAlignment.CENTER; // вирівнювання
-            }
-
-            CreateParEnter(doc1);
-
-        }
-        public void CreateNamesField(List<List<string?>?> list, string path = "C:\\app\\EDRSh.docx", 
-            string path2 = "C:\\app\\Відповідь\\Відповідь 1.docx",
-            string path3 = "C:\\app\\Відповідь\\Відповідь.docx"
-            )
-        {
-            XWPFDocument doc1;
-            //string path = "C:\\app\\EDRSh.docx";
-            //string path2 = $"C:\\app\\Відповідь\\Відповідь {1}.docx";
-            FileInfo fileInfo = new FileInfo(path);
-            fileInfo.CopyTo(path2, true);
-
-            
-
-            doc1 = new XWPFDocument(new FileStream(path2, FileMode.Open));
-            //doc1 = new XWPFDocument(OPCPackage.Open(path2));
-
-            int i = 0;
-            foreach (var item in Reest.namesField)
-            {
-                CreateParHead(item, doc1);
-                var l = list[i];
-                if (l != null)
-                {
-                    if(l.Count > 0)
-                    {
-                        foreach (var itemIn in l)
-                        {
-                            CreateParInHead(itemIn ?? "Відомості відсутні", doc1);
-                        }
-                    }
-                    else
-                    {
-                        CreateParInHead("Відомості відсутні", doc1);
-                    }
-                    
-                }
-                else
-                {
-                    CreateParInHead("Відомості відсутні", doc1);
-                }
-                
-                CreateParEnter(doc1);
-
-                i++;
-            }
-
-            //string path3 = "C:\\app\\Відповідь\\Відповідь.docx";
-
-            //Збереження звіта 
-            using (FileStream sw = File.Create(path3))
-            {
-                doc1.Write(sw);
-            }
-
-            doc1.Close();
-            File.Delete(path2);
-
-        }
-
+       
         /// <summary>
         /// it's summary
         /// </summary>
@@ -197,113 +94,316 @@ namespace DesARMA.Registers
         /// <param name="path"></param>
         /// <param name="path2"></param>
         /// <param name="path3"></param>
-        public void CreateNamesFieldPDF(List<List<List<string?>?>> listAll, object[] arrInfo,
+        public void CreateNamesFieldEDR_PDF(List<List<List<string?>?>> listAll, object[] arrInfo,
              List<bool> isFisList,
                 string path = "C:\\app\\EDRSh.docx",
                 string path2 = "C:\\app\\Відповідь\\Відповідь 1.docx",
                 string path3 = "C:\\app\\Відповідь\\Відповідь.docx"
                )
         {
-            XWPFDocument doc1;
-            //string path = "C:\\app\\EDRSh.docx";
-            //string path2 = $"C:\\app\\Відповідь\\Відповідь {1}.docx";
-            FileInfo fileInfo = new FileInfo(path);
-            fileInfo.CopyTo(path2, true);
-
-
-
-            
-            
-
-            string[] arrTypeSearch = new string[] { "засновника(-ів)", "бенефіціара(-ів)", "керівника(-ів)",  "представника(-ів)"};
-            string[] arr = new string[] { "юридичної особи", "фізичної особи" };
-            var isUO = (bool)arrInfo[0];
-            var code = (string)arrInfo[1];
-            var typeSearch = (SearchType)arrInfo[2];
-            var countRecord = listAll.Count;
-            string SType = "";
-            switch (typeSearch)
+            try
             {
-                case SearchType.Beneficiar:
-                    SType = arrTypeSearch[1];
-                    break;
-                case SearchType.Founder:
-                    SType = arrTypeSearch[0];
-                    break;
-                case SearchType.Chief:
-                    SType = arrTypeSearch[2];
-                    break;
-                case SearchType.Assignee:
-                    SType = arrTypeSearch[3];
-                    break;
-                default:
-                    break;
-            }
-            
-            doc1 = new XWPFDocument(new FileStream(path2, FileMode.Open));
-            var par = doc1.Paragraphs[6];
+                XWPFDocument doc1;
+                //string path = "C:\\app\\EDRSh.docx";
+                //string path2 = $"C:\\app\\Відповідь\\Відповідь {1}.docx";
+                FileInfo fileInfo = new FileInfo(path);
+                fileInfo.CopyTo(path2, true);
 
-            //MessageBox.Show($"{par.Text}");
-            par.ReplaceText("09.03.2023 16:39:21", DateTime.Now.ToString());
-            par.ReplaceText("ЄДРПОУ", isUO ? "ЄДРПОУ" : "РНОКПП");
-            par.ReplaceText("39759997", code);
-            par.ReplaceText("4 записів", $"{AddRecordWordZAPYS(countRecord)}");
-            par.ReplaceText("юридичної особи", isUO ? arr[0] : arr[1]);
-            par.ReplaceText("засновника (учасника)", SType);
-
-
-            int curZap = 1;
-            foreach (var itemList in listAll)
-            {
-                int i = 0;
-                
-                CreateParHead($"Запис {curZap++}", doc1, curZap != 2);
-
-                
-                var sear = isFisList[curZap - 2] ? Reest.namesFieldPDFFiz : Reest.namesFieldPDF;
-
-                foreach (var item in sear)
+                string[] arrTypeSearch = new string[] { "засновника(-ів)", "бенефіціара(-ів)", "керівника(-ів)", "представника(-ів)" };
+                string[] arr = new string[] { "юридичної особи", "фізичної особи" };
+                var isUO = (bool)arrInfo[0];
+                var code = (string)arrInfo[1];
+                var typeSearch = (SearchType)arrInfo[2];
+                var countRecord = listAll.Count;
+                string SType = "";
+                switch (typeSearch)
                 {
-                    CreateParHead(item, doc1);
-                    var l = itemList[i];
-                    if (l != null)
+                    case SearchType.Beneficiar:
+                        SType = arrTypeSearch[1];
+                        break;
+                    case SearchType.Founder:
+                        SType = arrTypeSearch[0];
+                        break;
+                    case SearchType.Chief:
+                        SType = arrTypeSearch[2];
+                        break;
+                    case SearchType.Assignee:
+                        SType = arrTypeSearch[3];
+                        break;
+                    default:
+                        break;
+                }
+
+                doc1 = new XWPFDocument(new FileStream(path2, FileMode.Open));
+                var par = doc1.Paragraphs[6];
+
+                //MessageBox.Show($"{par.Text}");
+                par.ReplaceText("09.03.2023 16:39:21", DateTime.Now.ToString());
+                par.ReplaceText("ЄДРПОУ", isUO ? "ЄДРПОУ" : "РНОКПП");
+                par.ReplaceText("39759997", code);
+                par.ReplaceText("4 записів", $"{AddRecordWordZAPYS(countRecord)}");
+                par.ReplaceText("юридичної особи", isUO ? arr[0] : arr[1]);
+                par.ReplaceText("засновника (учасника)", SType);
+
+
+                int curZap = 1;
+                foreach (var itemList in listAll)
+                {
+                    int i = 0;
+
+                    CreateParHead($"Запис {curZap++}", doc1, curZap != 2);
+
+
+                    var sear = isFisList[curZap - 2] ? Reest.namesFieldPDFFiz : Reest.namesFieldPDF;
+
+                    foreach (var item in sear)
                     {
-                        if (l.Count > 0)
+                        CreateParHead(item, doc1);
+                        var l = itemList[i];
+                        if (l != null)
                         {
-                            foreach (var itemIn in l)
+                            if (l.Count > 0)
                             {
-                                CreateParInHead(itemIn ?? "Відомості відсутні", doc1);
+                                foreach (var itemIn in l)
+                                {
+                                    CreateParInHead(itemIn ?? "Відомості відсутні", doc1);
+                                }
                             }
+                            else
+                            {
+                                CreateParInHead("Відомості відсутні", doc1);
+                            }
+
                         }
                         else
                         {
                             CreateParInHead("Відомості відсутні", doc1);
                         }
 
-                    }
-                    else
-                    {
-                        CreateParInHead("Відомості відсутні", doc1);
-                    }
+                        CreateParEnter(doc1);
 
-                    CreateParEnter(doc1);
-
-                    i++;
+                        i++;
+                    }
                 }
+
+                CreateParEndHead(doc1);
+                //string path3 = "C:\\app\\Відповідь\\Відповідь.docx";
+
+                //Збереження звіта 
+                using (FileStream sw = File.Create(path3))
+                {
+                    doc1.Write(sw);
+                }
+
+                doc1.Close();
+                File.Delete(path2);
             }
 
-            CreateParEndHead(doc1);
-            //string path3 = "C:\\app\\Відповідь\\Відповідь.docx";
-
-            //Збереження звіта 
-            using (FileStream sw = File.Create(path3))
+            catch (Exception ex)
             {
-                doc1.Write(sw);
+                MessageBox.Show(ex.Message);
+            }
+        }
+        public void CreateNamesFieldRPS_PDF(List<List<string?>> listAll, string code, string whoSearch,
+                string path = "C:\\app\\EDRSh.docx",
+                string path2 = "C:\\app\\Відповідь\\Відповідь 1.docx",
+                string path3 = "C:\\app\\Відповідь\\Відповідь.docx"
+               )
+        {
+            try
+            {
+                XWPFDocument doc1;
+                FileInfo fileInfo = new FileInfo(path);
+                fileInfo.CopyTo(path2, true);
+
+                var countRecord = listAll.Count;
+                
+                doc1 = new XWPFDocument(new FileStream(path2, FileMode.Open));
+                var par = doc1.Paragraphs[6];
+
+                //MessageBox.Show($"{par.Text}");
+                par.ReplaceText("09.03.2023 16:39:21", DateTime.Now.ToString()); 
+                par.ReplaceText("39759997", code);
+                par.ReplaceText("4 записів", $"{AddRecordWordZAPYS(countRecord)}");
+                par.ReplaceText("Код ЄДРПОУ засновника (учасника) юридичної особи", whoSearch);
+
+
+                int curZap = 1;
+                foreach (var itemList in listAll)
+                {
+                    int i = 0;
+
+                    CreateParHead($"Запис {curZap++}", doc1, curZap != 2);
+
+
+                    var sear = Reest.namesFieldRPS_PDF;
+
+                    foreach (var item in sear)
+                    {
+                        CreateParHead(item, doc1);
+                        var l = itemList[i];
+                        if (l != null)
+                        {
+                            CreateParInHead(l, doc1);
+                        }
+                        else
+                        {
+                            CreateParInHead("Відомості відсутні", doc1);
+                        }
+
+                        CreateParEnter(doc1);
+
+                        i++;
+                    }
+                }
+
+                using (FileStream sw = File.Create(path3))
+                {
+                    doc1.Write(sw);
+                }
+
+                doc1.Close();
+                File.Delete(path2);
             }
 
-            doc1.Close();
-            File.Delete(path2);
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        public void CreateNamesFieldSK_PDF(List<List<string?>> listAll, string code,
+                string path = "C:\\app\\EDRSh.docx",
+                string path2 = "C:\\app\\Відповідь\\Відповідь 1.docx",
+                string path3 = "C:\\app\\Відповідь\\Відповідь.docx"
+               )
+            {
 
+            try
+            {
+                XWPFDocument doc1;
+                FileInfo fileInfo = new FileInfo(path);
+                fileInfo.CopyTo(path2, true);
+
+                var countRecord = listAll.Count;
+
+                doc1 = new XWPFDocument(new FileStream(path2, FileMode.Open));
+                var par = doc1.Paragraphs[6];
+
+                //MessageBox.Show($"{par.Text}");
+                par.ReplaceText("09.03.2023 16:39:21", DateTime.Now.ToString());
+                par.ReplaceText("39759997", code);
+                par.ReplaceText("4 записів", $"{AddRecordWordZAPYS(countRecord)}");
+
+
+                int curZap = 1;
+                foreach (var itemList in listAll)
+                {
+                    int i = 0;
+
+                    CreateParHead($"Запис {curZap++}", doc1, curZap != 2);
+
+
+                    var sear = Reest.namesFieldSK_PDF;
+
+                    foreach (var item in sear)
+                    {
+                        CreateParHead(item, doc1);
+                        var l = itemList[i];
+                        if (l != null && l!="")
+                        {
+                            CreateParInHead(l, doc1);
+                        }
+                        else
+                        {
+                            CreateParInHead("Відомості відсутні", doc1);
+                        }
+
+                        CreateParEnter(doc1);
+
+                        i++;
+                    }
+                }
+
+                using (FileStream sw = File.Create(path3))
+                {
+                    doc1.Write(sw);
+                }
+
+                doc1.Close();
+                File.Delete(path2);
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        public void CreateNamesFieldDSRU_PDF(List<List<string?>> listAll, string code,
+                string path = "C:\\app\\EDRSh.docx",
+                string path2 = "C:\\app\\Відповідь\\Відповідь 1.docx",
+                string path3 = "C:\\app\\Відповідь\\Відповідь.docx"
+               )
+        {
+
+            try
+            {
+                XWPFDocument doc1;
+                FileInfo fileInfo = new FileInfo(path);
+                fileInfo.CopyTo(path2, true);
+
+                var countRecord = listAll.Count;
+
+                doc1 = new XWPFDocument(new FileStream(path2, FileMode.Open));
+                var par = doc1.Paragraphs[6];
+
+                //MessageBox.Show($"{par.Text}");
+                par.ReplaceText("09.03.2023 16:39:21", DateTime.Now.ToString());
+                par.ReplaceText("39759997", code);
+                par.ReplaceText("4 записів", $"{AddRecordWordZAPYS(countRecord)}");
+
+
+                int curZap = 1;
+                foreach (var itemList in listAll)
+                {
+                    int i = 0;
+
+                    CreateParHead($"Запис {curZap++}", doc1, curZap != 2);
+
+
+                    var sear = Reest.namesFieldDSRU_PDF;
+
+                    foreach (var item in sear)
+                    {
+                        CreateParHead(item, doc1);
+                        var l = itemList[i];
+                        if (l != null && l != "")
+                        {
+                            CreateParInHead(l, doc1);
+                        }
+                        else
+                        {
+                            CreateParInHead("Відомості відсутні", doc1);
+                        }
+
+                        CreateParEnter(doc1);
+
+                        i++;
+                    }
+                }
+
+                using (FileStream sw = File.Create(path3))
+                {
+                    doc1.Write(sw);
+                }
+
+                doc1.Close();
+                File.Delete(path2);
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
         public static string AddRecordWordZAPYS(int number)
         {
