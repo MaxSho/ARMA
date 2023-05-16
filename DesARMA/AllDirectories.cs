@@ -317,13 +317,14 @@ namespace DesARMA
                             //    Chief, // - дані керівника,
                             //    Assignee // - дані представників
                             //}
+                            List<Figurant> figsNotNeeded = new List<Figurant>();
 
                             if (numberR == 15)
                             {
                                 if (Figurants != null)
                                 {
                                     var figs = (from f in Figurants where f.Ipn != null || f.Fio != null select f).ToList();
-                                    var figsNotNeeded = (from f in Figurants where f.Code != null || f.Name != null select f).ToList();
+                                    figsNotNeeded = (from f in Figurants where f.Code != null || f.Name != null select f).ToList();
                                     System.Windows.Application.Current.Dispatcher.Invoke(() =>
                                     {
                                         progresWindow.CreateListFig(figs);
@@ -500,7 +501,7 @@ namespace DesARMA
                                 if (Figurants != null)
                                 {
                                     var figs = (from f in Figurants where f.Ipn != null || f.Fio != null select f).ToList();
-                                    var figsNotNeeded = (from f in Figurants where f.Code != null || f.Name != null select f).ToList();
+                                    figsNotNeeded = (from f in Figurants where f.Code != null || f.Name != null select f).ToList();
 
                                     System.Windows.Application.Current.Dispatcher.Invoke(() =>
                                     {
@@ -560,7 +561,7 @@ namespace DesARMA
                                 if (Figurants != null)
                                 {
                                     var figs = (from f in Figurants where f.Ipn != null || f.Fio != null select f).ToList();
-                                    var figsNotNeeded = (from f in Figurants where f.Code != null || f.Name != null select f).ToList();
+                                    figsNotNeeded = (from f in Figurants where f.Code != null || f.Name != null select f).ToList();
                                     System.Windows.Application.Current.Dispatcher.Invoke(() =>
                                     {
                                         progresWindow.CreateListFig(figs);
@@ -615,7 +616,7 @@ namespace DesARMA
                                 if (Figurants != null)
                                 {
                                     var figs = (from f in Figurants where f.Code != null || f.Name != null select f).ToList();
-                                    var figsNotNeeded = (from f in Figurants where f.Ipn != null || f.Fio != null select f).ToList();
+                                    figsNotNeeded = (from f in Figurants where f.Ipn != null || f.Fio != null select f).ToList();
 
                                     await Task.Run(() =>
                                     {
@@ -678,7 +679,7 @@ namespace DesARMA
                                 if (Figurants != null)
                                 {
                                     var figs = (from f in Figurants where f.Ipn != null || f.Fio != null select f).ToList();
-                                    var figsNotNeeded = (from f in Figurants where f.Name != null || f.Name != null select f).ToList();
+                                    figsNotNeeded = (from f in Figurants where f.Name != null || f.Name != null select f).ToList();
 
                                     System.Windows.Application.Current.Dispatcher.Invoke(() =>
                                     {
