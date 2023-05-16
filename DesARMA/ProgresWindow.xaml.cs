@@ -179,7 +179,7 @@ namespace DesARMA
                 return cont;
             }
         }
-        public async void CreateEDR()
+        public async void CreateFinish()
         {
             await Task.Run(() =>
             {

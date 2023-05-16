@@ -11,6 +11,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Drawings\allcheckbox\1.png" />
+    <None Remove="Drawings\allcheckbox\2.png" />
+    <None Remove="Drawings\allcheckbox\652733.png" />
+    <None Remove="Drawings\allcheckbox\allcheck.png" />
+    <None Remove="Drawings\allcheckbox\Зображення1.jpg" />
     <None Remove="Drawings\cat.gif" />
     <None Remove="Drawings\done\done1.png" />
     <None Remove="Drawings\done\done2.png" />
@@ -93,6 +98,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Drawings\allcheckbox\1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\allcheckbox\2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\allcheckbox\652733.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\allcheckbox\allcheck.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\allcheckbox\Зображення1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Drawings\cat.gif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -162,8 +182,14 @@
     <None Update="FilesReestSh\edr.docx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="FilesReestSh\RPSSh.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="FilesReestSh\EDRSh.docx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="FilesReestSh\SKSh.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="FilesRet\2.docx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

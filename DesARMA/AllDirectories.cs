@@ -280,11 +280,11 @@ namespace DesARMA
             {
                 if (sender is System.Windows.Controls.Button b)
                 {
-                   
+
                     int numberR = (int)b.Tag;
-                    if( numberR < Reest.abbreviatedName.Count)
+                    if (numberR < Reest.abbreviatedName.Count)
                     {
-                        if (IsAvailableDirectory(numberR, Reest.abbreviatedName[numberR - 1]) && numberR >= 15 && numberR <=20)
+                        if (IsAvailableDirectory(numberR, Reest.abbreviatedName[numberR - 1]) && (numberR >= 15 && numberR <= 20 || numberR >= 38 && numberR <= 40))
                         {
                             b.IsEnabled = false;
                             
@@ -317,6 +317,7 @@ namespace DesARMA
                             //    Chief, // - дані керівника,
                             //    Assignee // - дані представників
                             //}
+
                             if (numberR == 15)
                             {
                                 if (Figurants != null)
@@ -340,7 +341,7 @@ namespace DesARMA
                                         {
                                             try
                                             {
-                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500,
+                                                var dsd = new SearchEDR(cts, item.Ipn, item.Fio, null, 500,
                                                 SearchType.Beneficiar, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
                                                 progresWindow, item, modelContext, true, numberR);
 
@@ -357,17 +358,18 @@ namespace DesARMA
 
 
                                     }
-                                    foreach (var item in figsNotNeeded)
-                                    {
-                                        var listC = AllDirectories.GetBoolsFromString(item.Control);
-                                        var listS = AllDirectories.GetBoolsFromString(item.Shema);
+                                    //foreach (var item in figsNotNeeded)
+                                    //{
+                                    //    var listC = AllDirectories.GetBoolsFromString(item.Control);
+                                    //    var listS = AllDirectories.GetBoolsFromString(item.Shema);
 
-                                        listC[numberR - 1] = false;
-                                        listS[numberR - 1] = true;
+                                    //    listC[numberR - 1] = false;
+                                    //    listS[numberR - 1] = true;
 
-                                        item.Control = AllDirectories.GetStringFromBools(listC);
-                                        item.Shema = AllDirectories.GetStringFromBools(listS);
-                                    }
+                                    //    item.Control = AllDirectories.GetStringFromBools(listC);
+                                    //    item.Shema = AllDirectories.GetStringFromBools(listS);
+                                    //    SaveToDB();
+                                    //}
                                 }
                             }
                             else if (numberR == 16)
@@ -401,7 +403,7 @@ namespace DesARMA
                                             {
                                                 try
                                                 {
-                                                    var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500,
+                                                    var dsd = new SearchEDR(cts,  item.Ipn, item.Fio, null, 500,
                                                     SearchType.Founder, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
                                                     progresWindow, item, modelContext, true);
                                                     //dsd.CreateExel();
@@ -446,7 +448,7 @@ namespace DesARMA
                                             {
                                                 try
                                                 {
-                                                    var dsd = new SearchEDR(item.Code, item.Name, null, 500,
+                                                    var dsd = new SearchEDR(cts, item.Code, item.Name, null, 500,
                                                     SearchType.Founder, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}", 
                                                     progresWindow, item, modelContext);
                                                     //dsd.CreateExel();
@@ -517,7 +519,7 @@ namespace DesARMA
                                         {
                                             try
                                             {
-                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500,
+                                                var dsd = new SearchEDR(cts, item.Ipn, item.Fio, null, 500,
                                                 SearchType.Chief, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
                                                 progresWindow, item, modelContext, true);
                                                 //dsd.CreateExel();
@@ -540,17 +542,17 @@ namespace DesARMA
                                         //    progresWindow.SetDoneFigNow(item);
                                         //});
                                     }
-                                    foreach (var item in figsNotNeeded)
-                                    {
-                                        var listC = AllDirectories.GetBoolsFromString(item.Control);
-                                        var listS = AllDirectories.GetBoolsFromString(item.Shema);
+                                    //foreach (var item in figsNotNeeded)
+                                    //{
+                                    //    var listC = AllDirectories.GetBoolsFromString(item.Control);
+                                    //    var listS = AllDirectories.GetBoolsFromString(item.Shema);
 
-                                        listC[numberR - 1] = false;
-                                        listS[numberR - 1] = true;
+                                    //    listC[numberR - 1] = false;
+                                    //    listS[numberR - 1] = true;
 
-                                        item.Control = AllDirectories.GetStringFromBools(listC);
-                                        item.Shema = AllDirectories.GetStringFromBools(listS);
-                                    }
+                                    //    item.Control = AllDirectories.GetStringFromBools(listC);
+                                    //    item.Shema = AllDirectories.GetStringFromBools(listS);
+                                    //}
                                 }
                             }
                             else if (numberR == 18)
@@ -576,7 +578,7 @@ namespace DesARMA
                                         {
                                             try
                                             {
-                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500,
+                                                var dsd = new SearchEDR(cts, item.Ipn, item.Fio, null, 500,
                                                 SearchType.Assignee, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
                                                 progresWindow, item, modelContext, true);
                                             }
@@ -595,17 +597,17 @@ namespace DesARMA
                                         //    progresWindow.SetDoneFigNow(item);
                                         //});
                                     }
-                                    foreach (var item in figsNotNeeded)
-                                    {
-                                        var listC = AllDirectories.GetBoolsFromString(item.Control);
-                                        var listS = AllDirectories.GetBoolsFromString(item.Shema);
+                                    //foreach (var item in figsNotNeeded)
+                                    //{
+                                    //    var listC = AllDirectories.GetBoolsFromString(item.Control);
+                                    //    var listS = AllDirectories.GetBoolsFromString(item.Shema);
 
-                                        listC[numberR - 1] = false;
-                                        listS[numberR - 1] = true;
+                                    //    listC[numberR - 1] = false;
+                                    //    listS[numberR - 1] = true;
 
-                                        item.Control = AllDirectories.GetStringFromBools(listC);
-                                        item.Shema = AllDirectories.GetStringFromBools(listS);
-                                    }
+                                    //    item.Control = AllDirectories.GetStringFromBools(listC);
+                                    //    item.Shema = AllDirectories.GetStringFromBools(listS);
+                                    //}
                                 }
                             }
                             else if (numberR == 19)
@@ -641,7 +643,7 @@ namespace DesARMA
                                         {
                                             try
                                             {
-                                                var dsd = new SearchEDR(item.Code, item.Name, null, 500,
+                                                var dsd = new SearchEDR(cts, item.Code, item.Name, null, 500,
                                                 SearchType.Base, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
                                                 progresWindow, item, modelContext);
                                             }
@@ -658,17 +660,17 @@ namespace DesARMA
                                         //    progresWindow.SetDoneFigNow(item);
                                         //});
                                     }
-                                    foreach (var item in figsNotNeeded)
-                                    {
-                                        var listC = AllDirectories.GetBoolsFromString(item.Control);
-                                        var listS = AllDirectories.GetBoolsFromString(item.Shema);
+                                    //foreach (var item in figsNotNeeded)
+                                    //{
+                                    //    var listC = AllDirectories.GetBoolsFromString(item.Control);
+                                    //    var listS = AllDirectories.GetBoolsFromString(item.Shema);
 
-                                        listC[numberR - 1] = false;
-                                        listS[numberR - 1] = true;
+                                    //    listC[numberR - 1] = false;
+                                    //    listS[numberR - 1] = true;
 
-                                        item.Control = AllDirectories.GetStringFromBools(listC);
-                                        item.Shema = AllDirectories.GetStringFromBools(listS);
-                                    }
+                                    //    item.Control = AllDirectories.GetStringFromBools(listC);
+                                    //    item.Shema = AllDirectories.GetStringFromBools(listS);
+                                    //}
                                 }
                             }
                             else if (numberR == 20)
@@ -683,7 +685,6 @@ namespace DesARMA
                                         progresWindow.CreateListFig(figs);
                                     });
 
-                                    List<Task> listTask = new List<Task>();
                                     foreach (var item in figs)
                                     {
                                         string path = (from mc in modelContext.@MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
@@ -698,7 +699,7 @@ namespace DesARMA
                                         {
                                             try
                                             {
-                                                var dsd = new SearchEDR(item.Ipn, item.Fio, null, 500,
+                                                var dsd = new SearchEDR(cts, item.Ipn, item.Fio, null, 500,
                                                 SearchType.Base, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
                                                 progresWindow, item, modelContext, true);
 
@@ -714,42 +715,187 @@ namespace DesARMA
 
                                     }
 
+                                    //foreach (var item in figsNotNeeded)
+                                    //{
+                                    //    var listC = AllDirectories.GetBoolsFromString(item.Control);
+                                    //    var listS = AllDirectories.GetBoolsFromString(item.Shema);
 
+                                    //    listC[numberR - 1] = false;
+                                    //    listS[numberR - 1] = true;
 
-                                    foreach (var item in figsNotNeeded)
+                                    //    item.Control = AllDirectories.GetStringFromBools(listC);
+                                    //    item.Shema = AllDirectories.GetStringFromBools(listS);
+                                    //}
+                                }
+                            }
+                            else if (numberR == 38)
+                            {
+                                if (Figurants != null)
+                                {
+                                    var figs = Figurants;
+
+                                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
                                     {
-                                        var listC = AllDirectories.GetBoolsFromString(item.Control);
-                                        var listS = AllDirectories.GetBoolsFromString(item.Shema);
-                                        
-                                        listC[numberR - 1] = false;
-                                        listS[numberR - 1] = true;
+                                        progresWindow.CreateListFig(figs);
+                                    });
 
-                                        item.Control = AllDirectories.GetStringFromBools(listC);
-                                        item.Shema = AllDirectories.GetStringFromBools(listS);
+                                    foreach (var item in figs)
+                                    {
+                                        string path = (from mc in modelContext.@MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
+
+                                        System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                                        {
+                                            progresWindow.SetDounloadFigNow(item);
+                                        });
+
+
+                                        var searchEDRTask = Task.Run(() =>
+                                        {
+                                            try
+                                            {
+                                                //var dsd = new SearchEDR(cts, item.Ipn, item.Fio, null, 500,
+                                                //SearchType.Base, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
+                                                //progresWindow, item, modelContext, true, numberR);
+                                                if (item.Ipn != null || item.Fio != null)
+                                                {
+                                                    var searchRPS = new SearchRPS(item.Fio + "", item.Ipn + "", true, progresWindow, item, numberR, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                }
+                                                else
+                                                {
+                                                    var searchRPS = new SearchRPS(item.Name + "", item.Code + "", false, progresWindow, item, numberR, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                }
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                progresWindow.ErrorFigur(item, ex);
+                                                return;
+                                            }
+                                        });
+                                        await searchEDRTask;
                                     }
                                 }
                             }
-                            modelContext.SaveChanges();
-                            CreateNewTree();
-
-                            if (mainWindow.treeView1.Items[numberR - 1] is StackPanel st)
+                            else if (numberR == 39)
                             {
-                                if (st.Children[2] is System.Windows.Controls.Button bnew)
+                                if (Figurants != null)
                                 {
-                                    bnew.IsEnabled = false;
+                                    var figs = Figurants;
+
+                                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                                    {
+                                        progresWindow.CreateListFig(figs);
+                                    });
+
+                                    foreach (var item in figs)
+                                    {
+                                        string path = (from mc in modelContext.@MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
+
+                                        System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                                        {
+                                            progresWindow.SetDounloadFigNow(item);
+                                        });
+
+                                        var searchEDRTask = Task.Run(() =>
+                                        {
+                                            try
+                                            {
+                                                if (item.Ipn != null || item.Fio != null)
+                                                {
+                                                    var searchSK = new SearchSK(item.Fio + "", item.Ipn + "", true, progresWindow, item, numberR, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                }
+                                                else
+                                                {
+                                                    var searchSK = new SearchSK(item.Name + "", item.Code + "", false, progresWindow, item, numberR, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                }
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                progresWindow.ErrorFigur(item, ex);
+                                                return;
+                                            }
+                                        });
+                                        await searchEDRTask;
+                                    }
                                 }
                             }
+                            else if (numberR == 40)
+                            {
+                                if (Figurants != null)
+                                {
+                                    var figs = Figurants;
+
+                                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                                    {
+                                        progresWindow.CreateListFig(figs);
+                                    });
+
+                                    foreach (var item in figs)
+                                    {
+                                        string path = (from mc in modelContext.@MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
 
 
+                                        System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                                        {
+                                            progresWindow.SetDounloadFigNow(item);
+                                        });
+
+                                        var searchEDRTask = Task.Run(() =>
+                                        {
+                                            try
+                                            {
+                                                if (item.Ipn != null || item.Fio != null)
+                                                {
+                                                    var searchDSRU = new SearchDSRU(item.Fio + "", item.Ipn + "", true, progresWindow, item, numberR, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                }
+                                                else
+                                                {
+                                                    var searchDSRU = new SearchDSRU(item.Name + "", item.Code + "", false, progresWindow, item, numberR, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}");
+                                                }
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                progresWindow.ErrorFigur(item, ex);
+                                                return;
+                                            }
+                                        });
+                                        await searchEDRTask;
+                                    }
+                                }
+                            }
                             await Task.Run(() =>
                             {
                                 while (true)
                                 {
                                     if (progresWindow.GetIsEnd())
                                     {
+                                        
                                         System.Windows.Application.Current.Dispatcher.Invoke(() =>
                                         {
-                                            progresWindow.CreateEDR();
+                                            foreach (var item in figsNotNeeded)
+                                            {
+                                                var listC = AllDirectories.GetBoolsFromString(item.Control);
+                                                var listS = AllDirectories.GetBoolsFromString(item.Shema);
+
+                                                listC[numberR - 1] = false;
+                                                listS[numberR - 1] = true;
+
+                                                item.Control = AllDirectories.GetStringFromBools(listC);
+                                                item.Shema = AllDirectories.GetStringFromBools(listS);
+                                            }
+
+                                            //SaveToDB();
+                                            progresWindow.CreateFinish();
+                                            modelContext.SaveChanges();
+                                            CreateNewTree();
+
+                                            if (mainWindow.treeView1.Items[numberR - 1] is StackPanel st)
+                                            {
+                                                if (st.Children[2] is System.Windows.Controls.Button bnew)
+                                                {
+                                                    bnew.IsEnabled = false;
+                                                }
+                                            }
+
                                         });
                                         break;
                                     }
@@ -1619,7 +1765,7 @@ namespace DesARMA
         }
         public TreeViewItem? GetTreeViewItem(int id)
         {
-            return (treeView1.Items[id - 1] as StackPanel).Children[2] as TreeViewItem;
+            return (treeView1.Items[id - 1] as StackPanel).Children[3] as TreeViewItem;
         }
         public List<Tuple<CheckBox?, CheckBox?>>? GetFigListTupleCheckBoxes(int id)
         {
