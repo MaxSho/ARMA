@@ -134,7 +134,7 @@ namespace DesARMA.Automation
                 }
                 modelContextEDR.SaveChanges();
             }
-            
+
         }
         public void ToCheckFigInTree(int indR)
         {
@@ -586,7 +586,7 @@ namespace DesARMA.Automation
                 RequestUri = new Uri(ReqstrId + $"{id}"),
                 Headers =
                 {
-                    { "Authorization", GetStrToken() },
+                    { "Authorization", "Token 6c48e3a0948ec23c5de170299134e98ee2ff90e0" },
                 }
             };
             var response = await client.SendAsync(request);
