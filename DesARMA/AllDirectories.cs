@@ -899,6 +899,8 @@ namespace DesARMA
                                             CreateNewTree();
                                             updatePanel(null, null);
 
+                                            //Thread.Sleep(5000);
+                                            
                                             //if (mainWindow.treeView1.Items[numberR - 1] is StackPanel st)
                                             //{
                                             //    if (st.Children[2] is System.Windows.Controls.Button bnew)
@@ -915,8 +917,9 @@ namespace DesARMA
                                         Thread.Sleep(500);
                                     }
                                 }
+                                
                             }, ct);
-
+                            
                         }
                     }
                 }

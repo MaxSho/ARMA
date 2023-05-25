@@ -326,10 +326,40 @@ namespace DesARMA
                         gridTop.Children.Add(borderName);
                     }
 
-
                 });
-            }, ct);
-            
+            }, ct).ContinueWith(_ =>
+                            {
+                                Thread.Sleep(5000);
+                                this.Dispatcher.Invoke(() =>
+                                {
+                                    this.Close();
+                                });
+                                
+                                
+
+
+                            });
+            //await Task.Run(() =>
+            //{
+
+
+
+
+            //}, ct);
+
+
+        }
+        public async void ClosedMe5secund()
+        {
+            await Task.Run(
+                () => {
+                    System.Windows.Application.Current.Dispatcher.Invoke(() => {
+                        Thread.Sleep(5000);
+                        this.Close();
+                    });
+                },
+                ct
+                );
             
         }
         public void CreateTitle(string title)
