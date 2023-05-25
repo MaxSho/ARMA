@@ -9,7 +9,7 @@
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
         
-        Title="DeskAPMA" MinHeight="400" MinWidth="400" FontSize="16" WindowState="Maximized"
+       Title="АІС &quot;Розшук&quot;" MinHeight="400" MinWidth="400" FontSize="16" WindowState="Maximized"
         ResizeMode="CanResizeWithGrip" Closing="App_Closing" PreviewMouseMove="Window_PreviewMouseMove"  MouseMove="Window_MouseMove" 
         Loaded="Window_Loaded">
     <Window.Resources>
@@ -331,7 +331,7 @@
             </MenuItem>
             <MenuItem Header="Edit" ></MenuItem>
             <MenuItem Header="View" ></MenuItem>-->
-            <Label>Version 2.0.3</Label>
+            <Label>Version 2.1.0</Label>
         </Menu>
 
         
@@ -341,7 +341,7 @@
                         x:Name="stackPanelButtonsGetData" >
                 <Button Background="Transparent"  Width="50"
                         BorderThickness="0"
-                ToolTip="Проставити усюди прапорці ні(в процесі розробки)">
+                ToolTip="Проставити усюди прапорці ні" Click="Button_ClickAllCheckBoxNo">
                     <Image x:Name="allCheckBoxImage" Grid.Column="0" Grid.Row="1" Margin="1"
                             Source="/DesARMA;component/Drawings/allcheckbox/652733.png" 
                    ></Image>

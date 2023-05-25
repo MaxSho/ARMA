@@ -420,6 +420,7 @@ namespace DesARMA.Automation
         public string? Name { get; set; } = null;
         public decimal Count { get; set; } = 0;
         public bool isToExtract { get; set; } = false;
+        public IGrouping<string?, InfShipRegN> Group { get; set; }
 
-    }
+}
 }

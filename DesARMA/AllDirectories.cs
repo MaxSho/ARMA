@@ -23,6 +23,7 @@ using DesARMA.Automation;
 using DesARMA.Registers;
 using System.Windows.Threading;
 using DesARMA.Registers.EDR;
+using System.DirectoryServices.ActiveDirectory;
 
 namespace DesARMA
 {
@@ -36,7 +37,7 @@ namespace DesARMA
         public MainConfig @MainConfig { get; private set; } = null!;
         public List<Figurant>? Figurants { get; private set; } = null!;
         readonly ModelContext modelContext = null!;
-        readonly UpdateDel updatePanel = null!;
+        UpdateDel updatePanel = null!;
         readonly System.Windows.Controls.TreeView treeView1 = null!;
 
         List<bool> listContr;
@@ -50,6 +51,7 @@ namespace DesARMA
         readonly List<System.Windows.Controls.Button> buttonList = new();
 
         MainWindow mainWindow;
+        Main _main;
         public AllDirectories(Main main, @MainConfig @MainConfig, UpdateDel updatePanel,
             SolidColorBrush RedSolidColorBrush, SolidColorBrush WhiteSolidColorBrush, SolidColorBrush GreenSolidColorBrush,
             System.Windows.Controls.TreeView treeView1, ModelContext modelContext, MainWindow mainWindow
@@ -62,6 +64,7 @@ namespace DesARMA
             this.GreenSolidColorBrush = GreenSolidColorBrush;
             this.treeView1 = treeView1;
             this.modelContext = modelContext;
+            _main = main;
             Figurants = (from f in modelContext.Figurants where f.NumbInput == main.NumbInput && f.Status == 1 select f).ToList();
 
 
@@ -344,7 +347,7 @@ namespace DesARMA
                                             {
                                                 var dsd = new SearchEDR(cts, item.Ipn, item.Fio, null, 500,
                                                 SearchType.Beneficiar, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
-                                                progresWindow, item, modelContext, true, numberR);
+                                                progresWindow, item, modelContext, numberR, true);
 
                                             }
                                             catch(Exception ex)
@@ -406,7 +409,7 @@ namespace DesARMA
                                                 {
                                                     var dsd = new SearchEDR(cts,  item.Ipn, item.Fio, null, 500,
                                                     SearchType.Founder, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
-                                                    progresWindow, item, modelContext, true);
+                                                    progresWindow, item, modelContext, numberR, true);
                                                     //dsd.CreateExel();
                                                     //dsd.CreatePDF();
 
@@ -451,7 +454,7 @@ namespace DesARMA
                                                 {
                                                     var dsd = new SearchEDR(cts, item.Code, item.Name, null, 500,
                                                     SearchType.Founder, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}", 
-                                                    progresWindow, item, modelContext);
+                                                    progresWindow, item, modelContext, numberR);
                                                     //dsd.CreateExel();
                                                     //dsd.CreatePDF();
 
@@ -522,7 +525,7 @@ namespace DesARMA
                                             {
                                                 var dsd = new SearchEDR(cts, item.Ipn, item.Fio, null, 500,
                                                 SearchType.Chief, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
-                                                progresWindow, item, modelContext, true);
+                                                progresWindow, item, modelContext, numberR, true);
                                                 //dsd.CreateExel();
                                                 //dsd.CreatePDF();
 
@@ -581,7 +584,7 @@ namespace DesARMA
                                             {
                                                 var dsd = new SearchEDR(cts, item.Ipn, item.Fio, null, 500,
                                                 SearchType.Assignee, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
-                                                progresWindow, item, modelContext, true);
+                                                progresWindow, item, modelContext, numberR, true);
                                             }
                                             catch (Exception ex)
                                             {
@@ -646,7 +649,7 @@ namespace DesARMA
                                             {
                                                 var dsd = new SearchEDR(cts, item.Code, item.Name, null, 500,
                                                 SearchType.Base, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
-                                                progresWindow, item, modelContext);
+                                                progresWindow, item, modelContext, numberR);
                                             }
                                             catch (Exception ex)
                                             {
@@ -702,7 +705,7 @@ namespace DesARMA
                                             {
                                                 var dsd = new SearchEDR(cts, item.Ipn, item.Fio, null, 500,
                                                 SearchType.Base, path + $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}",
-                                                progresWindow, item, modelContext, true);
+                                                progresWindow, item, modelContext, numberR, true);
 
                                                
                                             }
@@ -886,16 +889,23 @@ namespace DesARMA
 
                                             //SaveToDB();
                                             progresWindow.CreateFinish();
-                                            modelContext.SaveChanges();
-                                            CreateNewTree();
+                                            //modelContext.SaveChanges();
+                                            //Figurants = (from f in modelContext.Figurants where f.NumbInput == _main.NumbInput && f.Status == 1 select f).ToList();
+                                            //listContr = GetBoolsFromString(@MainConfig.Control);
+                                            //listSh = GetBoolsFromString(@MainConfig.Shema);
 
-                                            if (mainWindow.treeView1.Items[numberR - 1] is StackPanel st)
-                                            {
-                                                if (st.Children[2] is System.Windows.Controls.Button bnew)
-                                                {
-                                                    bnew.IsEnabled = false;
-                                                }
-                                            }
+                                            //listFigurantCheckListSHEMA = GetFigurantCheckListNO();
+                                            //listFigurantCheckListCONTROL = GetFigurantCheckListYES();
+                                            CreateNewTree();
+                                            updatePanel(null, null);
+
+                                            //if (mainWindow.treeView1.Items[numberR - 1] is StackPanel st)
+                                            //{
+                                            //    if (st.Children[2] is System.Windows.Controls.Button bnew)
+                                            //    {
+                                            //        bnew.IsEnabled = false;
+                                            //    }
+                                            //}
 
                                         });
                                         break;
@@ -1785,6 +1795,51 @@ namespace DesARMA
                 return listRet;
             }
             return null;
+        }
+        public void AllCheckBoxNo()
+        {
+            foreach (var item in Figurants)
+            {
+                //var modelContext = new ModelContext();
+                var listC = AllDirectories.GetBoolsFromString(item.Control);
+                var listS = AllDirectories.GetBoolsFromString(item.Shema);
+                for (int i = 0; i < listC.Count; i++)
+                {
+                    if(i < listC.Count - 1)
+                    {
+                        if(IsAvailableDirectory(i + 1, Reest.abbreviatedName[i]))
+                        {
+                            listC[i] = false;
+                            listS[i] = true;
+                        }
+                        else
+                        {
+                            listC[i] = false;
+                            listS[i] = false;
+                        }
+                    }
+                    else if (i == listC.Count - 1)
+                    {
+                        if(IsAvailableDirectory(i + 1, "Схеми"))
+                        {
+                            listC[i] = false;
+                            listS[i] = true;
+                        }
+                        else
+                        {
+                            listC[i] = false;
+                            listS[i] = false;
+                        }
+                    }
+
+
+
+                }
+                
+                item.Control = AllDirectories.GetStringFromBools(listC);
+                item.Shema = AllDirectories.GetStringFromBools(listS);
+                modelContext.SaveChanges();
+            }
         }
     }
 }

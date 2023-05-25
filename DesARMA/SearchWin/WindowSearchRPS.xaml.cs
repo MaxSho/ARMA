@@ -33,7 +33,7 @@ namespace DesARMA.SearchWin
                 this.potentialRecordsOwner = potentialRecordsOwner;
                 this.potentialRecordsOperator = potentialRecordsOperator;
 
-                labelTitle.Content = $"{searchRPS.FullName}\nУ реєстрі повітряних суден знайдено наступна інформація за критерієм співпадінь з \"{searchRPS.NameFirst}\". Виберіть варіант, який відповідає Вашому критерію пошуку:";
+                labelTitle.Content = $"{searchRPS.FullName}\nУ Державному реєстрі цивільних повітряних суден України знайдено наступна інформація за критерієм співпадінь з \"{searchRPS.NameFirst}\". Виберіть варіант, який відповідає Вашому критерію пошуку:";
 
                 CreateTableOwner();
                 CreateTableOperator();

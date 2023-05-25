@@ -303,13 +303,13 @@ namespace DesARMA.Registers
                     CreateParHead($"Запис {curZap++}", doc1, curZap != 2);
 
 
-                    var sear = Reest.namesFieldSK_PDF;
+                    var sear = Reest.namesFieldSK_PDF_N;
 
                     foreach (var item in sear)
                     {
                         CreateParHead(item, doc1);
                         var l = itemList[i];
-                        if (l != null && l!="")
+                        if (l != null && l!="" && l != "-")
                         {
                             CreateParInHead(l, doc1);
                         }
@@ -370,7 +370,7 @@ namespace DesARMA.Registers
                     CreateParHead($"Запис {curZap++}", doc1, curZap != 2);
 
 
-                    var sear = Reest.namesFieldDSRU_PDF;
+                    var sear = Reest.namesFieldDSRU_PDF_N;
 
                     foreach (var item in sear)
                     {

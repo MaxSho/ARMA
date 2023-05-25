@@ -69,7 +69,7 @@ namespace DesARMA.Automation
 
         int numberR;
         public SearchEDR(CancellationTokenSource cts, string? code, string? name, string? passport, int limit, SearchType? searchType,
-                        string path, ProgresWindow progresWindow, Figurant figurant, ModelContext modelContext, bool isFO = false, int numberR = 15)
+                        string path, ProgresWindow progresWindow, Figurant figurant, ModelContext modelContext, int numberR, bool isFO = false)
         {
             try
             {
@@ -141,7 +141,7 @@ namespace DesARMA.Automation
             var modelContext = new ModelContext();
             var listC = AllDirectories.GetBoolsFromString(figurant.Control);
             var listS = AllDirectories.GetBoolsFromString(figurant.Shema);
-            if (subjects != null && subjects.Count > 0)
+            if (subjectsMore != null && subjectsMore.Count > 0)
             {
                 listC[indR] = true;
                 listS[indR] = false;
@@ -504,6 +504,7 @@ namespace DesARMA.Automation
                             }
                             ToCheckFigInTree(numberR - 1);
                             SavesubjectsMoreToDB();
+
                         }
                         catch(Exception ex)
                         {

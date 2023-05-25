@@ -52,6 +52,8 @@ using System.Windows.Media.Animation;
 using DesARMA.Automation;
 using System.Drawing;
 using DesARMA.Registers;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using DesARMA.ModelRPS_SK_SR;
 
 namespace DesARMA
 {
@@ -74,7 +76,9 @@ namespace DesARMA
             {
                 InitializeComponent();
 
-                //SearchRPS sfde = new("\"ТОВ \"\"АВІА-ПЛАЗА ПЛЮС\"\"", "39209863", false);
+                
+
+              
 
                 CreateTimer();
                 Auth();
@@ -2337,6 +2341,31 @@ namespace DesARMA
             {
                 System.Windows.MessageBox.Show(ex.Message);
             }
+        }
+        private void Button_ClickAllCheckBoxNo(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var main = modelContext.Mains.Where(m => m.NumbInput.Equals(numberInTextBox.Text)).FirstOrDefault();
+                var mainC = modelContext.MainConfigs.Where(m => m.NumbInput.Equals(numberInTextBox.Text)).FirstOrDefault();
+                if (main != null && mainC != null)
+                {
+                    AllDirectories allDirectories = new AllDirectories(main, mainC, Button_ClickUpdate, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
+                                            this.Resources["GreenEmpty"] as SolidColorBrush
+                                            , treeView1, modelContext, this
+                                           );
+                    allDirectories.AllCheckBoxNo();
+                    allDirectories.CreateNewTree();
+                    
+                }
+            }
+            catch( Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.Message);
+            }
+            
+
+            
         }
     }
 }

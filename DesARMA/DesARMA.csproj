@@ -182,6 +182,9 @@
     <None Update="FilesReestSh\edr.docx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="FilesReestSh\DSRUSh.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="FilesReestSh\RPSSh.docx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
