@@ -202,7 +202,11 @@ namespace DesARMA
                 button.Margin = new Thickness(10, 0, 10, 5);
                 button.Click += AutomationHendler;
 
-
+                button.IsEnabled = Reest.activeNumbReestr.Contains(idNum);
+                if (!Reest.activeNumbReestr.Contains(idNum))
+                {
+                    button.Opacity = 0.1;
+                }
 
                 var image = new Image();
                 image.Source = new BitmapImage(new Uri($"pack://application:,,,/DesARMA;component/Drawings/ExtractFromTheRegister/extract.png"));
@@ -237,7 +241,7 @@ namespace DesARMA
                 tree.Items.Add(CreateTextBlockesYesNo(idNum));
             }
 
-            if (idNum < Reest.abbreviatedName.Count)
+            if (idNum <= Reest.abbreviatedName.Count)
             {
                 var contextmenu = new ContextMenu();
                 tree.ContextMenu = contextmenu;

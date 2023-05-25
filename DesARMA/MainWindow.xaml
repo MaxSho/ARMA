@@ -291,11 +291,11 @@
         <Button Grid.Column="3" Grid.Row="21" Content="Перелік запитів" Click="ClickReqButton"
                 x:Name="ReqButton" Foreground="{StaticResource 2ColorStyle}" Height="45"   VerticalAlignment="Top"></Button>
 
-        <Label Grid.Column="2" Grid.Row="22" FlowDirection="RightToLeft">
-            Автоматизація
+        <Label Grid.Column="2" Grid.Row="22" FlowDirection="RightToLeft" IsEnabled="False">
+            Аналітика
         </Label>
-        <Button Grid.Column="3" Grid.Row="22" Foreground="{StaticResource 2ColorStyle}">
-            Перелік реєстрів
+        <Button Grid.Column="3" Grid.Row="22" Foreground="{StaticResource 2ColorStyle}" IsEnabled="False">
+            Відкрити аналітику
         </Button>
         
         
@@ -331,7 +331,7 @@
             </MenuItem>
             <MenuItem Header="Edit" ></MenuItem>
             <MenuItem Header="View" ></MenuItem>-->
-            <Label>Version 2.1.0</Label>
+            <Label>Version 2.1.1</Label>
         </Menu>
 
         

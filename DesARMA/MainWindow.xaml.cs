@@ -70,6 +70,8 @@ namespace DesARMA
         Main CurrentMainDB = null!;
         ModelContext modelContext = new ModelContext();
         public User CurrentUser { get; set; } = null!;
+
+        List<System.Windows.Window> listWindowOpenInNumbInput = new List<System.Windows.Window>();
         public MainWindow()
         {
             try
@@ -358,11 +360,7 @@ namespace DesARMA
         private void CreateLeftPanelButtonsRequestes(List<Main> m)
         {
             stackPanel1.Children.Clear();
-            //var AddButton = new System.Windows.Controls.Button();
-            //AddButton.Tag = "0";
-            //AddButton.Content = "Відкрити запит";
-            //AddButton.Click += Button_Click_1;
-            //stackPanel1.Children.Add(AddButton);
+         
 
             for (int i = 0; i < m.Count; i++)
             {
@@ -435,12 +433,7 @@ namespace DesARMA
                     
                     .ToList();
 
-                //stackPanel1.Children.Clear();
-                //var AddButton = new System.Windows.Controls.Button();
-                //AddButton.Tag = "0";
-                //AddButton.Content = "Відкрити запит";
-                //AddButton.Click += Button_Click_1;
-                //stackPanel1.Children.Add(AddButton);
+
 
                 CreateLeftPanelButtonsRequestes(mains);
 
@@ -467,56 +460,7 @@ namespace DesARMA
                                        );
                 allDirectories.CreateNewTree();
 
-                //for (int i = 0; i < mains.Count; i++)
-                //{ 
-                //    var mcIs = modelContext.MainConfigs.Find(mains[i].NumbInput);
-                //    if (mcIs == null) continue;
-
-                //    contShLabel.Content = /*$"Контроль/Схема  Розташування папки: {mcIs.Folder}";*/ CreateContShLabel(mcIs.Folder);
-
-                //    //Кнопка запиту зліва
-                //    //var itemButton = new System.Windows.Controls.Button();
-                //    //itemButton.Click += Button_Any_Click_Req;
-
-                //    //var NumForeground = 4;
-                //    //var NumBackground = 2;
-
-                //    //itemButton.Foreground = this.Resources[$"{NumForeground}ColorStyle"] as SolidColorBrush;
-                //    //itemButton.Background = this.Resources[$"{NumBackground}ColorStyle"] as SolidColorBrush;
-
-                //    numberKPTextBox.Text = mains[i].CpNumber;
-                //    numberInTextBox.Text = mains[i].NumbInput;
-                //    dateInTextBox.Text = InStrDate(mains[i].DtInput);
-                //    dateControlTextBox.Text = InStrDate(mains[i].DtCheck);
-
-                //    ReadFromMainDBToCenter(mains[i]);
-
-                //    //itemButton.Tag = mains[i].Id;
-                //    //itemButton.Content = $"Запит: {mains[i].NumbInput}";
-                //    //stackPanel1.Children.Insert(0, itemButton);
-
-                //    //currentButton = itemButton;
-                //    CurrentMainDB = mains[i];
-
-                //    treeView1.Items.Clear();
-                   
-
-                //    AllDirectories allDirectories = new AllDirectories(mains[i], mcIs, ClickOnCheckBox, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
-                //                            this.Resources["GreenEmpty"] as SolidColorBrush
-                //                            , treeView1, modelContext
-                //                           );
-                //    allDirectories.CreateNewTree();
-                //}
-
-                //for (int j = 1; j < stackPanel1.Children.Count; j++)
-                //{
-                //    var b = stackPanel1.Children[j] as System.Windows.Controls.Button;
-                //    if (b != null)
-                //    {
-                //        b.Background = this.Resources[$"3ColorStyle"] as SolidColorBrush;
-                //        b.Foreground = this.Resources[$"1ColorStyle"] as SolidColorBrush;
-                //    }
-                //}
+               
 
                 Button_ClickUpdate(new object(), new RoutedEventArgs());
                 // System.Windows.MessageBox.Show("" + treeView1.Items.Count);
@@ -626,6 +570,12 @@ namespace DesARMA
 
                 if (m != null)
                 {
+                    foreach (var item in listWindowOpenInNumbInput)
+                    {
+                        item.Close();
+                    }
+                    listWindowOpenInNumbInput = new();
+
                     CurrentMainDB = m;
                     ClearMainCenter();
 
@@ -1167,6 +1117,8 @@ namespace DesARMA
                     ListDefendantsWindow listDefendantsWindow = new ListDefendantsWindow(modelContext,
                         numberInTextBox.Text, "Перелік фігурантів", false, Button_ClickUpdate, inactivityTimer);
                         listDefendantsWindow.Owner = this;
+                        
+                        listWindowOpenInNumbInput.Add(listDefendantsWindow);
                         listDefendantsWindow.Show();
 
                 }
@@ -1265,21 +1217,7 @@ namespace DesARMA
                     itemButton2.Content = $"Запит: {reqItAdd.NumbInput}";
                     stackPanel1.Children.Insert(0, itemButton2);
 
-                    //currentButton = itemButton2;
-
-
-                    //var itemButtonAdd = new System.Windows.Controls.Button();
-                    //itemButtonAdd.Click += Button_Click_1;
-                    //itemButtonAdd.Name = "AddButton";
-                    ////itemButtonAdd.Name = "OpenButton";
-                    //itemButtonAdd.Tag = "0";
-                    //itemButtonAdd.Content = "Відкрити запит";
-                    //itemButtonAdd.Foreground = this.Resources[$"{1}ColorStyle"] as SolidColorBrush;
-                    //itemButtonAdd.Background = this.Resources[$"{4}ColorStyle"] as SolidColorBrush;
-                    //stackPanel1.Children.Add(itemButtonAdd);
-
-
-                    // Button_Any_Click_Req(currentButton, new RoutedEventArgs());
+                    
                     numberKPTextBox.Text = reqItAdd.CpNumber;
                     dateInTextBox.Text = InStrDate(reqItAdd.DtInput);
                     dateControlTextBox.Text = InStrDate(reqItAdd.DtCheck);
@@ -1316,8 +1254,8 @@ namespace DesARMA
 
                     ListDefendantsWindow listDefendantsWindow = new ListDefendantsWindow(modelContext, numberInTextBox.Text, "Перелік пов'язаних осіб", true, Button_ClickUpdate, inactivityTimer);
                     listDefendantsWindow.Owner = this;
+                    listWindowOpenInNumbInput.Add(listDefendantsWindow);
                     listDefendantsWindow.Show();
-
                     //listDefendantsWindow.Close();
                 }
             }
@@ -2109,7 +2047,7 @@ namespace DesARMA
 
                                 prevMc.Folder = FBD.SelectedPath + "\\" + strF;
                                 modelContext.SaveChanges();
-                                contShLabel.Content = $"Контроль/Схема  Розташування папки: " + FBD.SelectedPath + "\\" + strF; CreateContShLabel(FBD.SelectedPath + "\\" + strF);
+                                contShLabel.Content = CreateContShLabel(FBD.SelectedPath + "\\" + strF);
                                 System.Windows.MessageBox.Show("Папку запиту створено за посиланням " + FBD.SelectedPath + "\\" + strF);
                                 Button_ClickUpdate(new object(), new RoutedEventArgs());
                             }
@@ -2356,7 +2294,7 @@ namespace DesARMA
                                            );
                     allDirectories.AllCheckBoxNo();
                     allDirectories.CreateNewTree();
-                    
+                    System.Windows.MessageBox.Show("Прапорці встановлено");
                 }
             }
             catch( Exception ex)
