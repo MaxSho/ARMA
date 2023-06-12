@@ -1,4 +1,7 @@
-﻿using DesARMA.Models;
+﻿using DesARMA.Log;
+using DesARMA.Log.Data;
+using DesARMA.Models;
+using Microsoft.EntityFrameworkCore;
 using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
@@ -154,6 +157,7 @@ namespace DesARMA
                             listConnectedPeople.Add(def_FO_Window.figurant);
                             modelContext.Figurants.Add(def_FO_Window.figurant);
                             modelContext.SaveChanges();
+                            App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Додано пов'язану особу (ФО) {def_FO_Window.figurant.Fio} {def_FO_Window.figurant.Ipn}"));
 
                         }
                         else
@@ -161,6 +165,8 @@ namespace DesARMA
                             def_FO_Window.figurant.LoginName = curM.LoginName;
                             listDefendants.Add(def_FO_Window.figurant); modelContext.Figurants.Add(def_FO_Window.figurant);
                             modelContext.SaveChanges();
+                            App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Додано фігуранта (ФО) {def_FO_Window.figurant.Fio} {def_FO_Window.figurant.Ipn}"));
+
                         }
 
                     }
@@ -204,8 +210,8 @@ namespace DesARMA
                             listConnectedPeople.Add(def_UO_Window.figurant);
                             modelContext.Figurants.Add(def_UO_Window.figurant);
                             modelContext.SaveChanges();
+                            App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Додано пов'язану особу (ЮО) {def_UO_Window.figurant.Name} {def_UO_Window.figurant.Code}"));
 
-                        
                         }
                         else
                         {
@@ -213,6 +219,8 @@ namespace DesARMA
                             listDefendants.Add(def_UO_Window.figurant);
                             modelContext.Figurants.Add(def_UO_Window.figurant);
                             modelContext.SaveChanges();
+                            App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Додано фігуранта (ЮО) {def_UO_Window.figurant.Name} {def_UO_Window.figurant.Code}"));
+
                         }
 
                     }
@@ -255,9 +263,11 @@ namespace DesARMA
                             {
                                 modelContext.Figurants.Remove(def_UO_Window.figurant);
                                 listDefendants.RemoveAt(ind);
+                                App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Видалено (ЮО) {def.Name} {def.Code}"));
                             }
                             modelContext.SaveChanges();
-                            UpdateListButton();
+                            UpdateListButton(); 
+                            
                         }
                         else
                         {
@@ -277,9 +287,11 @@ namespace DesARMA
                             {
                                 modelContext.Figurants.Remove(def_FO_Window.figurant);
                                 listDefendants.RemoveAt(ind);
+                                App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Видалено (ФО) {def.Fio} {def.Ipn}"));
                             }
                             modelContext.SaveChanges();
                             UpdateListButton();
+                           
                         }
                         else
                         {

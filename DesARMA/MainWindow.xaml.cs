@@ -54,6 +54,9 @@ using System.Drawing;
 using DesARMA.Registers;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using DesARMA.ModelRPS_SK_SR;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using DesARMA.Log;
+using DesARMA.Log.Data;
 
 namespace DesARMA
 {
@@ -79,8 +82,7 @@ namespace DesARMA
                 InitializeComponent();
 
                 
-
-              
+                
 
                 CreateTimer();
                 Auth();
@@ -88,6 +90,11 @@ namespace DesARMA
                 currentButton = OpenButton;
                 DownloadReest();
                 LoadDb();
+
+
+                
+
+                //this.LogInf();
 
                 //CreateButtonsGetData();
 
@@ -330,24 +337,38 @@ namespace DesARMA
                 AuthWindow authWindow = new AuthWindow(inactivityTimer);
                 if (authWindow.ShowDialog() == true)
                 {
-                    bool sh = false;
+                    bool isLogExist = false;
+                    bool isPassExist = false;
                     foreach (var item in users)
                     {
                         if (item.LoginName == authWindow.Login)
                         {
+                            isLogExist = true;
+                            CurrentUser = item;
+                            App.CurUser = CurrentUser;
                             if (item.Password == CreateMD5(authWindow.Password))
                             {
-                                CurrentUser = item;
-                                sh = true;
+                                isPassExist = true;
                                 nameVykon.Content = item.Name;
                                 break;
                             }
                         }
                     }
-                    if (sh)
+                    if (isLogExist && isPassExist)
+                    {
+                        this.LogInf(new LogInData(CurrentUser.LoginName, TypeLogData.Access, true));
                         break;
-                    else
+                    }   
+                    else if(isLogExist && !isPassExist)
+                    {
+                        this.LogInf(new LogInData(CurrentUser.LoginName, TypeLogData.Incorrect, false));
                         System.Windows.MessageBox.Show($"Неправильний логін або пароль ");
+                    }
+                    else if (!isLogExist && !isPassExist)
+                    {
+                        this.LogInf(new LogInData(null, TypeLogData.Incorrect, false));
+                        System.Windows.MessageBox.Show($"Неправильний логін або пароль ");
+                    }
                 }
                 else
                 {
@@ -968,6 +989,7 @@ namespace DesARMA
                                 else
                                 {
                                     System.Windows.MessageBox.Show($"Не знайдено назву реєстру");
+                                    this.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Incorrect, "Не знайдено назву реєстру"));
                                     return false;
                                 }
                             }
@@ -975,12 +997,14 @@ namespace DesARMA
                         else
                         {
                             System.Windows.MessageBox.Show($"Не відмічено контроль(null)");
+                            this.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Incorrect, "Не відмічено контроль(null)"));
                             return false;
                         }
                     }
                     else
                     {
                         System.Windows.MessageBox.Show($"Прапорець номер {iPrap} контролю не визначений");
+                        this.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Incorrect, $"Прапорець номер {iPrap} контролю не визначений"));
                         return false;
                     }
                 }
@@ -998,6 +1022,7 @@ namespace DesARMA
                     str += "\n" + item;
                 }
                 System.Windows.MessageBox.Show(str);
+                this.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Incorrect, $"Не відмічено контроль"));
                 return false;
             }
             return true;
@@ -1022,7 +1047,8 @@ namespace DesARMA
 
                 if (isCountFig == 0)
                 {
-                    System.Windows.MessageBox.Show($"Не вибрано жодного фігуранта");
+                    System.Windows.MessageBox.Show($"Не додано жодного фігуранта");
+                    this.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Incorrect, "Не додано жодного фігуранта"));
                     return;
                 }
 
@@ -1045,7 +1071,7 @@ namespace DesARMA
 
 
                 DocResponse docResponse = new DocResponse(new List<MainConfig>() { prevM }, 
-                    new List<int>() { indexSub, whatIndex, count_Shemat }, //TODO визначити кількість схематичного відображення
+                    new List<int>() { indexSub, whatIndex, count_Shemat }, 
                     new List<string>() {
                     name,
                     address1,
@@ -1067,9 +1093,9 @@ namespace DesARMA
                 {
                     docResponse.CreateResponseOther();
                     //System.Windows.MessageBox.Show($"Відповідь збережено в папку:\n{path3}");
-                }   
+                }
 
-               
+                this.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Access, numberInTextBox.Text));
             }
             catch (Exception e2)
             {
@@ -1810,14 +1836,22 @@ namespace DesARMA
                 if (System.Windows.MessageBoxResult.Yes == result)
                 {
                     if (SaveAllDB())
+                    {
                         System.Windows.MessageBox.Show("Дані запиту збережено");
+                        this.LogInf(new SaveToDbData(CurrentUser.LoginName, TypeLogData.Access, numberInTextBox.Text));
+                    }
                     else
+                    {
                         System.Windows.MessageBox.Show("Виникла помилка збереження");
+                        this.LogInf(new SaveToDbData(CurrentUser.LoginName, TypeLogData.Incorrect, numberInTextBox.Text));
+                    }
+                        
                 }
             }
             catch (Exception e2)
             {
                 System.Windows.MessageBox.Show("Виникла помилка збереження\n" + e2.Message);
+                this.LogInf(new SaveToDbData(CurrentUser.LoginName, TypeLogData.Incorrect, numberInTextBox.Text));
             }
             inactivityTimer.Start();
         }
@@ -2016,6 +2050,7 @@ namespace DesARMA
                                 modelContext.SaveChanges();
                                 contShLabel.Content = /*$"Контроль/Схема  Розташування папки: " + FBD.SelectedPath + "\\" + strF;*/ CreateContShLabel(FBD.SelectedPath + "\\" + strF);
                                 System.Windows.MessageBox.Show("Папку запиту переміщено до " + FBD.SelectedPath + "\\" + strF);
+                                this.LogInf(new MoveFolderData(CurrentUser.LoginName, TypeLogData.Access, numberInTextBox.Text, "Папку запиту переміщено до " + FBD.SelectedPath + "\\" + strF));
                             }
                         }
                     }
@@ -2050,6 +2085,7 @@ namespace DesARMA
                                 contShLabel.Content = CreateContShLabel(FBD.SelectedPath + "\\" + strF);
                                 System.Windows.MessageBox.Show("Папку запиту створено за посиланням " + FBD.SelectedPath + "\\" + strF);
                                 Button_ClickUpdate(new object(), new RoutedEventArgs());
+                                this.LogInf(new MoveFolderData(CurrentUser.LoginName, TypeLogData.Access, numberInTextBox.Text, "Папку запиту створено за посиланням " + FBD.SelectedPath + "\\" + strF));
                             }
                         }
                     }
@@ -2203,17 +2239,21 @@ namespace DesARMA
                 if(main.CpNumber == null)
                 {
                     System.Windows.MessageBox.Show("Не можливо створити об'єднаний запит з порожнім КП");
+                    this.LogInf(new СombinedResponData(CurrentUser.Name, TypeLogData.Incorrect, numberInTextBox.Text,  "Не можливо створити об'єднаний запит з порожнім КП"));
                 }
                 else
                 {
+                    var numinp = modelContext!.Mains!.Find(numberInTextBox.Text)!;
                     CreateCombinedResponseWindow createCombinedResponseWindow = new CreateCombinedResponseWindow(modelContext, CurrentUser,
                     modelContext!.Mains!.Find(numberInTextBox.Text)!, inactivityTimer);
 
+                    createCombinedResponseWindow.Owner = this;
                     if (createCombinedResponseWindow.ShowDialog() == true)
                     {
                         //System.Windows.MessageBox.Show("true");
                         LoadDb();
                         createCombinedResponseWindow.MessegeAboutCreate();
+                        this.LogInf(new СombinedResponData(CurrentUser.Name, TypeLogData.Incorrect, numberInTextBox.Text, "об'єднаний запит"));
                     }
                     else
                     {

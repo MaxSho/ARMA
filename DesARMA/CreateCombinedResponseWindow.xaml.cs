@@ -1,4 +1,6 @@
-﻿using DesARMA.Models;
+﻿using DesARMA.Log;
+using DesARMA.Log.Data;
+using DesARMA.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -286,7 +288,6 @@ namespace DesARMA
                     }
                     else
                     {
-
                         this.DialogResult = false;
                     }
                     //this.Close();

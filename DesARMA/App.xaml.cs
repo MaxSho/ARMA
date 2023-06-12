@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DesARMA.Models;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -14,5 +15,6 @@ namespace DesARMA
     public partial class App : Application
     {
         public List<Window> ChildWindows { get; } = new List<Window>();
+        static public User CurUser = null!;
     }
 }

@@ -18,6 +18,9 @@ using static NPOI.HSSF.Util.HSSFColor;
 using System.Timers;
 using System.Configuration;
 using System.Collections.ObjectModel;
+using DesARMA.Log;
+using DesARMA.Log.Data;
+using System.Runtime.CompilerServices;
 
 namespace DesARMA
 {
@@ -47,7 +50,7 @@ namespace DesARMA
 
 
                 Init();
-
+                
                 
 
                 inactivityTimer.Start();
@@ -249,6 +252,7 @@ namespace DesARMA
                         else
                         {
                             exMeth(figs, fold);
+                            
 
                         }
                     }
@@ -301,19 +305,23 @@ namespace DesARMA
                     if (numKP != null)
                     {
                         ExternalRequests.ExternalRequestsToMytna(figs, fold, numKP);
-                        MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Запит Держмитслужба");
+                        MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\Запит Держмитслужба");
+                        App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Запит збережено за розташуванням {fold}\\Запити\\Запит Держмитслужба"));
                     }
                 }   
             }
             else if(enumExtReq == EnumExtReq.ExternalRequestsToIntelektualnyi)
             {
                 ExternalRequests.ExternalRequestsToIntelektualnyi(figs, fold);
-                MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Запит Укрпатент.docx");
+                MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\Запит Укрпатент.docx");
+                App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Запит збережено за розташуванням {fold}\\Запити\\Запит Укрпатент.docx"));
+
             }
             else if (enumExtReq == EnumExtReq.ExternalRequestsToHeolohii)
             {
                 ExternalRequests.ExternalRequestsToHeolohii(figs, fold);
-                MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Запит Геонадра.docx");
+                MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\Запит Геонадра.docx");
+                App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Запит збережено за розташуванням {fold}\\Запити\\Запит Геонадра.docx"));
             }
             else if (enumExtReq == EnumExtReq.ExternalRequestsToDerzhpratsi)
             {
@@ -335,7 +343,9 @@ namespace DesARMA
                     if (addr != null && dfs != null)
                     {
                         ExternalRequests.ExternalRequestsToDerzhpratsi(figs, fold, addr[0], dfs);
-                        MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {itemOrganName.SelectedItem}.docx");
+                        MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {itemOrganName.SelectedItem}.docx");
+                        App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Запит збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {itemOrganName.SelectedItem}.docx"));
+
                     }
 
                 }
@@ -350,19 +360,24 @@ namespace DesARMA
                     if (numKP != null)
                     {
                         ExternalRequests.ExternalRequestsToAntymonopolnyi(figs, fold, numKP);
-                        MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\АМК\\Запит АМК.docx");
+                        MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\АМК\\Запит АМК.docx");
+                        App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Запит збережено за розташуванням {fold}\\Запити\\АМК\\Запит АМК.docx"));
                     }
                 }
             }
             else if(enumExtReq == EnumExtReq.ExternalRequestsToFondovyi1)
             {
                 ExternalRequests.ExternalRequestsToFondovyi1(figs, fold);
-                MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\НКЦПФР 1\\Запит НКЦПФР.docx");
+                MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\НКЦПФР 1\\Запит НКЦПФР.docx");
+                App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Запит збережено за розташуванням {fold}\\Запити\\НКЦПФР 1\\Запит НКЦПФР.docx"));
+
             }
             else if (enumExtReq == EnumExtReq.ExternalRequestsToFondovyiOsnovnyi2)
             {
                 ExternalRequests.ExternalRequestsToFondovyiOsnovnyi2(figs, fold);
-                MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\НКЦПФР 2\\Запит НКЦПФР2.docx");
+                MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\НКЦПФР 2\\Запит НКЦПФР2.docx");
+                App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Запит збережено за розташуванням {fold}\\Запити\\НКЦПФР 2\\Запит НКЦПФР2.docx"));
+
             }
             else if (enumExtReq == EnumExtReq.ExternalRequestsToNAPZK)
             {
@@ -374,7 +389,9 @@ namespace DesARMA
                     if (numKP != null)
                     {
                         ExternalRequests.ExternalRequestsToNAPZK(figs, fold, numKP);
-                        MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\НАЗК\\Запит НАЗК.docx");
+                        MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\НАЗК\\Запит НАЗК.docx");
+                        App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Запит збережено за розташуванням {fold}\\Запити\\НАЗК\\Запит НАЗК.docx"));
+
                     }
                 }
                 
@@ -407,7 +424,8 @@ namespace DesARMA
                     if (numKP != null)
                     {
                         ExternalRequests.ExternalRequestsToBank(figs, fold,  numKP, nameBank.Text, mfo + "", addr);
-                        MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Банки\\Запит {nameBank.Text.Replace('\"', ' ')} - ... .docx");
+                        MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\Банки\\Запит {nameBank.Text.Replace('\"', ' ')} - ... .docx");
+                        App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Запит збережено за розташуванням {fold}\\Запити\\Банки\\Запит {nameBank.Text.Replace('\"', ' ')} - ... .docx"));
                     }
                 }
             }
@@ -423,19 +441,23 @@ namespace DesARMA
                     if (numKP != null)
                     {
                         ExternalRequests.ExternalRequestsToMytna(figs, fold, numKP);
-                        MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Запит Держмитслужба");
+                        MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\Запит Держмитслужба");
+                        App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Об'єднаний запит збережено за розташуванням {fold}\\Запити\\Запит Держмитслужба"));
+
                     }
                 }
             }
             else if (enumExtReq == EnumExtReq.ExternalRequestsToIntelektualnyi)
             {
                 ExternalRequests.ExternalRequestsToIntelektualnyi(figs, fold);
-                MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Запит Укрпатент.docx");
+                MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\Запит Укрпатент.docx");
+                App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Об'єднаний запит збережено за розташуванням {fold}\\Запити\\Запит Укрпатент.docx"));
             }
             else if (enumExtReq == EnumExtReq.ExternalRequestsToHeolohii)
             {
                 ExternalRequests.ExternalRequestsToHeolohii(figs, fold);
-                MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Запит Геонадра.docx");
+                MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\Запит Геонадра.docx");
+                App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Об'єднаний запит збережено за розташуванням {fold}\\Запити\\Запит Геонадра.docx"));
             }
             else if (enumExtReq == EnumExtReq.ExternalRequestsToDerzhpratsi)
             {
@@ -457,7 +479,9 @@ namespace DesARMA
                     if (addr != null && dfs != null)
                     {
                         ExternalRequests.ExternalRequestsToDerzhpratsi(figs, fold, addr[0], dfs);
-                        MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {itemOrganName.SelectedItem}.docx");
+                        MessageBox.Show($"Об'єднаний запит збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {itemOrganName.SelectedItem}.docx");
+                        App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Запит збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {itemOrganName.SelectedItem}.docx"));
+
                     }
 
                 }
@@ -472,19 +496,23 @@ namespace DesARMA
                     if (numKP != null)
                     {
                         ExternalRequests.ExternalRequestsToAntymonopolnyi(figs, fold, numKP);
-                        MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\АМК\\Запит АМК.docx");
+                        MessageBox.Show($"Об'єднаний запит збережено за розташуванням {fold}\\Запити\\АМК\\Запит АМК.docx");
+                        App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Запит збережено за розташуванням {fold}\\Запити\\АМК\\Запит АМК.docx"));
+
                     }
                 }
             }
             else if (enumExtReq == EnumExtReq.ExternalRequestsToFondovyi1)
             {
                 ExternalRequests.ExternalRequestsToFondovyi1(figs, fold);
-                MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\НКЦПФР 1\\Запит НКЦПФР.docx");
+                MessageBox.Show($"Об'єднаний запит збережено за розташуванням {fold}\\Запити\\НКЦПФР 1\\Запит НКЦПФР.docx");
+                App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Запит збережено за розташуванням {fold}\\Запити\\НКЦПФР 1\\Запит НКЦПФР.docx"));
             }
             else if (enumExtReq == EnumExtReq.ExternalRequestsToFondovyiOsnovnyi2)
             {
                 ExternalRequests.ExternalRequestsToFondovyiOsnovnyi2(figs, fold);
-                MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\НКЦПФР 2\\Запит НКЦПФР2.docx");
+                MessageBox.Show($"Об'єднаний запит збережено за розташуванням {fold}\\Запити\\НКЦПФР 2\\Запит НКЦПФР2.docx");
+                App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Запит збережено за розташуванням {fold}\\Запити\\НКЦПФР 2\\Запит НКЦПФР2.docx"));
             }
             else if (enumExtReq == EnumExtReq.ExternalRequestsToNAPZK)
             {
@@ -496,7 +524,8 @@ namespace DesARMA
                     if (numKP != null)
                     {
                         ExternalRequests.ExternalRequestsToNAPZK(figs, fold, numKP);
-                        MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\НАЗК\\Запит НАЗК.docx");
+                        MessageBox.Show($"Об'єднаний запит збережено за розташуванням {fold}\\Запити\\НАЗК\\Запит НАЗК.docx");
+                        App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Запит збережено за розташуванням {fold}\\Запити\\НАЗК\\Запит НАЗК.docx"));
                     }
                 }
 
@@ -529,7 +558,9 @@ namespace DesARMA
                     if (numKP != null)
                     {
                         ExternalRequests.ExternalRequestsToBank(figs, fold, numKP, nameBank.Text, mfo + "", addr);
-                        MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Банки\\Запит {nameBank.Text.Replace('\"', ' ')} - ... .docx");
+                        MessageBox.Show($"Об'єднаний запит збережено за розташуванням {fold}\\Запити\\Банки\\Запит {nameBank.Text.Replace('\"', ' ')} - ... .docx");
+                        App.CurUser.LogInf(new CreateRequestData(App.CurUser.LoginName, TypeLogData.Access, inputNumberList.First(), $"Запит збережено за розташуванням {fold}\\Запити\\Банки\\Запит {nameBank.Text.Replace('\"', ' ')} - ... .docx"));
+
                     }
                 }
             }
@@ -635,26 +666,26 @@ namespace DesARMA
                                         if (addr != null)
                                         {
                                             ExternalRequests.ExternalRequestsToDerzhpratsi(item.Value, fold, addr, nameMian);
-                                            MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {nameMian}.docx");
+                                            MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {nameMian}.docx");
                                         }
                                         else
                                         {
                                             ExternalRequests.ExternalRequestsToDerzhpratsi(item.Value, fold, "", nameMian);
-                                            MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {nameMian}.docx");
+                                            MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {nameMian}.docx");
                                         }
                                     }
                                     else
                                     {
                                         ExternalRequests.ExternalRequestsToDerzhpratsi(item.Value, fold, "", item.Key);
                                         strAnsw += item.Key + ";\n";
-                                        MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {item.Key}.docx");
+                                        MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {item.Key}.docx");
                                     }
                                 }
                                 else
                                 {
                                     ExternalRequests.ExternalRequestsToDerzhpratsi(item.Value, fold, "", item.Key);
                                     strAnsw += item.Key + ";\n";
-                                    MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {item.Key}.docx");
+                                    MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {item.Key}.docx");
                                 }
                             }
                             if (strAnsw != "")
@@ -737,26 +768,26 @@ namespace DesARMA
                                             if (addr != null)
                                             {
                                                 ExternalRequests.ExternalRequestsToDerzhpratsi(item.Value, fold, addr, nameMian);
-                                                MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {nameMian}.docx");
+                                                MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {nameMian}.docx");
                                             }
                                             else
                                             {
                                                 ExternalRequests.ExternalRequestsToDerzhpratsi(item.Value, fold, "", nameMian);
-                                                MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {nameMian}.docx");
+                                                MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {nameMian}.docx");
                                             }
                                         }
                                         else
                                         {
                                             ExternalRequests.ExternalRequestsToDerzhpratsi(item.Value, fold, "", item.Key);
                                             strAnsw += item.Key + ";\n";
-                                            MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {item.Key}.docx");
+                                            MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {item.Key}.docx");
                                         }
                                     }
                                     else
                                     {
                                         ExternalRequests.ExternalRequestsToDerzhpratsi(item.Value, fold, "", item.Key);
                                         strAnsw += item.Key + ";\n";
-                                        MessageBox.Show($"Збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {item.Key}.docx");
+                                        MessageBox.Show($"Запит збережено за розташуванням {fold}\\Запити\\Держпраці\\Відповідь {item.Key}.docx");
                                     }
                                 }
                                 if (strAnsw != "")

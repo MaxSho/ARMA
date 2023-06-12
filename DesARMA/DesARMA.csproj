@@ -268,4 +268,9 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="LogFile\Error\" />
+    <Folder Include="LogFile\Inf\" />
+  </ItemGroup>
+
 </Project>

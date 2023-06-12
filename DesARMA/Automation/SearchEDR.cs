@@ -310,7 +310,7 @@ namespace DesARMA.Automation
         }
         public async void GetInfoSubjectsMore()
         {
-            
+            try
             {
                 subjectsMore = new List<Subject>();
                 if (subjects != null)
@@ -521,9 +521,9 @@ namespace DesARMA.Automation
                     //Task.WaitAll(tasks);
                 }
             }
-            //not synh
-            { 
-                
+            catch(Exception ex)
+            {
+                throw ex;
             }
         }
         public string GetRespS()
@@ -587,7 +587,7 @@ namespace DesARMA.Automation
                 RequestUri = new Uri(ReqstrId + $"{id}"),
                 Headers =
                 {
-                    { "Authorization", "Token 6c48e3a0948ec23c5de170299134e98ee2ff90e0" },
+                    { "Authorization",  GetStrToken() },
                 }
             };
             var response = await client.SendAsync(request);
