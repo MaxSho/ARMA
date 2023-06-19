@@ -34,8 +34,11 @@
     <None Remove="Drawings\notdone\notdone10.png" />
     <None Remove="Drawings\notdone\notdone2.png" />
     <None Remove="Drawings\notdone\notdone3.png" />
+    <None Remove="Files\1.txt" />
     <None Remove="Files\2.ico" />
     <None Remove="Files\iconSave.jpg" />
+    <None Remove="LogFile\Error\1.txt" />
+    <None Remove="LogFile\Inf\1.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -167,12 +170,21 @@
     <Resource Include="Drawings\notdone\notdone3.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Files\1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Files\2.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Files\iconSave.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <EmbeddedResource Include="LogFile\Error\1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LogFile\Inf\1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
@@ -266,11 +278,6 @@
     <None Update="Files\Новий Документ Microsoft Word.docx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="LogFile\Error\" />
-    <Folder Include="LogFile\Inf\" />
   </ItemGroup>
 
 </Project>

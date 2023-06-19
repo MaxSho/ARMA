@@ -366,7 +366,7 @@ namespace DesARMA
                     }
                     else if (!isLogExist && !isPassExist)
                     {
-                        this.LogInf(new LogInData(null, TypeLogData.Incorrect, false));
+                        this.LogInf(new LogInData(null, TypeLogData.Incorrect, false, authWindow.Password));
                         System.Windows.MessageBox.Show($"Неправильний логін або пароль ");
                     }
                 }
@@ -649,6 +649,7 @@ namespace DesARMA
             inactivityTimer.Stop();
             try
             {
+                
                 CreateRequestWindow createRequestWindow = new CreateRequestWindow();
 
                 if (createRequestWindow.ShowDialog() == false)
@@ -671,6 +672,8 @@ namespace DesARMA
                 if (count == 0)
                 {
                     System.Windows.MessageBox.Show("Не вдалось відкрити запит, бо він не відкритий(не створений) в глобільній базі");
+                    CurrentUser.LogInf(new OpeningAppealData(CurrentUser.LoginName, TypeLogData.Incorrect, numberInTextBox.Text,
+                        $"Не вдалось відкрити запит {createRequestWindow.CodeRequest}, бо він не відкритий(не створений) в глобільній базі"));
                     return;
                 }
                 if (!(main.Executor == CurrentUser.IdUser || main.Executor == null)) 
@@ -679,6 +682,8 @@ namespace DesARMA
                     if(Us!= null)
                     {
                         System.Windows.MessageBox.Show($"Не вдалось відкрити запит, бо він відкритий іншим виконавцем: {Us.Name}");
+                        CurrentUser.LogInf(new OpeningAppealData(CurrentUser.LoginName, TypeLogData.Incorrect, numberInTextBox.Text,
+                       $"Не вдалось відкрити запит {createRequestWindow.CodeRequest}, бо він відкритий іншим виконавцем: {Us.Name}"));
                     }
                     return;
                 }
@@ -688,6 +693,8 @@ namespace DesARMA
                     if(chif.Employee != CurrentUser.Employee)
                     {
                         System.Windows.MessageBox.Show("Запит не доступний. Він відноситься до іншого управління");
+                        CurrentUser.LogInf(new OpeningAppealData(CurrentUser.LoginName, TypeLogData.Incorrect, numberInTextBox.Text,
+                       $"Запит {createRequestWindow.CodeRequest} не доступний. Він відноситься до іншого управління"));
                         return;
                     }
                 }
@@ -711,6 +718,8 @@ namespace DesARMA
                 foreach (var item in mcs)
                 {
                     System.Windows.MessageBox.Show("Запит уже відкривався");
+                    CurrentUser.LogInf(new OpeningAppealData(CurrentUser.LoginName, TypeLogData.Incorrect, numberInTextBox.Text,
+                       $"Запит {createRequestWindow.CodeRequest} уже відкривався. Наявні дані в MainConfigs"));
                     return;
                 }
 
@@ -820,11 +829,12 @@ namespace DesARMA
                         , treeView1, modelContext, this
                        );
                     allDirectories.CreateNewTree();
-
+                    CurrentUser.LogInf(new OpeningAppealData(CurrentUser.LoginName, TypeLogData.Access, numberInTextBox.Text,
+                       $"Запит {createRequestWindow.CodeRequest} успішно відкрито"));
                 }
                 else
                 {
-                    System.Windows.MessageBox.Show("Запит не створено");
+                    System.Windows.MessageBox.Show("Звернення не завантажено");
                     return;
                 }
             }
@@ -989,7 +999,7 @@ namespace DesARMA
                                 else
                                 {
                                     System.Windows.MessageBox.Show($"Не знайдено назву реєстру");
-                                    this.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Incorrect, "Не знайдено назву реєстру"));
+                                    CurrentUser.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Incorrect, "Не знайдено назву реєстру"));
                                     return false;
                                 }
                             }
@@ -997,14 +1007,14 @@ namespace DesARMA
                         else
                         {
                             System.Windows.MessageBox.Show($"Не відмічено контроль(null)");
-                            this.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Incorrect, "Не відмічено контроль(null)"));
+                            CurrentUser.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Incorrect, "Не відмічено контроль(null)"));
                             return false;
                         }
                     }
                     else
                     {
                         System.Windows.MessageBox.Show($"Прапорець номер {iPrap} контролю не визначений");
-                        this.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Incorrect, $"Прапорець номер {iPrap} контролю не визначений"));
+                        CurrentUser.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Incorrect, $"Прапорець номер {iPrap} контролю не визначений"));
                         return false;
                     }
                 }
@@ -1022,7 +1032,7 @@ namespace DesARMA
                     str += "\n" + item;
                 }
                 System.Windows.MessageBox.Show(str);
-                this.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Incorrect, $"Не відмічено контроль"));
+                CurrentUser.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Incorrect, $"Не відмічено контроль"));
                 return false;
             }
             return true;
@@ -1048,7 +1058,7 @@ namespace DesARMA
                 if (isCountFig == 0)
                 {
                     System.Windows.MessageBox.Show($"Не додано жодного фігуранта");
-                    this.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Incorrect, "Не додано жодного фігуранта"));
+                    CurrentUser.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Incorrect, "Не додано жодного фігуранта"));
                     return;
                 }
 
@@ -1095,7 +1105,7 @@ namespace DesARMA
                     //System.Windows.MessageBox.Show($"Відповідь збережено в папку:\n{path3}");
                 }
 
-                this.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Access, numberInTextBox.Text));
+                CurrentUser.LogInf(new CreateResponData(CurrentUser.LoginName, TypeLogData.Access, numberInTextBox.Text));
             }
             catch (Exception e2)
             {
@@ -1397,7 +1407,9 @@ namespace DesARMA
         private void App_Closing(object sender, CancelEventArgs e)
         {
 
-            System.Windows.MessageBoxResult result = System.Windows.MessageBox.Show(this, "Вийти?",
+            System.Windows.MessageBoxResult result = System.Windows.MessageBox.Show(
+                this, 
+                "Вийти?",
                 "Закрити", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question);
             //SaveReqLocalGlob();
             if (System.Windows.MessageBoxResult.No == result)
@@ -1412,7 +1424,14 @@ namespace DesARMA
                 if(System.Windows.MessageBoxResult.Yes == isSaveRes)
                 {
                     if (!SaveAllDB())
+                    {
+                        CurrentUser.LogInf(new SaveToDbData(CurrentUser.LoginName, TypeLogData.Incorrect, numberInTextBox.Text));
                         System.Windows.MessageBox.Show("Виникла помилка збереження");
+                    }  
+                    else
+                    {
+                        CurrentUser.LogInf(new SaveToDbData(CurrentUser.LoginName, TypeLogData.Access, numberInTextBox.Text));
+                    }
                 }
 
                 foreach (System.Windows.Window childWindow in ((App)System.Windows.Application.Current).ChildWindows)
@@ -1708,43 +1727,7 @@ namespace DesARMA
         }
         private bool ReadFromStringDBToCheckBoxes(MainConfig? mc)
         {
-            //if (mc == null) return false;
-
-            //var listCont = GetBoolsFromString(mc.Control);
-
-            //int k = 0;
-            //if(listCont != null)
-            //foreach (var item in listCont)
-            //{
-            //    if (treeView1.Items.Count >= k)
-            //    {
-            //        var trV = treeView1.Items[k++] as System.Windows.Controls.CheckBox;
-            //        if (trV != null)
-            //        {
-            //            trV.IsChecked = item as bool?;
-            //        }
-            //    }
-            //}
-
-            //var listShema = GetBoolsFromString(mc.Shema);
-
-            //k = 0;
-            //if(listShema != null)
-            //foreach (var item in listShema)
-            //{
-            //    if (treeView1.Items.Count >= k)
-            //    {
-            //        var trV = treeView1.Items[k++] as System.Windows.Controls.CheckBox;
-            //        if (trV != null)
-            //        {
-            //            var trVC = trV.Content as System.Windows.Controls.CheckBox;
-            //            if (trVC != null)
-            //            {
-            //                trVC.IsChecked = item as bool?;
-            //            }
-            //        }
-            //    }
-            //}
+           
 
             var main = (from m in modelContext.Mains where m.NumbInput == mc.NumbInput select m).First();
             AllDirectories allDirectories = new AllDirectories(main, mc, Button_ClickUpdate, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
@@ -1756,63 +1739,7 @@ namespace DesARMA
         }
         private bool ReadFromCheckBoxesToStringDB(MainConfig? mc)
         {
-            //bool ret = true;
-
-            //if (mc == null) return false;
-            //List<bool> listC = new List<bool>();
-            //List<bool> listS = new List<bool>();
-            //foreach (var item in treeView1.Items)
-            //{
-            //    if(item != null)
-            //    {
-            //        var cb = item as System.Windows.Controls.CheckBox;
-            //        if (cb != null)
-            //        {
-            //            var isc = cb.IsChecked;
-            //            if (isc != null)
-            //            {
-            //                listC.Add((bool)isc);
-            //            }
-            //            else
-            //            {
-            //                listS.Add(false);
-            //            }
-
-            //            var cbC = cb.Content as System.Windows.Controls.CheckBox;
-            //            if (cbC!=null)
-            //            {
-            //                var iscbC = cbC.IsChecked;
-            //                if(iscbC != null)
-            //                {
-            //                    listS.Add((bool)iscbC);
-            //                }
-            //                else
-            //                {
-            //                    listS.Add(false);
-            //                }
-                            
-            //            }
-            //        }
-            //        else
-            //        {
-            //            ret = false;
-            //        }
-
-
-            //    }
-            //    else
-            //    {
-            //        ret = false;
-            //    }
-                
-                
-            //}
-
-            //var strC = GetStringFromBools(listC);
-            //var strS = GetStringFromBools(listS);
-
-            //mc.Control = strC;
-            //mc.Shema = strS;
+            
 
             var main = (from m in modelContext.Mains where m.NumbInput == mc.NumbInput select m).First();
             AllDirectories allDirectories = new AllDirectories(main, mc, Button_ClickUpdate, this.Resources["RedEmpty"] as SolidColorBrush, this.Resources[$"4ColorStyle"] as SolidColorBrush,
@@ -1838,12 +1765,12 @@ namespace DesARMA
                     if (SaveAllDB())
                     {
                         System.Windows.MessageBox.Show("Дані запиту збережено");
-                        this.LogInf(new SaveToDbData(CurrentUser.LoginName, TypeLogData.Access, numberInTextBox.Text));
+                        CurrentUser.LogInf(new SaveToDbData(CurrentUser.LoginName, TypeLogData.Access, numberInTextBox.Text));
                     }
                     else
                     {
                         System.Windows.MessageBox.Show("Виникла помилка збереження");
-                        this.LogInf(new SaveToDbData(CurrentUser.LoginName, TypeLogData.Incorrect, numberInTextBox.Text));
+                        CurrentUser.LogInf(new SaveToDbData(CurrentUser.LoginName, TypeLogData.Incorrect, numberInTextBox.Text));
                     }
                         
                 }
@@ -1851,7 +1778,7 @@ namespace DesARMA
             catch (Exception e2)
             {
                 System.Windows.MessageBox.Show("Виникла помилка збереження\n" + e2.Message);
-                this.LogInf(new SaveToDbData(CurrentUser.LoginName, TypeLogData.Incorrect, numberInTextBox.Text));
+                CurrentUser.LogInf(new SaveToDbData(CurrentUser.LoginName, TypeLogData.Incorrect, numberInTextBox.Text));
             }
             inactivityTimer.Start();
         }
@@ -1961,16 +1888,6 @@ namespace DesARMA
                         i++;
                     }
 
-                        //int ind = 0;
-                        //foreach (var item in listNumering)
-                        //{
-                        //    Directory.CreateDirectory(prevMc.Folder + $"\\На диск\\Додаток {item}");
-                        //    perebor_updates(prevMc.Folder + $"\\{i}. " + Reest.sNazyv[Reest.sRodov.IndexOf(listNumering)] itemSNazyv, prevMc.Folder + $"\\На диск\\Додаток {numDod++}");
-                        //    ind++;
-                        //}
-
-
-                        
                     if (!(Directory.GetDirectories(prevMc.Folder + "\\" + $"{i}. Схеми").Length == 0 &&
                                      Directory.GetFiles(prevMc.Folder + "\\" + $"{i}. Схеми").Length == 0)){
 
@@ -1979,11 +1896,14 @@ namespace DesARMA
 
                     }
 
+                        CurrentUser.LogInf(new ToDiskData(CurrentUser.LoginName, TypeLogData.Access, numberInTextBox.Text, ("Додатки збережено в папку: " + prevMc.Folder + "\\На диск")));
                     System.Windows.MessageBox.Show("Додатки збережено в папку: " + prevMc.Folder + "\\На диск");
                 }
             }
             catch (Exception e1)
             {
+                CurrentUser.LogInf(new ToDiskData(CurrentUser.LoginName, TypeLogData.Access, numberInTextBox.Text, ("Додатки не збережені збережено в папку")));
+
                 Console.WriteLine(e1.Message.ToString());
             }
             inactivityTimer.Start();
@@ -2050,7 +1970,7 @@ namespace DesARMA
                                 modelContext.SaveChanges();
                                 contShLabel.Content = /*$"Контроль/Схема  Розташування папки: " + FBD.SelectedPath + "\\" + strF;*/ CreateContShLabel(FBD.SelectedPath + "\\" + strF);
                                 System.Windows.MessageBox.Show("Папку запиту переміщено до " + FBD.SelectedPath + "\\" + strF);
-                                this.LogInf(new MoveFolderData(CurrentUser.LoginName, TypeLogData.Access, numberInTextBox.Text, "Папку запиту переміщено до " + FBD.SelectedPath + "\\" + strF));
+                                CurrentUser.LogInf(new MoveFolderData(CurrentUser.LoginName, TypeLogData.Access, numberInTextBox.Text, "Папку запиту переміщено до " + FBD.SelectedPath + "\\" + strF));
                             }
                         }
                     }
@@ -2085,7 +2005,7 @@ namespace DesARMA
                                 contShLabel.Content = CreateContShLabel(FBD.SelectedPath + "\\" + strF);
                                 System.Windows.MessageBox.Show("Папку запиту створено за посиланням " + FBD.SelectedPath + "\\" + strF);
                                 Button_ClickUpdate(new object(), new RoutedEventArgs());
-                                this.LogInf(new MoveFolderData(CurrentUser.LoginName, TypeLogData.Access, numberInTextBox.Text, "Папку запиту створено за посиланням " + FBD.SelectedPath + "\\" + strF));
+                                CurrentUser.LogInf(new MoveFolderData(CurrentUser.LoginName, TypeLogData.Access, numberInTextBox.Text, "Папку запиту створено за посиланням " + FBD.SelectedPath + "\\" + strF));
                             }
                         }
                     }
@@ -2239,7 +2159,7 @@ namespace DesARMA
                 if(main.CpNumber == null)
                 {
                     System.Windows.MessageBox.Show("Не можливо створити об'єднаний запит з порожнім КП");
-                    this.LogInf(new СombinedResponData(CurrentUser.Name, TypeLogData.Incorrect, numberInTextBox.Text,  "Не можливо створити об'єднаний запит з порожнім КП"));
+                    CurrentUser.LogInf(new СombinedResponData(CurrentUser.Name, TypeLogData.Incorrect, numberInTextBox.Text,  "Не можливо створити об'єднаний запит з порожнім КП"));
                 }
                 else
                 {
@@ -2253,7 +2173,7 @@ namespace DesARMA
                         //System.Windows.MessageBox.Show("true");
                         LoadDb();
                         createCombinedResponseWindow.MessegeAboutCreate();
-                        this.LogInf(new СombinedResponData(CurrentUser.Name, TypeLogData.Incorrect, numberInTextBox.Text, "об'єднаний запит"));
+                        CurrentUser.LogInf(new СombinedResponData(CurrentUser.Name, TypeLogData.Incorrect, numberInTextBox.Text, "об'єднаний запит"));
                     }
                     else
                     {
@@ -2344,6 +2264,11 @@ namespace DesARMA
             
 
             
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            CurrentUser.LogInf(new ExitData(CurrentUser.LoginName, TypeLogData.Access, numberInTextBox.Text));
         }
     }
 }

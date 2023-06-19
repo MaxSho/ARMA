@@ -11,15 +11,15 @@
         
        Title="АІС &quot;Розшук&quot;" MinHeight="400" MinWidth="400" FontSize="16" WindowState="Maximized"
         ResizeMode="CanResizeWithGrip" Closing="App_Closing" PreviewMouseMove="Window_PreviewMouseMove"  MouseMove="Window_MouseMove" 
-        Loaded="Window_Loaded">
+        Loaded="Window_Loaded" Closed="Window_Closed">
     <Window.Resources>
         <SolidColorBrush x:Key="1ColorStyle" Color="#2C3333" />
         <SolidColorBrush x:Key="2ColorStyle" Color="#395B64" />
         <SolidColorBrush x:Key="3ColorStyle" Color="#A5C9CA" />
         <SolidColorBrush x:Key="4ColorStyle" Color="#E7F6F2" />
         <SolidColorBrush x:Key="5ColorStyle" Color="#009900" />
-        <SolidColorBrush x:Key="RedEmpty" Color="#E64E4E" />
-        <SolidColorBrush x:Key="GreenEmpty" Color="#21C25C" />
+        <SolidColorBrush x:Key="RedEmpty"    Color="#E64E4E" />
+        <SolidColorBrush x:Key="GreenEmpty"  Color="#21C25C" />
         <Style TargetType="Label">
             <Setter Property="Label.Background" Value="{StaticResource 2ColorStyle}" />
             <Setter Property="Label.Foreground" Value="{StaticResource 3ColorStyle}" />
@@ -331,7 +331,7 @@
             </MenuItem>
             <MenuItem Header="Edit" ></MenuItem>
             <MenuItem Header="View" ></MenuItem>-->
-            <Label>Version 2.1.1</Label>
+            <Label>Version 2.1.2</Label>
         </Menu>
 
         
