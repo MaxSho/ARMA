@@ -15,8 +15,8 @@ namespace MSTestProject
         [TestInitialize]
         public void TestInitialize()
         {
-            createRequestData = new(null, DesARMA.Log.TypeLogData.Access);
-            createRequestDat2 = new(null, DesARMA.Log.TypeLogData.Access);
+            createRequestData = new(null, DesARMA.Log.TypeLogData.Access, "");
+            createRequestDat2 = new(null, DesARMA.Log.TypeLogData.Access, "");
             listTest = new()
             {
                 createRequestData,
