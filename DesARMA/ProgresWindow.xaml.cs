@@ -411,7 +411,7 @@ namespace DesARMA
             }, ct);
            
         }
-        public void SetDoneFigNow(Figurant figurant)
+        public void SetDoneFigNow(Figurant figurant, bool isDontHaveFIO = false)
         {
             if (listStatus[figurants.IndexOf(figurant)])
             {
@@ -427,6 +427,11 @@ namespace DesARMA
                                      .FirstOrDefault(e => Grid.GetRow(e) == figInd && Grid.GetColumn(e) == 2) is System.Windows.Controls.Image image)
                             {
                                 var b = new BitmapImage(new Uri($"pack://application:,,,/DesARMA;component/Drawings/done/done{3}.png"));
+
+                                if (isDontHaveFIO)
+                                {
+                                    b = new BitmapImage(new Uri($"pack://application:,,,/DesARMA;component/Drawings/done/doneRed4.png"));
+                                }
                                 image.Source = b;
                                 ImageBehavior.SetAnimatedSource(image, b);
                                 listCheck[figInd] = true;
