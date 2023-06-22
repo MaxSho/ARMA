@@ -139,6 +139,14 @@ namespace DesARMA.Automation
         public void ToCheckFigInTree(int indR)
         {
             var modelContext = new ModelContext();
+            if(figurant.Control == null)
+            {
+                figurant.Control = new string('0', Reest.abbreviatedName.Count + 1);
+            }
+            if (figurant.Shema == null)
+            {
+                figurant.Shema = new string('0', Reest.abbreviatedName.Count + 1);
+            }
             var listC = AllDirectories.GetBoolsFromString(figurant.Control);
             var listS = AllDirectories.GetBoolsFromString(figurant.Shema);
             if (subjectsMore != null && subjectsMore.Count > 0)
