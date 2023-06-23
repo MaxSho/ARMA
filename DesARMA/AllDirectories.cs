@@ -24,6 +24,9 @@ using DesARMA.Registers;
 using System.Windows.Threading;
 using DesARMA.Registers.EDR;
 using System.DirectoryServices.ActiveDirectory;
+using DesARMA.Log.Data;
+using DesARMA.Log;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace DesARMA
 {
@@ -291,7 +294,7 @@ namespace DesARMA
                     int numberR = (int)b.Tag;
                     if (numberR < Reest.abbreviatedName.Count)
                     {
-                        if (IsAvailableDirectory(numberR, Reest.abbreviatedName[numberR - 1]) && (numberR >= 15 && numberR <= 20 || numberR >= 38 && numberR <= 40))
+                        if (IsAvailableDirectory(numberR, Reest.abbreviatedName[numberR - 1]) && (numberR >= 15 && numberR <= 20 || numberR >= 38 && numberR <= 40 || numberR == 28))
                         {
                             b.IsEnabled = false;
                             
@@ -734,6 +737,49 @@ namespace DesARMA
                                     //    item.Control = AllDirectories.GetStringFromBools(listC);
                                     //    item.Shema = AllDirectories.GetStringFromBools(listS);
                                     //}
+                                }
+                            }
+                            else if(numberR == 28) 
+                            {
+                                if (Figurants != null)
+                                {
+                                    var figs = (from f in Figurants where f.Ipn != null || f.Fio != null select f).ToList();
+                                    figsNotNeeded = (from f in Figurants where f.Code != null || f.Name != null select f).ToList();
+
+                                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                                    {
+                                        progresWindow.CreateListFig(figs);
+                                    });
+                                    foreach (var item in figs)
+                                    {
+                                        string path = (from mc in modelContext.@MainConfigs where mc.NumbInput == item.NumbInput select mc.Folder).First();
+
+                                        path += $"\\{numberR}. {Reest.abbreviatedName[numberR - 1]}";
+
+                                        System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                                        {
+                                            progresWindow.SetDounloadFigNow(item);
+                                        });
+
+                                        var searchInheritedTask = Task.Run(() =>
+                                        {
+                                            try
+                                            {
+                                                var dsd = new SearchInheritance(item.Ipn, item.Fio, path, progresWindow, item, numberR);
+                                                
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                progresWindow.ErrorFigur(item, ex);
+                                                App.CurUser.LogInf(new InheritanceData(App.CurUser.LoginName, TypeLogData.Incorrect, $"Сталися помилки під час пошуку по фігуранту: {item.Fio}, {item.Ipn}. Вх№:{item.NumbInput}"));
+                                                return;
+                                            }
+
+                                        });
+
+                                        await searchInheritedTask;
+                                    }
+
                                 }
                             }
                             else if (numberR == 38)

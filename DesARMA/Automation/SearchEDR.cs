@@ -273,24 +273,6 @@ namespace DesARMA.Automation
             {
                 throw ex;
             }
-
-
-            //string response = "";
-
-            //var task = Task.Run(async () => { // Викликаємо метод GetResp() в асинхронному таску
-            //    try
-            //    {
-            //        response = await GetResp();
-            //        subjects = JsonConvert.DeserializeObject<List<EDRClass>>(response);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        throw ex;
-            //    }
-
-            //});
-            //await task;
-            //task.Wait();
         }
         private string GetStrToken()
         {
@@ -516,7 +498,6 @@ namespace DesARMA.Automation
                             }
                             ToCheckFigInTree(numberR - 1);
                             SavesubjectsMoreToDB();
-
                         }
                         catch(Exception ex)
                         {
@@ -1555,6 +1536,30 @@ namespace DesARMA.Automation
     }
     public static class StringExtension
     {
+        public static string? SetTypeSpadk(this string? str, string? strIns)
+        {
+            if(str != null)
+            {
+                int ind = str.IndexOf("type");
+                if (ind != -1)
+                {
+                    return str.Insert(ind + "type=".Length, "" + strIns);
+                }
+            }
+            return str;
+        }
+        public static string? SetDataSpadk(this string? str, string? strIns)
+        {
+            if (str != null)
+            {
+                int ind = str.IndexOf("data");
+                if (ind != -1)
+                {
+                    return str.Insert(ind + "data=".Length, "" + strIns);
+                }
+            }
+            return str;
+        }
         public static string? SetCode(this string? str, string? strIns)
         {
             if (str != null)
