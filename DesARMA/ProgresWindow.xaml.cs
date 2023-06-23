@@ -354,7 +354,7 @@ namespace DesARMA
             await Task.Run(
                 () => {
                     System.Windows.Application.Current.Dispatcher.Invoke(() => {
-                        Thread.Sleep(5000);
+                        Thread.Sleep(20000);
                         this.Close();
                     });
                 },

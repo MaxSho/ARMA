@@ -480,11 +480,12 @@ namespace DesARMA.Automation
                                         isCor = true;
                                     }
 
-                                    if (isCor)
-                                    {
-                                        subjectsMore.Add(curr);
-                                    }
+                                    //if (isCor)
+                                    //{
+                                    //    subjectsMore.Add(curr);
+                                    //}
                                     isAllbool &= isCor;
+                                    subjectsMore.Add(curr);
                                 }
                                 catch (Exception ex)
                                 {
