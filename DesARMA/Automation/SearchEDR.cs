@@ -28,6 +28,7 @@ using System.Threading;
 using NPOI.SS.Formula.Functions;
 using System.Diagnostics;
 using System.Security.Cryptography;
+using System.Drawing;
 
 namespace DesARMA.Automation
 {
@@ -324,7 +325,7 @@ namespace DesARMA.Automation
                 if (subjects != null)
                 {
                     var tasks = new List<Task>(); //Task[subjects.Count];
-
+                    var isAllbool = true;
                     for (int i = 0; i < subjects.Count; i++)
                     {
                         var id = subjects[i].id;
@@ -478,11 +479,13 @@ namespace DesARMA.Automation
                                     {
                                         isCor = true;
                                     }
-                                    if (isCor)
-                                    {
-                                        subjectsMore.Add(curr);
-                                    }
-                                    
+
+                                    //if (isCor)
+                                    //{
+                                    //    subjectsMore.Add(curr);
+                                    //}
+                                    isAllbool &= isCor;
+                                    subjectsMore.Add(curr);
                                 }
                                 catch (Exception ex)
                                 {
@@ -501,6 +504,7 @@ namespace DesARMA.Automation
                         {
                             Debug.WriteLine($"\t - finish subMore ALL {DateTime.Now}");
                             CreatePDF();
+                            var it = isAllbool;
                             if (subjectsMore != null && subjectsMore?.Count == 0)
                             {
                                 progresWindow.NotDataFigur(figurant);
@@ -508,7 +512,7 @@ namespace DesARMA.Automation
                             }
                             else
                             {
-                                progresWindow.SetDoneFigNow(figurant);
+                                progresWindow.SetDoneFigNow(figurant, !isAllbool);
                             }
                             ToCheckFigInTree(numberR - 1);
                             SavesubjectsMoreToDB();

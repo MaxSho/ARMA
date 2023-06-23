@@ -20,6 +20,7 @@
     <None Remove="Drawings\done\done1.png" />
     <None Remove="Drawings\done\done2.png" />
     <None Remove="Drawings\done\done3.png" />
+    <None Remove="Drawings\done\doneRed4.png" />
     <None Remove="Drawings\download\download1.gif" />
     <None Remove="Drawings\download\download2.gif" />
     <None Remove="Drawings\download\download3.gif" />
@@ -126,6 +127,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Drawings\done\done3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Drawings\done\doneRed4.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Drawings\download\download1.gif">
