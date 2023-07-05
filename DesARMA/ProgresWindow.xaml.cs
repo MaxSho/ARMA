@@ -329,7 +329,7 @@ namespace DesARMA
                 });
             }, ct).ContinueWith(_ =>
                             {
-                                Thread.Sleep(20000);
+                                Thread.Sleep(90000);
                                 this.Dispatcher.Invoke(() =>
                                 {
                                     this.Close();
