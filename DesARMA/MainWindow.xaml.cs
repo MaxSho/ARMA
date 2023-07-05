@@ -692,7 +692,7 @@ namespace DesARMA
                 {
                     if(chif.Employee != CurrentUser.Employee)
                     {
-                        System.Windows.MessageBox.Show("Запит не доступний. Він відноситься до іншого управління");
+                        System.Windows.MessageBox.Show("Запит недоступний. Він відноситься до іншого управління");
                         CurrentUser.LogInf(new OpeningAppealData(CurrentUser.LoginName, TypeLogData.Incorrect, numberInTextBox.Text,
                        $"Запит {createRequestWindow.CodeRequest} не доступний. Він відноситься до іншого управління"));
                         return;

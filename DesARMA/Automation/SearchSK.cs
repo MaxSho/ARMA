@@ -170,8 +170,8 @@ namespace DesARMA.Automation
                     else
                     {
                         query = (from row in context.InfShipBooksN
-                                 where item.Ipn == row.Ipn &&
-                                 item.Pib == row.Pib &&
+                                 where item.Ipn == row.Edrpou &&
+                                 item.Pib == row.NameO &&
                                  item.Passp == row.Pass &&
                                  item.Dt == row.DtBirth &&
                                  item.Reg == row.Reg &&
