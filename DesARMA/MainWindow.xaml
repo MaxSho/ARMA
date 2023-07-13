@@ -331,7 +331,7 @@
             </MenuItem>
             <MenuItem Header="Edit" ></MenuItem>
             <MenuItem Header="View" ></MenuItem>-->
-            <Label>Version 2.2.1</Label>
+            <Label>Version 2.2.2</Label>
         </Menu>
 
         
