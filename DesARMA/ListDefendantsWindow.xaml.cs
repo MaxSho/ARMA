@@ -157,7 +157,7 @@ namespace DesARMA
                             listConnectedPeople.Add(def_FO_Window.figurant);
                             modelContext.Figurants.Add(def_FO_Window.figurant);
                             modelContext.SaveChanges();
-                            App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Додано пов'язану особу (ФО) {def_FO_Window.figurant.Fio} {def_FO_Window.figurant.Ipn}"));
+                            App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Додано пов'язану особу (ФО) {def_FO_Window.figurant.Id}"));
 
                         }
                         else
@@ -165,7 +165,7 @@ namespace DesARMA
                             def_FO_Window.figurant.LoginName = curM.LoginName;
                             listDefendants.Add(def_FO_Window.figurant); modelContext.Figurants.Add(def_FO_Window.figurant);
                             modelContext.SaveChanges();
-                            App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Додано фігуранта (ФО) {def_FO_Window.figurant.Fio} {def_FO_Window.figurant.Ipn}"));
+                            App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Додано фігуранта (ФО) {def_FO_Window.figurant.Id}"));
 
                         }
 
@@ -210,7 +210,7 @@ namespace DesARMA
                             listConnectedPeople.Add(def_UO_Window.figurant);
                             modelContext.Figurants.Add(def_UO_Window.figurant);
                             modelContext.SaveChanges();
-                            App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Додано пов'язану особу (ЮО) {def_UO_Window.figurant.Name} {def_UO_Window.figurant.Code}"));
+                            App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Додано пов'язану особу (ЮО) {def_UO_Window.figurant.Id}"));
 
                         }
                         else
@@ -219,7 +219,7 @@ namespace DesARMA
                             listDefendants.Add(def_UO_Window.figurant);
                             modelContext.Figurants.Add(def_UO_Window.figurant);
                             modelContext.SaveChanges();
-                            App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Додано фігуранта (ЮО) {def_UO_Window.figurant.Name} {def_UO_Window.figurant.Code}"));
+                            App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Додано фігуранта (ЮО) {def_UO_Window.figurant.Id}"));
 
                         }
 
@@ -247,58 +247,115 @@ namespace DesARMA
                 var b = sender as System.Windows.Controls.Button;
                 if (b != null)
                 {
-                    int ind = (int)b.Tag;
-                    var def = listDefendants[ind] as Figurant;
-                
-                    if(def.ResUr != null)
+                    if (isConn)
                     {
-                        Def_UO_Window def_UO_Window = new Def_UO_Window(def, isConn, inactivityTimer);
-                        if (def_UO_Window.ShowDialog() == true)
+                        int ind = (int)b.Tag;
+                        var def = listConnectedPeople[ind] as Figurant;
+
+                        if (def.ResUr != null)
                         {
-                            if (!def_UO_Window.isDelete)
+                            Def_UO_Window def_UO_Window = new Def_UO_Window(def, isConn, inactivityTimer);
+                            if (def_UO_Window.ShowDialog() == true)
                             {
-                            
+                                if (!def_UO_Window.isDelete)
+                                {
+
+                                }
+                                else
+                                {
+                                    modelContext.Figurants.Remove(def_UO_Window.figurant);
+                                    listConnectedPeople.RemoveAt(ind);
+                                    App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Видалено (ЮО) {def.Id}"));
+                                }
+                                modelContext.SaveChanges();
+                                UpdateListButton();
+
                             }
                             else
                             {
-                                modelContext.Figurants.Remove(def_UO_Window.figurant);
-                                listDefendants.RemoveAt(ind);
-                                App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Видалено (ЮО) {def.Name} {def.Code}"));
+
                             }
-                            modelContext.SaveChanges();
-                            UpdateListButton(); 
-                            
                         }
                         else
                         {
-                          
+                            Def_FO_Window def_FO_Window = new Def_FO_Window(def, isConn, inactivityTimer);
+                            if (def_FO_Window.ShowDialog() == true)
+                            {
+                                if (!def_FO_Window.isDelete)
+                                {
+
+                                }
+                                else
+                                {
+                                    modelContext.Figurants.Remove(def_FO_Window.figurant);
+                                    listConnectedPeople.RemoveAt(ind);
+                                    App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Видалено (ФО) {def.Id} "));
+                                }
+                                modelContext.SaveChanges();
+                                UpdateListButton();
+
+                            }
+                            else
+                            {
+
+                            }
                         }
                     }
                     else
                     {
-                        Def_FO_Window def_FO_Window = new Def_FO_Window(def, isConn, inactivityTimer);
-                        if (def_FO_Window.ShowDialog() == true)
+                        int ind = (int)b.Tag;
+                        var def = listDefendants[ind] as Figurant;
+
+                        if (def.ResUr != null)
                         {
-                            if (!def_FO_Window.isDelete)
+                            Def_UO_Window def_UO_Window = new Def_UO_Window(def, isConn, inactivityTimer);
+                            if (def_UO_Window.ShowDialog() == true)
                             {
-                            
+                                if (!def_UO_Window.isDelete)
+                                {
+
+                                }
+                                else
+                                {
+                                    modelContext.Figurants.Remove(def_UO_Window.figurant);
+                                    listDefendants.RemoveAt(ind);
+                                    App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Видалено (ЮО) {def.Id}"));
+                                }
+                                modelContext.SaveChanges();
+                                UpdateListButton();
+
                             }
                             else
                             {
-                                modelContext.Figurants.Remove(def_FO_Window.figurant);
-                                listDefendants.RemoveAt(ind);
-                                App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Видалено (ФО) {def.Fio} {def.Ipn}"));
+
                             }
-                            modelContext.SaveChanges();
-                            UpdateListButton();
-                           
                         }
                         else
                         {
-                            
+                            Def_FO_Window def_FO_Window = new Def_FO_Window(def, isConn, inactivityTimer);
+                            if (def_FO_Window.ShowDialog() == true)
+                            {
+                                if (!def_FO_Window.isDelete)
+                                {
+
+                                }
+                                else
+                                {
+                                    modelContext.Figurants.Remove(def_FO_Window.figurant);
+                                    listDefendants.RemoveAt(ind);
+                                    App.CurUser.LogInf(new FigurantsData(App.CurUser.LoginName, TypeLogData.Access, numberIn, $"Видалено (ФО) {def.Id}"));
+                                }
+                                modelContext.SaveChanges();
+                                UpdateListButton();
+
+                            }
+                            else
+                            {
+
+                            }
                         }
                     }
-
+                  
                 }
             }
             catch (Exception ex)
