@@ -77,22 +77,22 @@ namespace DesARMA
         List<System.Windows.Window> listWindowOpenInNumbInput = new List<System.Windows.Window>();
         public MainWindow()
         {
+            InitializeComponent();
+
+            //if (DateTime.Now > new DateTime(2023, 7, 1))
+            //{
+            //    System.Windows.MessageBox.Show("Термін доступу до програми минув");
+            //    System.Windows.Application.Current.Shutdown();
+            //}
+
             try
             {
-                InitializeComponent();
-
-                
-                
-
                 CreateTimer();
                 Auth();
                 currentButton = AddButton;
                 currentButton = OpenButton;
                 DownloadReest();
                 LoadDb();
-
-
-                
 
                 //this.LogInf();
 

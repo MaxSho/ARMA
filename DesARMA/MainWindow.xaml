@@ -60,6 +60,7 @@
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50" />
@@ -111,7 +112,7 @@
                     HorizontalAlignment="Left">
             </Image>
         </Button>
-        <StackPanel Grid.Column="0" Grid.Row="7" Grid.RowSpan="20"  
+        <StackPanel Grid.Column="0" Grid.Row="7" Grid.RowSpan="18"  
                     Background="{StaticResource 1ColorStyle}"  >
         </StackPanel>
 
@@ -137,7 +138,7 @@
         <Button Name="OpenButton" Click="Button_Click_1"
             Grid.Column="1" Grid.Row="3" Content="Відкрити звернення" Background="{StaticResource 4ColorStyle}" Foreground="{StaticResource 1ColorStyle}">
         </Button>
-        <ScrollViewer  Grid.Column="1" Grid.RowSpan="22" Grid.Row="4">
+        <ScrollViewer  Grid.Column="1" Grid.RowSpan="21" Grid.Row="4">
             <StackPanel x:Name="stackPanel1"  Background="{StaticResource 1ColorStyle}">
                 <Button x:Name="AddButton" Background="{StaticResource 4ColorStyle}" Foreground="{StaticResource 1ColorStyle}" Content="Відкрити запит" Click="Button_Click_1" Tag="0"/>
             </StackPanel>
@@ -297,14 +298,13 @@
         <Button Grid.Column="3" Grid.Row="22" Foreground="{StaticResource 2ColorStyle}" IsEnabled="False">
             Відкрити аналітику
         </Button>
-        
-        
-        
+
+
+
         <Label  FontSize="19"  Foreground="{StaticResource 4ColorStyle}" 
                x:Name="nameVykon" Grid.ColumnSpan="4" FlowDirection="RightToLeft"
                 Grid.Column="2" Grid.Row="24"
                >
-            
             <Label.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Menu item 1" />
@@ -331,10 +331,10 @@
             </MenuItem>
             <MenuItem Header="Edit" ></MenuItem>
             <MenuItem Header="View" ></MenuItem>-->
-            <Label>Version 2.2.2</Label>
+            <Label>Version 2.2.3</Label>
         </Menu>
-
         
+
         <ScrollViewer Grid.Column="4" Grid.Row="3"  Grid.RowSpan="21" Background="{StaticResource 1ColorStyle}"
                       VerticalScrollBarVisibility="Auto" Padding="0 10 0 0">
             <StackPanel 
@@ -386,5 +386,15 @@
                 Grid.Column="4" Grid.Row="1" Background="{StaticResource 4ColorStyle}"
                 Foreground="{StaticResource 1ColorStyle}"
                 Grid.ColumnSpan="2"/>
+        
+        <Label FontSize="10" 
+               Grid.Column="0" 
+               Grid.Row="27" 
+               Grid.ColumnSpan="6"
+               Background="{StaticResource 1ColorStyle}"
+               Foreground="{StaticResource 3ColorStyle}"
+               BorderThickness="0" 
+               BorderBrush="Transparent"
+               >© Шовкун Максим Ігорович</Label>
     </Grid>
 </Window>

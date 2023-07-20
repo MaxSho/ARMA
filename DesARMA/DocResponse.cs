@@ -228,8 +228,6 @@ namespace DesARMA
                 count_dodat++;
             }
 
-            
-            
             //remove
             for (int i = 0; i < listSRod.Count; i++)
             {
@@ -249,8 +247,6 @@ namespace DesARMA
                 tmpRun.FontSize = 14;
             }
 
-            
-           
             // пересунуть 2 ліст
             for (int i = doc1.Paragraphs.Count - listSDav.Count - 1; i >= 22 + listSRod.Count; i--)
             {
@@ -291,9 +287,6 @@ namespace DesARMA
                 doc1.RemoveBodyElement(pPos);
             }
 
-            
-            
-
             //
             int indexDel = 0;
             if (count_Shemat == 0)
@@ -310,6 +303,8 @@ namespace DesARMA
             {
                 indexDel = 23 + listSRod.Count + listSDav.Count;
             }
+
+
 
             if (!isExReq)
             {
