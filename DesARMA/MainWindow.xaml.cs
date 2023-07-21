@@ -79,11 +79,11 @@ namespace DesARMA
         {
             InitializeComponent();
 
-            //if (DateTime.Now > new DateTime(2023, 7, 1))
-            //{
-            //    System.Windows.MessageBox.Show("Термін доступу до програми минув");
-            //    System.Windows.Application.Current.Shutdown();
-            //}
+            if (DateTime.Now >= new DateTime(2023, 9, 8))
+            {
+                System.Windows.MessageBox.Show("Термін доступу до версії програми минув (політика безпеки)");
+                System.Windows.Application.Current.Shutdown();
+            }
 
             try
             {
